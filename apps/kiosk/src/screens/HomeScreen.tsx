@@ -4,6 +4,7 @@ import type { CatalogItem } from "../api";
 import { api } from "../api";
 import type { Lang } from "../i18n";
 import { t } from "../i18n";
+import { procedureIcon } from "../icons";
 
 export function HomeScreen({
   lang,
@@ -50,6 +51,9 @@ export function HomeScreen({
       <p className="subtitle">{strings.homeSubtitle}</p>
 
       <div className="search-row">
+        <span className="search-icon" aria-hidden="true">
+          🔎
+        </span>
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -76,15 +80,20 @@ export function HomeScreen({
                 className={`card${highlighted === item.id ? " highlighted" : ""}`}
                 onClick={() => onOpenProcedure(item.id)}
               >
-                <span
-                  className={`badge ${
-                    item.status === "available" ? "badge-available" : "badge-coming"
-                  }`}
-                >
-                  {item.status === "available"
-                    ? strings.statusAvailable
-                    : strings.statusComingSoon}
-                </span>
+                <div className="card-top">
+                  <span className="card-icon" aria-hidden="true">
+                    {procedureIcon(item.id)}
+                  </span>
+                  <span
+                    className={`badge ${
+                      item.status === "available" ? "badge-available" : "badge-coming"
+                    }`}
+                  >
+                    {item.status === "available"
+                      ? strings.statusAvailable
+                      : strings.statusComingSoon}
+                  </span>
+                </div>
                 <h3>{item.name[lang]}</h3>
                 {item.description && <p>{item.description[lang]}</p>}
               </button>

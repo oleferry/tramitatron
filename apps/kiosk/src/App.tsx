@@ -125,7 +125,12 @@ export function App() {
       style={{ ["--font-scale" as string]: FONT_SCALES[fontScaleIdx] }}
     >
       <header className="kiosk-header">
-        <h1>{strings.appName}</h1>
+        <div className="brand">
+          <span className="brand-mark" aria-hidden="true">
+            🏛️
+          </span>
+          <h1>{strings.appName}</h1>
+        </div>
         <div className="a11y-controls">
           <button
             className="btn-secondary btn-small"
@@ -162,6 +167,9 @@ export function App() {
 
         {screen.kind === "ended" && (
           <div className="centered-splash">
+            <span className="splash-icon" aria-hidden="true">
+              ✅
+            </span>
             <h2>{strings.sessionEndedTitle}</h2>
             <p>{strings.sessionEndedBody}</p>
           </div>

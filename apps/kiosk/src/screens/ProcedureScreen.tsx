@@ -4,6 +4,7 @@ import type { ExecutionResult, Procedure } from "../api";
 import { api } from "../api";
 import type { Lang } from "../i18n";
 import { t } from "../i18n";
+import { procedureIcon } from "../icons";
 
 export function ProcedureScreen({
   lang,
@@ -57,6 +58,9 @@ export function ProcedureScreen({
 
   return (
     <div className="screen">
+      <div className="language-hero" aria-hidden="true">
+        {procedureIcon(procedure.id)}
+      </div>
       <h2>{procedure.name[lang]}</h2>
       {procedure.description && <p className="subtitle">{procedure.description[lang]}</p>}
 
@@ -68,7 +72,9 @@ export function ProcedureScreen({
 
       {procedure.requirements.length > 0 && (
         <div className="panel">
-          <h3>{strings.requirementsTitle}</h3>
+          <h3>
+            <span aria-hidden="true">📋</span> {strings.requirementsTitle}
+          </h3>
           <ul>
             {procedure.requirements.map((req, i) => (
               <li key={i}>{req[lang]}</li>
@@ -79,7 +85,9 @@ export function ProcedureScreen({
 
       {procedure.official_sources.length > 0 && (
         <div className="panel">
-          <h3>{strings.officialSourcesTitle}</h3>
+          <h3>
+            <span aria-hidden="true">🔗</span> {strings.officialSourcesTitle}
+          </h3>
           <ul>
             {procedure.official_sources.map((src) => (
               <li key={src}>{src}</li>
