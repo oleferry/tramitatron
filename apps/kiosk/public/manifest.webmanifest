@@ -1,0 +1,19 @@
+{
+  "name": "Tramitatrón",
+  "short_name": "Tramitatrón",
+  "description": "Punto público de asistencia digital para trámites",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#f4f6f8",
+  "theme_color": "#0b3d6e",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

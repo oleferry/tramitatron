@@ -29,6 +29,7 @@ coverage/
 *.local.yml
 data/
 pgdata/
+spool/
 
 # IDE / SO
 .vscode/

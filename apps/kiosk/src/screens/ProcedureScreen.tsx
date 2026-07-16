@@ -1,0 +1,118 @@
+import { useEffect, useState } from "react";
+
+import type { ExecutionResult, Procedure } from "../api";
+import { api } from "../api";
+import type { Lang } from "../i18n";
+import { t } from "../i18n";
+
+export function ProcedureScreen({
+  lang,
+  sessionId,
+  procedureId,
+}: {
+  lang: Lang;
+  sessionId: string;
+  procedureId: string;
+}) {
+  const strings = t(lang);
+  const [procedure, setProcedure] = useState<Procedure | null>(null);
+  const [result, setResult] = useState<ExecutionResult | null>(null);
+  const [printed, setPrinted] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    api
+      .getProcedure(procedureId)
+      .then(setProcedure)
+      .catch(() => setFailed(true));
+  }, [procedureId]);
+
+  if (failed) return <div className="banner banner-info">{strings.apiError}</div>;
+  if (!procedure) return <p className="subtitle">{strings.loading}</p>;
+
+  const execute = async () => {
+    try {
+      setResult(await api.executeProcedure(procedureId, sessionId));
+    } catch {
+      setFailed(true);
+    }
+  };
+
+  const print = async () => {
+    if (!result?.receipt) return;
+    try {
+      await api.printReceipt([
+        strings.appName,
+        procedure.name[lang],
+        `${strings.receiptReference}: ${result.receipt.reference}`,
+        result.receipt.timestamp,
+      ]);
+      setPrinted(true);
+    } catch {
+      // La impresora simulada puede no estar arrancada; no es un error de sesión.
+      setPrinted(false);
+      setFailed(true);
+    }
+  };
+
+  return (
+    <div className="screen">
+      <h2>{procedure.name[lang]}</h2>
+      {procedure.description && <p className="subtitle">{procedure.description[lang]}</p>}
+
+      {procedure.status === "coming_soon" && (
+        <div className="banner banner-info">
+          {strings.comingSoonBanner} {strings.comingSoonHelp}
+        </div>
+      )}
+
+      {procedure.requirements.length > 0 && (
+        <div className="panel">
+          <h3>{strings.requirementsTitle}</h3>
+          <ul>
+            {procedure.requirements.map((req, i) => (
+              <li key={i}>{req[lang]}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {procedure.official_sources.length > 0 && (
+        <div className="panel">
+          <h3>{strings.officialSourcesTitle}</h3>
+          <ul>
+            {procedure.official_sources.map((src) => (
+              <li key={src}>{src}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {procedure.execution_mode === "assisted" && (
+        <p className="subtitle">{strings.assistedModeNote}</p>
+      )}
+
+      {procedure.status === "available" && !result && (
+        <button className="btn-primary btn-xl" onClick={() => void execute()}>
+          {strings.confirmAndRun}
+        </button>
+      )}
+
+      {result?.status === "completed" && result.receipt && (
+        <div className="banner banner-success">
+          <p style={{ margin: 0 }}>{strings.executionDone}</p>
+          <p style={{ margin: 0 }}>
+            {strings.receiptReference}: {result.receipt.reference}
+          </p>
+          {!printed ? (
+            <button className="btn-secondary" onClick={() => void print()}>
+              {strings.printReceipt}
+            </button>
+          ) : (
+            <p style={{ margin: 0 }}>{strings.printed}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

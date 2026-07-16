@@ -1,0 +1,25 @@
+id: demo.mock.appointment
+name:
+  es: Trámite de demostración
+  ca-valencia: Tràmit de demostració
+description:
+  es: Recorrido completo de ejemplo para probar el kiosco sin tocar ningún portal real.
+  ca-valencia: Recorregut complet d'exemple per a provar el quiosc sense tocar cap portal real.
+territory: ES-VC-CS
+execution_mode: assisted
+risk_class: A0
+status: available
+official_sources: []
+required_fields: []
+requirements:
+  - es: No necesitas ningún documento. Es una demostración.
+    ca-valencia: No necessites cap document. És una demostració.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: mock
+  package: demo.mock
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

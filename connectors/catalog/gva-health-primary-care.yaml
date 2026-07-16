@@ -1,0 +1,30 @@
+id: gva.health.primary-care.appointment
+name:
+  es: Cita de atención primaria
+  ca-valencia: Cita d'atenció primària
+description:
+  es: Pedir cita con tu médico o enfermera del centro de salud (Conselleria de Sanidad).
+  ca-valencia: Demanar cita amb el teu metge o infermera del centre de salut (Conselleria de Sanitat).
+territory: ES-VC-CS
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://www.san.gva.es/es/web/portal-del-paciente
+required_fields:
+  - sip_number
+  - birth_date
+requirements:
+  - es: Tarjeta SIP (o su número).
+    ca-valencia: Targeta SIP (o el seu número).
+  - es: Fecha de nacimiento.
+    ca-valencia: Data de naixement.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.gva_health
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

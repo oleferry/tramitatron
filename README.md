@@ -22,19 +22,58 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 ## Estado
 
-🚧 **Fase 0 — Descubrimiento y cimentación.** El repositorio se está arrancando desde cero como reescritura controlada del prototipo heredado (Universidad de Vigo), que se archivará en `/legacy` solo como referencia.
+✅ **Hito 1 completado — repositorio ejecutable y núcleo anónimo** (PRD §32): API con sesiones efímeras, catálogo declarativo, gateway IA mock, conector mock, kiosco bilingüe con purga de datos, simulador de periféricos, pruebas de aislamiento/privacidad y CI.
 
-## Stack previsto
+🚧 Siguiente: Fase 2 — documentos y conocimiento oficial (captura efímera, extracción SIP/DNI, RAG).
 
-- **Frontend kiosco:** Next.js/React + TypeScript, PWA en modo kiosco.
-- **Backend:** Python 3.12+, FastAPI, PostgreSQL, Redis.
-- **Automatización asistida:** Playwright en worker separado.
-- **Infra local:** Docker Compose.
+## Estructura
 
-## Cómo empezar (desarrollo)
+```text
+apps/kiosk/            Interfaz del tótem (React + TypeScript + Vite, PWA)
+services/api/          API FastAPI: sesiones, catálogo, gateway IA, conectores
+services/device-agent/ Agente de periféricos (hito 1: modo simulador)
+connectors/catalog/    Catálogo declarativo de trámites (YAML validado)
+docs/adr/              Decisiones de arquitectura
+```
+
+## Cómo ejecutarlo
+
+### Opción A — Docker (entorno completo)
 
 ```bash
-git clone https://github.com/oleferry/tramitatron.git
-cd tramitatron
-# La estructura de monorepo y el docker-compose llegarán con el hito 1 (ver PRD §32)
+cp .env.example .env   # y edita POSTGRES_PASSWORD
+docker compose up --build
 ```
+
+### Opción B — Nativo (sin Docker)
+
+En tres terminales:
+
+```bash
+# 1. API (http://localhost:8000/docs)
+cd services/api
+python -m venv .venv && .venv/Scripts/pip install -e ".[dev]"   # Linux/mac: .venv/bin/pip
+.venv/Scripts/python -m uvicorn app.main:app --reload --port 8000
+
+# 2. Simulador de periféricos
+cd services/device-agent
+python -m venv .venv && .venv/Scripts/pip install -e ".[dev]"
+.venv/Scripts/python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8210
+
+# 3. Kiosco (http://localhost:5173)
+cd apps/kiosk
+npm install
+npm run dev
+```
+
+Sin Redis configurado, la API usa un almacén de sesiones en memoria (solo desarrollo). Con `REDIS_URL` definido, usa Redis con TTL nativo.
+
+### Tests
+
+```bash
+cd services/api && .venv/Scripts/python -m pytest -q          # 27 tests
+cd services/device-agent && .venv/Scripts/python -m pytest -q # 3 tests
+cd apps/kiosk && npm run build                                # typecheck + build
+```
+
+La suite incluye pruebas de **aislamiento entre sesiones** (E2E-05 del PRD) y de **privacidad**: valores centinela de PII no pueden aparecer en logs ni en respuestas de listado.

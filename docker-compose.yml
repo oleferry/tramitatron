@@ -1,0 +1,52 @@
+# Entorno local completo de Tramitatrón (hito 1).
+#   docker compose up --build
+# Kiosco: http://localhost:5173 · API: http://localhost:8000/docs
+#
+# PostgreSQL aún no lo consume la API (llegará con métricas/catálogo versionado
+# en la fase 4); se incluye ya para que el entorno sea el definitivo.
+
+services:
+  api:
+    build: services/api
+    ports:
+      - "8000:8000"
+    environment:
+      SESSION_TTL_SECONDS: ${SESSION_TTL_SECONDS:-1200}
+      REDIS_URL: redis://redis:6379/0
+      CATALOG_PATH: /catalog
+      CORS_ORIGINS: http://localhost:5173
+    volumes:
+      - ./connectors/catalog:/catalog:ro
+    depends_on:
+      - redis
+
+  device-agent:
+    build: services/device-agent
+    ports:
+      - "127.0.0.1:8210:8210"
+
+  kiosk:
+    build: apps/kiosk
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://api:8000
+      VITE_DEVICE_URL: http://device-agent:8210
+    depends_on:
+      - api
+      - device-agent
+
+  redis:
+    image: redis:7-alpine
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: tramitatron
+      POSTGRES_USER: tramitatron
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

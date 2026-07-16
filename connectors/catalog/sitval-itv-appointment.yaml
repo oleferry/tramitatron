@@ -1,0 +1,30 @@
+id: sitval.itv.appointment
+name:
+  es: Cita previa ITV
+  ca-valencia: Cita prèvia ITV
+description:
+  es: Reservar cita para la inspección técnica del vehículo en centros SITVAL de Castellón.
+  ca-valencia: Reservar cita per a la inspecció tècnica del vehicle en centres SITVAL de Castelló.
+territory: ES-VC-CS
+execution_mode: assisted
+risk_class: A1
+status: coming_soon
+official_sources:
+  - https://sitval.com/
+required_fields:
+  - license_plate
+  - vehicle_type
+requirements:
+  - es: Matrícula del vehículo.
+    ca-valencia: Matrícula del vehicle.
+  - es: Tipo de vehículo (coche, moto, furgoneta…).
+    ca-valencia: Tipus de vehicle (cotxe, moto, furgoneta…).
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.sitval
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true
