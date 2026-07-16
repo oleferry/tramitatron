@@ -1,0 +1,45 @@
+# Secretos y configuración local — NUNCA subir
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+*.egg-info/
+
+# Node / TypeScript
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.tsbuildinfo
+
+# Docker / datos locales
+*.local.yml
+data/
+pgdata/
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Datos sensibles de pruebas (solo datos sintéticos en el repo)
+*.jpg
+*.jpeg
+*.png
+!docs/**/*.png
+!apps/**/public/**
+tmp/
