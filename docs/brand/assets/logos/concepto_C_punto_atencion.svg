@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+
+<rect width="1200" height="500" fill="#FFFFFF"/>
+<g transform="translate(96,50)">
+  <rect x="20" y="10" width="260" height="350" rx="62" fill="none" stroke="#0F6B78" stroke-width="26"/>
+  <rect x="63" y="64" width="174" height="145" rx="28" fill="#F7F8FA"/>
+  <circle cx="105" cy="117" r="17" fill="#246BFD"/>
+  <path d="M92 155 C105 134,128 134,141 155" fill="none" stroke="#246BFD" stroke-width="13" stroke-linecap="round"/>
+  <path d="M155 100 H208 M155 132 H208 M95 250 H211" stroke="#17324D" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="104" cy="310" r="13" fill="#F2C14E"/><circle cx="150" cy="310" r="13" fill="#F2C14E"/><circle cx="196" cy="310" r="13" fill="#F2C14E"/>
+</g>
+<text x="430" y="226" font-family="Inter, Arial, sans-serif" font-size="102" font-weight="700" fill="#17324D">Tramitatrón</text>
+<text x="434" y="294" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="500" fill="#0F6B78">Punto público de asistencia digital</text>
+
+</svg>

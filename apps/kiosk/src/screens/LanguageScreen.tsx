@@ -5,9 +5,10 @@ import { t } from "../i18n";
 export function LanguageScreen({ onChoose }: { onChoose: (lang: Lang) => void }) {
   return (
     <div className="screen">
-      <div className="language-hero" aria-hidden="true">
-        👋
-      </div>
+      <img className="brand-hero" src="/icon.svg" alt="" />
+      <p className="claim">
+        {t("es").claim} · {t("ca-valencia").claim}
+      </p>
       <h2>
         {t("es").chooseLanguage} / {t("ca-valencia").chooseLanguage}
       </h2>

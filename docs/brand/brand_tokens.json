@@ -1,0 +1,50 @@
+{
+  "brand": {
+    "name": "Tramitatrón",
+    "name_without_diacritics": "Tramitatron",
+    "descriptor": "Punto público de asistencia digital",
+    "purpose": "Acercamos la administración a las personas.",
+    "citizen_claim": "Tus trámites, paso a paso.",
+    "institutional_claim": "La administración, más cerca.",
+    "version": "0.1"
+  },
+  "colors": {
+    "trust_navy": {"hex": "#17324D", "role": "marca principal, titulares, fondos sólidos"},
+    "action_blue": {"hex": "#246BFD", "role": "enlaces y acciones digitales"},
+    "guide_yellow": {"hex": "#F2C14E", "role": "señales, acento, progreso; nunca texto sobre blanco"},
+    "support_teal": {"hex": "#0F6B78", "role": "ayuda, información y elementos secundarios"},
+    "success_green": {"hex": "#1F6F43", "role": "confirmaciones y estados completados"},
+    "incident_red": {"hex": "#C43D3D", "role": "errores y avisos críticos"},
+    "surface": {"hex": "#F7F8FA", "role": "fondos y tarjetas"},
+    "text": {"hex": "#121820", "role": "texto principal"},
+    "white": {"hex": "#FFFFFF", "role": "fondos y texto invertido"}
+  },
+  "typography": {
+    "interface_primary": "Atkinson Hyperlegible",
+    "corporate_primary": "Inter",
+    "fallback": "Arial, sans-serif",
+    "weights": [400, 500, 600, 700],
+    "rules": [
+      "No usar pesos Light o Thin",
+      "No justificar párrafos",
+      "Evitar mayúsculas sostenidas",
+      "Mantener una acción por bloque"
+    ]
+  },
+  "ui": {
+    "radius_px": {"small": 12, "medium": 20, "large": 32},
+    "touch_target_min_px": 64,
+    "body_text_min_px_totem": 24,
+    "button_text_min_px_totem": 26,
+    "focus_outline_px": 4
+  },
+  "voice": {
+    "attributes": ["clara", "cercana", "paciente", "fiable", "adulta", "no paternalista"],
+    "avoid": ["jerga administrativa", "promesas de resultado", "tecnicismos de IA", "humor en errores", "diminutivos", "culpar al usuario"]
+  },
+  "cobranding": {
+    "citizen_facing_lead": "Administración contratante",
+    "recommended_signature": "Un servicio de [Administración] · Tecnología Tramitatrón",
+    "white_label_allowed": true
+  }
+}

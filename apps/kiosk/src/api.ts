@@ -1,5 +1,6 @@
 // Cliente HTTP tipado del kiosco. Todas las rutas pasan por el proxy de Vite.
 
+import { demoActivated, demoApi } from "./demo";
 import type { Lang } from "./i18n";
 
 export type LocalizedText = { es: string; "ca-valencia": string };
@@ -78,19 +79,33 @@ export type CameraCapture = {
   mime_type: "image/png" | "image/jpeg";
 };
 
+export class NetworkError extends Error {}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
-    headers: { "Content-Type": "application/json" },
-    ...init,
-  });
-  if (!response.ok && response.status !== 204) {
-    throw new Error(`HTTP ${response.status}`);
+  let response: Response;
+  try {
+    response = await fetch(path, {
+      headers: { "Content-Type": "application/json" },
+      ...init,
+    });
+  } catch {
+    // Sin red: candidato a modo demostración.
+    throw new NetworkError();
   }
   if (response.status === 204) return undefined as T;
+  // Backend caído (5xx del proxy) o inexistente: en un despliegue estático
+  // la ruta /api no existe y el servidor devuelve HTML en lugar de JSON.
+  const contentType = response.headers.get("content-type") ?? "";
+  if (response.status >= 500 || !contentType.includes("json")) {
+    throw new NetworkError();
+  }
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
   return (await response.json()) as T;
 }
 
-export const api = {
+const realApi = {
   createSession: (language: Lang) =>
     request<SessionInfo>("/api/session", {
       method: "POST",
@@ -143,4 +158,38 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ lines }),
     }),
+};
+
+// Cada llamada intenta el backend real; si no hay red o no existe backend
+// (preview estática), pasa al modo demostración y lo señala en la interfaz.
+function withDemoFallback<A extends unknown[], R>(
+  real: (...args: A) => Promise<R>,
+  demo: (...args: A) => Promise<R>,
+): (...args: A) => Promise<R> {
+  return async (...args: A) => {
+    try {
+      return await real(...args);
+    } catch (error) {
+      if (error instanceof NetworkError) {
+        demoActivated();
+        return demo(...args);
+      }
+      throw error;
+    }
+  };
+}
+
+export const api: typeof realApi = {
+  createSession: withDemoFallback(realApi.createSession, demoApi.createSession),
+  extendSession: withDemoFallback(realApi.extendSession, demoApi.extendSession),
+  endSession: withDemoFallback(realApi.endSession, demoApi.endSession),
+  getCatalog: withDemoFallback(realApi.getCatalog, demoApi.getCatalog),
+  getProcedure: withDemoFallback(realApi.getProcedure, demoApi.getProcedure),
+  classifyIntent: withDemoFallback(realApi.classifyIntent, demoApi.classifyIntent),
+  ask: withDemoFallback(realApi.ask, demoApi.ask),
+  captureCamera: withDemoFallback(realApi.captureCamera, demoApi.captureCamera),
+  uploadDocument: withDemoFallback(realApi.uploadDocument, demoApi.uploadDocument),
+  confirmDocument: withDemoFallback(realApi.confirmDocument, demoApi.confirmDocument),
+  executeProcedure: withDemoFallback(realApi.executeProcedure, demoApi.executeProcedure),
+  printReceipt: withDemoFallback(realApi.printReceipt, demoApi.printReceipt),
 };

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+
+<rect width="1200" height="500" fill="#FFFFFF"/>
+<g transform="translate(82,62)">
+  <path d="M68 18 H226 L286 78 V312 Q286 350 248 350 H68 Q30 350 30 312 V56 Q30 18 68 18Z" fill="#F7F8FA" stroke="#17324D" stroke-width="22"/>
+  <path d="M226 18 V78 H286" fill="none" stroke="#17324D" stroke-width="22" stroke-linejoin="round"/>
+  <path d="M83 130 H227 M83 181 H206" stroke="#0F6B78" stroke-width="18" stroke-linecap="round"/>
+  <path d="M92 245 L126 279 L202 202" fill="none" stroke="#1F6F43" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M235 223 Q310 223 310 282 Q310 337 251 337 H218 L183 370 L191 331 Q166 313 166 282 Q166 223 235 223Z" fill="#246BFD"/>
+  <circle cx="211" cy="282" r="8" fill="#FFFFFF"/><circle cx="238" cy="282" r="8" fill="#FFFFFF"/><circle cx="265" cy="282" r="8" fill="#FFFFFF"/>
+</g>
+<text x="430" y="226" font-family="Inter, Arial, sans-serif" font-size="102" font-weight="700" fill="#17324D">Tramitatrón</text>
+<text x="434" y="294" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="500" fill="#0F6B78">Te acompañamos para resolver</text>
+
+</svg>

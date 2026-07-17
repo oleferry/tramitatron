@@ -59,6 +59,8 @@ type Strings = {
   askUpdatedLabel: string;
   askDisclaimer: string;
   askNoAnswer: string;
+  claim: string;
+  demoBadge: string;
 };
 
 const es: Strings = {
@@ -66,7 +68,7 @@ const es: Strings = {
   chooseLanguage: "Elige tu idioma",
   languageEs: "Castellano",
   languageVa: "Valencià",
-  homeTitle: "¿Qué necesitas hacer?",
+  homeTitle: "¿Qué trámite necesitas hacer?",
   homeSubtitle: "Toca un trámite o escribe lo que necesitas.",
   searchPlaceholder: "Por ejemplo: quiero pedir cita para el médico",
   searchButton: "Buscar",
@@ -80,7 +82,8 @@ const es: Strings = {
   endSessionConfirmYes: "Sí, terminar y borrar",
   endSessionConfirmNo: "No, seguir",
   sessionEndedTitle: "Sesión terminada",
-  sessionEndedBody: "Tus datos se han borrado. Gracias por usar el servicio.",
+  sessionEndedBody:
+    "La sesión ha terminado y tus datos se han eliminado de este punto de atención.",
   requirementsTitle: "Qué necesitas",
   officialSourcesTitle: "Fuente oficial",
   comingSoonBanner: "Este trámite estará disponible próximamente en este punto.",
@@ -127,6 +130,8 @@ const es: Strings = {
     "Este texto procede de la fuente oficial indicada y puede haber cambiado. Compruébalo en el enlace.",
   askNoAnswer:
     "No he encontrado esa información en las fuentes oficiales. Consulta el enlace oficial o pide ayuda al personal.",
+  claim: "Tus trámites, paso a paso.",
+  demoBadge: "Modo demostración · datos de ejemplo",
 };
 
 const va: Strings = {
@@ -134,7 +139,7 @@ const va: Strings = {
   chooseLanguage: "Tria el teu idioma",
   languageEs: "Castellano",
   languageVa: "Valencià",
-  homeTitle: "Què necessites fer?",
+  homeTitle: "Quin tràmit necessites fer?",
   homeSubtitle: "Toca un tràmit o escriu el que necessites.",
   searchPlaceholder: "Per exemple: vull demanar cita per al metge",
   searchButton: "Buscar",
@@ -148,7 +153,8 @@ const va: Strings = {
   endSessionConfirmYes: "Sí, acabar i esborrar",
   endSessionConfirmNo: "No, continuar",
   sessionEndedTitle: "Sessió acabada",
-  sessionEndedBody: "Les teues dades s'han esborrat. Gràcies per usar el servici.",
+  sessionEndedBody:
+    "La sessió ha acabat i les teues dades s'han eliminat d'este punt d'atenció.",
   requirementsTitle: "Què necessites",
   officialSourcesTitle: "Font oficial",
   comingSoonBanner: "Este tràmit estarà disponible pròximament en este punt.",
@@ -195,6 +201,8 @@ const va: Strings = {
     "Este text procedix de la font oficial indicada i pot haver canviat. Comprova-ho en l'enllaç.",
   askNoAnswer:
     "No he trobat eixa informació en les fonts oficials. Consulta l'enllaç oficial o demana ajuda al personal.",
+  claim: "Els teus tràmits, pas a pas.",
+  demoBadge: "Mode demostració · dades d'exemple",
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

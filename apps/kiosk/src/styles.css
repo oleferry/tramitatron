@@ -2,36 +2,48 @@
    El tamaño base se controla con --font-scale (toggle de accesibilidad).
    El modo .high-contrast redefine los tokens; ningún color se usa fuera de ellos. */
 
+/* Tokens de marca Tramitatrón v0.1 (docs/brand/brand_tokens.json):
+   trust_navy #17324D · action_blue #246BFD · guide_yellow #F2C14E
+   support_teal #0F6B78 · success_green #1F6F43 · incident_red #C43D3D */
 :root {
   --font-scale: 1;
-  --color-bg: #eef2f7;
-  --color-bg-accent: radial-gradient(1200px 600px at 50% -10%, #dbe7f4 0%, #eef2f7 60%);
+  --color-bg: #f7f8fa; /* surface */
+  --color-bg-accent: radial-gradient(1200px 600px at 50% -10%, #e9edf3 0%, #f7f8fa 60%);
   --color-surface: #ffffff;
-  --color-primary: #0b5cad;
-  --color-primary-strong: #0a4c8f;
-  --color-primary-soft: #e3eefa;
+  --color-navy: #17324d; /* trust_navy: marca, titulares, fondos sólidos */
+  --color-primary: #246bfd; /* action_blue: acciones digitales */
+  --color-primary-strong: #1e56c9;
+  --color-primary-soft: #e8effe;
   --color-on-primary: #ffffff;
-  --color-accent: #157f3d;
-  --color-accent-soft: #ddf3e4;
-  --color-danger: #b3261e;
-  --color-danger-soft: #fdecea;
-  --color-text: #16202b;
+  --color-guide: #f2c14e; /* guide_yellow: señales y foco; nunca texto sobre blanco */
+  --color-teal: #0f6b78; /* support_teal: ayuda e información */
+  --color-teal-soft: #e2f0f2;
+  --color-accent: #1f6f43; /* success_green */
+  --color-accent-soft: #def0e5;
+  --color-danger: #c43d3d; /* incident_red */
+  --color-danger-soft: #fbeaea;
+  --color-text: #121820;
   --color-muted: #4e5b69;
   --color-border: #d7dee7;
-  --shadow-card: 0 2px 6px rgba(15, 40, 70, 0.06), 0 12px 28px rgba(15, 40, 70, 0.09);
-  --shadow-card-hover: 0 4px 10px rgba(15, 40, 70, 0.1), 0 18px 40px rgba(15, 40, 70, 0.14);
-  --radius-l: 24px;
-  --radius-m: 16px;
+  --shadow-card: 0 2px 6px rgba(23, 50, 77, 0.06), 0 12px 28px rgba(23, 50, 77, 0.09);
+  --shadow-card-hover: 0 4px 10px rgba(23, 50, 77, 0.1), 0 18px 40px rgba(23, 50, 77, 0.14);
+  --radius-s: 12px;
+  --radius-m: 20px;
+  --radius-l: 32px;
 }
 
 .high-contrast {
   --color-bg: #000000;
   --color-bg-accent: #000000;
   --color-surface: #0d0d0d;
-  --color-primary: #ffd400;
-  --color-primary-strong: #ffea00;
+  --color-navy: #000000;
+  --color-primary: #f2c14e; /* guide_yellow sobre negro: contraste máximo */
+  --color-primary-strong: #ffd97a;
   --color-primary-soft: #1a1a1a;
   --color-on-primary: #000000;
+  --color-guide: #f2c14e;
+  --color-teal: #7fd8e5;
+  --color-teal-soft: #0a1f22;
   --color-accent: #00e676;
   --color-accent-soft: #0d1f14;
   --color-danger: #ff7b72;
@@ -55,7 +67,8 @@ body,
 }
 
 body {
-  font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+  /* Interfaz: Atkinson Hyperlegible (autoalojada); sin pesos Light/Thin */
+  font-family: "Atkinson Hyperlegible", Inter, "Segoe UI", system-ui, Arial, sans-serif;
   background: var(--color-bg);
   color: var(--color-text);
 }
@@ -78,9 +91,9 @@ body {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.9rem 2rem;
-  background: linear-gradient(120deg, #0a4c8f 0%, #0b5cad 55%, #1273d4 100%);
+  background: var(--color-navy); /* fondo sólido institucional, sin degradados */
   color: #fff;
-  box-shadow: 0 2px 14px rgba(10, 60, 110, 0.25);
+  box-shadow: 0 2px 14px rgba(23, 50, 77, 0.25);
 }
 
 .high-contrast .kiosk-header {
@@ -99,23 +112,13 @@ body {
 .brand-mark {
   width: 1.9em;
   height: 1.9em;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.16);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.95em;
-}
-
-.high-contrast .brand-mark {
-  background: transparent;
-  border: 2px solid var(--color-primary);
+  display: block;
 }
 
 .kiosk-header h1 {
   font-size: 1.05em;
   margin: 0;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: 0.01em;
 }
 
@@ -182,19 +185,21 @@ button:active {
 }
 
 button:focus-visible {
-  outline: 4px solid var(--color-accent);
+  /* guide_yellow como señal de foco (4 px, brand_tokens.ui) */
+  outline: 4px solid var(--color-guide);
   outline-offset: 3px;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-strong) 100%);
+  background: var(--color-primary);
   color: var(--color-on-primary);
-  font-weight: 650;
-  box-shadow: 0 6px 18px rgba(11, 92, 173, 0.35);
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(36, 107, 253, 0.3);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 8px 24px rgba(11, 92, 173, 0.45);
+  background: var(--color-primary-strong);
+  box-shadow: 0 8px 24px rgba(36, 107, 253, 0.4);
 }
 
 .high-contrast .btn-primary {
@@ -206,7 +211,7 @@ button:focus-visible {
   background: var(--color-surface);
   color: var(--color-primary);
   border-color: var(--color-primary);
-  font-weight: 650;
+  font-weight: 700;
 }
 
 .btn-secondary:hover {
@@ -217,7 +222,7 @@ button:focus-visible {
   background: var(--color-surface);
   color: var(--color-danger);
   border-color: var(--color-danger);
-  font-weight: 650;
+  font-weight: 700;
 }
 
 .btn-danger:hover {
@@ -228,7 +233,7 @@ button:focus-visible {
   min-height: 48px;
   font-size: 0.72em;
   padding: 0.4em 0.9em;
-  border-radius: 12px;
+  border-radius: var(--radius-s);
 }
 
 .btn-xl {
@@ -276,6 +281,35 @@ button:focus-visible {
   font-size: 1.5em;
   font-weight: 700;
   letter-spacing: -0.01em;
+  color: var(--color-navy); /* titulares en trust_navy */
+}
+
+.high-contrast .screen h2 {
+  color: var(--color-text);
+}
+
+.brand-hero {
+  width: 6.5rem;
+  height: 6.5rem;
+  margin: 0.6rem auto 0;
+  display: block;
+}
+
+.claim {
+  margin: 0;
+  font-size: 0.95em;
+  font-weight: 700;
+  color: var(--color-teal);
+}
+
+.demo-badge {
+  align-self: center;
+  font-size: 0.62em;
+  font-weight: 700;
+  padding: 0.4em 1.2em;
+  border-radius: 999px;
+  background: var(--color-guide);
+  color: var(--color-navy);
 }
 
 .subtitle {
@@ -410,7 +444,7 @@ button:focus-visible {
   margin: 0;
   font-size: 0.98em;
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-navy);
 }
 
 .high-contrast .card h3 {
@@ -426,7 +460,7 @@ button:focus-visible {
 
 .badge {
   font-size: 0.56em;
-  font-weight: 750;
+  font-weight: 700;
   padding: 0.35em 1em;
   border-radius: 999px;
   text-transform: uppercase;
@@ -463,7 +497,7 @@ button:focus-visible {
 
 .panel h3 {
   margin: 0 0 0.5em;
-  color: var(--color-primary);
+  color: var(--color-navy);
   font-size: 0.92em;
   display: flex;
   align-items: center;
@@ -495,9 +529,9 @@ button:focus-visible {
 }
 
 .banner-info {
-  background: var(--color-primary-soft);
-  color: var(--color-primary-strong);
-  border: 2px solid var(--color-primary);
+  background: var(--color-teal-soft);
+  color: var(--color-teal);
+  border: 2px solid var(--color-teal);
 }
 
 .banner-success {
@@ -507,7 +541,7 @@ button:focus-visible {
 }
 
 .high-contrast .banner-info {
-  color: var(--color-primary);
+  color: var(--color-teal);
 }
 
 /* ── Modales ──────────────────────────────────────────────── */
@@ -536,7 +570,7 @@ button:focus-visible {
 .modal {
   background: var(--color-surface);
   color: var(--color-text);
-  border-radius: 28px;
+  border-radius: var(--radius-l);
   padding: 2.2rem;
   max-width: 660px;
   width: calc(100% - 3rem);
@@ -594,7 +628,7 @@ button:focus-visible {
 
 .field-label {
   font-size: 0.72em;
-  font-weight: 650;
+  font-weight: 700;
   color: var(--color-muted);
 }
 
@@ -630,7 +664,7 @@ button:focus-visible {
 
 .field-hint {
   font-size: 0.65em;
-  font-weight: 650;
+  font-weight: 700;
 }
 
 .field-hint-review {

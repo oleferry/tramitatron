@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+
+<rect width="1200" height="500" fill="#FFFFFF"/>
+<g transform="translate(90,70)">
+  <rect x="0" y="0" width="310" height="310" rx="72" fill="#17324D"/>
+  <path d="M78 78 H232" stroke="#FFFFFF" stroke-width="34" stroke-linecap="round"/>
+  <path d="M155 78 V210" stroke="#FFFFFF" stroke-width="34" stroke-linecap="round"/>
+  <path d="M155 210 C155 257, 205 267, 238 238" fill="none" stroke="#F2C14E" stroke-width="26" stroke-linecap="round"/>
+  <path d="M216 239 L237 259 L274 214" fill="none" stroke="#F2C14E" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<text x="450" y="235" font-family="Inter, Arial, sans-serif" font-size="104" font-weight="700" fill="#17324D">Tramitatrón</text>
+<text x="454" y="300" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="500" fill="#0F6B78">La administración, paso a paso.</text>
+
+</svg>

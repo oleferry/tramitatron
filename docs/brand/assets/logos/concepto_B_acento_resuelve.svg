@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+
+<rect width="1200" height="500" fill="#FFFFFF"/>
+<g transform="translate(90,82)">
+  <circle cx="150" cy="150" r="145" fill="#246BFD"/>
+  <text x="150" y="205" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="190" font-weight="800" fill="#FFFFFF">T</text>
+  <path d="M205 68 L225 88 L262 40" fill="none" stroke="#F2C14E" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<text x="430" y="235" font-family="Inter, Arial, sans-serif" font-size="104" font-weight="750" fill="#121820">Tramitatrón</text>
+<path d="M1018 122 L1037 141 L1073 97" fill="none" stroke="#F2C14E" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="434" y="302" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="500" fill="#17324D">Tus trámites, más cerca.</text>
+
+</svg>

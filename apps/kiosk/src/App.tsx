@@ -28,6 +28,13 @@ export function App() {
   const [confirmEndOpen, setConfirmEndOpen] = useState(false);
   const [inactivityWarn, setInactivityWarn] = useState(false);
   const [error, setError] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
+
+  useEffect(() => {
+    const onDemo = () => setDemoMode(true);
+    window.addEventListener("tramitatron:demo", onDemo);
+    return () => window.removeEventListener("tramitatron:demo", onDemo);
+  }, []);
 
   const warnTimer = useRef<number | undefined>(undefined);
   const endTimer = useRef<number | undefined>(undefined);
@@ -126,10 +133,9 @@ export function App() {
     >
       <header className="kiosk-header">
         <div className="brand">
-          <span className="brand-mark" aria-hidden="true">
-            🏛️
-          </span>
+          <img className="brand-mark" src="/icon.svg" alt="" />
           <h1>{strings.appName}</h1>
+          {demoMode && <span className="demo-badge">{strings.demoBadge}</span>}
         </div>
         <div className="a11y-controls">
           <button
