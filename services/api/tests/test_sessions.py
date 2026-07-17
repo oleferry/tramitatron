@@ -69,14 +69,15 @@ def test_session_expires_and_is_purged(short_ttl_client):
         f"/api/session/{session_id}/data",
         json={"key": "phone", "value": "600000000"},
     )
-    time.sleep(0.3)
+    time.sleep(0.7)
     assert short_ttl_client.get(f"/api/session/{session_id}").status_code == 404
 
 
 def test_extend_renews_ttl(short_ttl_client):
     session_id = _create(short_ttl_client)
-    time.sleep(0.1)
+    time.sleep(0.4)
     assert short_ttl_client.post(f"/api/session/{session_id}/extend").status_code == 200
-    time.sleep(0.15)
-    # Sin extend habría expirado (TTL 0.2s); con extend sigue viva.
+    time.sleep(0.3)
+    # Sin extend habría expirado a los 0.5s de crearse; con extend sigue viva
+    # (el reloj del extend arranca de nuevo: quedan ~0.2s de margen).
     assert short_ttl_client.get(f"/api/session/{session_id}").status_code == 200

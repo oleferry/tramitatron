@@ -10,10 +10,11 @@ execution_mode: assisted
 risk_class: A0
 status: available
 official_sources: []
-required_fields: []
+required_fields:
+  - dni_number
 requirements:
-  - es: No necesitas ningún documento. Es una demostración.
-    ca-valencia: No necessites cap document. És una demostració.
+  - es: Es una demostración con un documento sintético. No se escanea tu DNI real.
+    ca-valencia: És una demostració amb un document sintètic. No s'escaneja el teu DNI real.
 confirmation_required: true
 captcha_policy: user_only
 document_retention: none

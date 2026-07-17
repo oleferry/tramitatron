@@ -40,6 +40,33 @@ export type ExecutionResult = {
   message: string | null;
 };
 
+export type DocumentClass = "dni" | "sip_card";
+
+export type ExtractedField = {
+  field: string;
+  value: string;
+  confidence: number;
+  validator: string;
+  status: "VALID" | "REVIEW_REQUIRED" | "INVALID";
+};
+
+export type DocumentExtraction = {
+  document_id: string;
+  document_class: DocumentClass;
+  fields: ExtractedField[];
+};
+
+export type ConfirmDocumentResponse = {
+  accepted: boolean;
+  fields: ExtractedField[];
+};
+
+export type CameraCapture = {
+  status: string;
+  image_base64: string;
+  mime_type: "image/png" | "image/jpeg";
+};
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
     headers: { "Content-Type": "application/json" },
@@ -74,6 +101,27 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ session_id: sessionId, confirmed: true }),
     }),
+  captureCamera: () =>
+    request<CameraCapture>("/device/camera/capture", { method: "POST" }),
+  uploadDocument: (
+    sessionId: string,
+    documentClass: DocumentClass,
+    imageBase64: string,
+    mimeType: CameraCapture["mime_type"],
+  ) =>
+    request<DocumentExtraction>(`/api/session/${sessionId}/documents`, {
+      method: "POST",
+      body: JSON.stringify({
+        document_class: documentClass,
+        image_base64: imageBase64,
+        mime_type: mimeType,
+      }),
+    }),
+  confirmDocument: (sessionId: string, documentId: string, fields: Record<string, string>) =>
+    request<ConfirmDocumentResponse>(
+      `/api/session/${sessionId}/documents/${documentId}/confirm`,
+      { method: "POST", body: JSON.stringify({ fields }) },
+    ),
   printReceipt: (lines: string[]) =>
     request<{ job_id: string }>("/device/printer/print", {
       method: "POST",

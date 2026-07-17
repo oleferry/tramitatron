@@ -54,6 +54,14 @@ class MemorySessionStore:
             session.data[key] = value
         return True
 
+    def remove_data(self, session_id: str, key: str) -> bool:
+        session = self.get(session_id)
+        if session is None:
+            return False
+        with self._lock:
+            session.data.pop(key, None)
+        return True
+
     def purge(self, session_id: str) -> bool:
         with self._lock:
             session = self._sessions.get(session_id)

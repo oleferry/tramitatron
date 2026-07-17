@@ -5,6 +5,7 @@ import { api } from "../api";
 import type { Lang } from "../i18n";
 import { t } from "../i18n";
 import { procedureIcon } from "../icons";
+import { DocumentStep } from "./DocumentStep";
 
 export function ProcedureScreen({
   lang,
@@ -20,6 +21,7 @@ export function ProcedureScreen({
   const [result, setResult] = useState<ExecutionResult | null>(null);
   const [printed, setPrinted] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [documentConfirmed, setDocumentConfirmed] = useState(false);
 
   useEffect(() => {
     api
@@ -100,11 +102,22 @@ export function ProcedureScreen({
         <p className="subtitle">{strings.assistedModeNote}</p>
       )}
 
-      {procedure.status === "available" && !result && (
-        <button className="btn-primary btn-xl" onClick={() => void execute()}>
-          {strings.confirmAndRun}
-        </button>
+      {procedure.status === "available" && procedure.required_fields.length > 0 && !result && (
+        <DocumentStep
+          lang={lang}
+          sessionId={sessionId}
+          documentClass={procedure.required_fields.includes("sip_number") ? "sip_card" : "dni"}
+          onConfirmed={() => setDocumentConfirmed(true)}
+        />
       )}
+
+      {procedure.status === "available" &&
+        !result &&
+        (procedure.required_fields.length === 0 || documentConfirmed) && (
+          <button className="btn-primary btn-xl" onClick={() => void execute()}>
+            {strings.confirmAndRun}
+          </button>
+        )}
 
       {result?.status === "completed" && result.receipt && (
         <div className="banner banner-success">

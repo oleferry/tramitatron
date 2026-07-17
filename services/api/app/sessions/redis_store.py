@@ -64,6 +64,17 @@ class RedisSessionStore:
         self._client.set(redis_key, json.dumps(stored), ex=max(ttl, 1))
         return True
 
+    def remove_data(self, session_id: str, key: str) -> bool:
+        redis_key = self._key(session_id)
+        raw = self._client.get(redis_key)
+        if raw is None:
+            return False
+        stored = json.loads(raw)
+        stored["data"].pop(key, None)
+        ttl = self._client.ttl(redis_key)
+        self._client.set(redis_key, json.dumps(stored), ex=max(ttl, 1))
+        return True
+
     def purge(self, session_id: str) -> bool:
         return bool(self._client.delete(self._key(session_id)))
 

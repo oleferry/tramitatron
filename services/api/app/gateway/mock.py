@@ -7,7 +7,13 @@ del ciudadano no se registra ni se conserva: entra, se clasifica y se descarta.
 import re
 import unicodedata
 
-from .base import IntentRequest, IntentResult
+from .base import (
+    DocumentRequest,
+    DocumentResult,
+    IntentRequest,
+    IntentResult,
+    RawExtractedField,
+)
 
 _RULES: list[tuple[str, str, str]] = [
     # (patrón, intent, procedure_id)
@@ -56,4 +62,27 @@ class MockModelGateway:
             procedure_id=None,
             next_action="ASK_CLARIFICATION",
             clarification=_CLARIFICATION[request.language],
+        )
+
+    async def extract_document(self, request: DocumentRequest) -> DocumentResult:
+        """Extracción SINTÉTICA: ignora la imagen y devuelve siempre los mismos
+        datos ficticios. El campo birth_date llega con confianza baja a propósito
+        para ejercitar el flujo de revisión obligatoria del kiosco."""
+        name = RawExtractedField(
+            field="full_name", value="PERSONA SINTÉTICA DEMO", confidence=0.95
+        )
+        synthetic: dict[str, list[RawExtractedField]] = {
+            "dni": [
+                RawExtractedField(field="dni_number", value="12345678Z", confidence=0.97),
+                name,
+                RawExtractedField(field="birth_date", value="1957-03-14", confidence=0.62),
+            ],
+            "sip_card": [
+                RawExtractedField(field="sip_number", value="01234567", confidence=0.93),
+                name,
+            ],
+        }
+        return DocumentResult(
+            document_class=request.document_class,
+            fields=synthetic[request.document_class],
         )

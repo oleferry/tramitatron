@@ -14,6 +14,7 @@ from .catalog.loader import load_catalog
 from .config import Settings
 from .connectors import router as connectors_router_module
 from .connectors.mock import MockConnector
+from .documents import router as documents_router_module
 from .gateway import router as gateway_router_module
 from .gateway.mock import MockModelGateway
 from .sessions import router as sessions_router_module
@@ -57,6 +58,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok", "service": "tramitatron-api", "version": "0.1.0"}
 
     app.include_router(sessions_router_module.router)
+    app.include_router(documents_router_module.router)
     app.include_router(catalog_router_module.router)
     app.include_router(gateway_router_module.router)
     app.include_router(connectors_router_module.router)

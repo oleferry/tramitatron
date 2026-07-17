@@ -24,5 +24,27 @@ class IntentResult(BaseModel):
     clarification: str | None = None
 
 
+class DocumentRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    document_class: Literal["dni", "sip_card"]
+    image_base64: str
+    mime_type: str = "image/png"
+    language: Literal["es", "ca-valencia"] = "es"
+
+
+class RawExtractedField(BaseModel):
+    field: str
+    value: str
+    confidence: float = Field(ge=0.0, le=1.0)
+
+
+class DocumentResult(BaseModel):
+    document_class: str
+    fields: list[RawExtractedField]
+
+
 class ModelGateway(Protocol):
     async def classify_intent(self, request: IntentRequest) -> IntentResult: ...
+
+    async def extract_document(self, request: DocumentRequest) -> DocumentResult: ...

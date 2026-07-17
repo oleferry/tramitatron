@@ -31,6 +31,10 @@ class SessionStore(Protocol):
 
     def set_data(self, session_id: str, key: str, value: str) -> bool: ...
 
+    def remove_data(self, session_id: str, key: str) -> bool:
+        """Elimina una clave de datos concreta (p. ej. una extracción documental)."""
+        ...
+
     def purge(self, session_id: str) -> bool:
         """Elimina la sesión y todos sus datos. Idempotente."""
         ...

@@ -32,6 +32,29 @@ def test_access_log_has_no_query_strings(client, caplog):
     assert "GET /api/catalog" in all_logs
 
 
+def test_no_document_data_in_logs(client, caplog):
+    """Los valores extraídos de un documento (aunque sean sintéticos) jamás
+    aparecen en los logs, solo viajan en la respuesta al kiosco."""
+    import base64
+    import logging
+
+    with caplog.at_level(logging.DEBUG):
+        session_id = client.post("/api/session", json={"language": "es"}).json()["session_id"]
+        client.post(
+            f"/api/session/{session_id}/documents",
+            json={
+                "document_class": "dni",
+                "image_base64": base64.b64encode(b"foto-sintetica").decode(),
+            },
+        )
+        client.delete(f"/api/session/{session_id}")
+
+    all_logs = "\n".join(record.getMessage() for record in caplog.records)
+    assert "12345678Z" not in all_logs
+    assert "SINTÉTICA" not in all_logs
+    assert "1957-03-14" not in all_logs
+
+
 def test_session_data_values_never_in_any_response_listing(client):
     session_id = client.post("/api/session", json={"language": "es"}).json()["session_id"]
     client.put(

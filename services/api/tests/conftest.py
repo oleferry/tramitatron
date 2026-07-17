@@ -14,5 +14,5 @@ def client() -> TestClient:
 @pytest.fixture()
 def short_ttl_client() -> TestClient:
     """Cliente con TTL de sesión muy corto para probar la expiración."""
-    app = create_app(Settings(session_ttl_seconds=0.2))
+    app = create_app(Settings(session_ttl_seconds=0.5))
     return TestClient(app)

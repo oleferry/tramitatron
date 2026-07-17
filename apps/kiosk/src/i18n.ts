@@ -40,6 +40,18 @@ type Strings = {
   highContrast: string;
   loading: string;
   apiError: string;
+  scanTitle: string;
+  scanIntro: string;
+  scanButton: string;
+  scanning: string;
+  reviewTitle: string;
+  reviewIntro: string;
+  fieldReview: string;
+  fieldInvalid: string;
+  confirmData: string;
+  dataConfirmed: string;
+  rescan: string;
+  fieldLabels: Record<string, string>;
 };
 
 const es: Strings = {
@@ -81,6 +93,24 @@ const es: Strings = {
   highContrast: "Alto contraste",
   loading: "Cargando…",
   apiError: "No se ha podido conectar con el servicio. Pide ayuda al personal.",
+  scanTitle: "Tu documento",
+  scanIntro:
+    "Vamos a leer los datos de tu documento con la cámara. Después podrás revisarlos y corregirlos antes de usarlos.",
+  scanButton: "Escanear documento",
+  scanning: "Leyendo el documento…",
+  reviewTitle: "Comprueba tus datos",
+  reviewIntro: "Revisa que todo es correcto. Toca un campo para corregirlo.",
+  fieldReview: "Revisa este dato",
+  fieldInvalid: "Este dato no es válido",
+  confirmData: "Los datos son correctos",
+  dataConfirmed: "Datos confirmados. Se borrarán al terminar la sesión.",
+  rescan: "Volver a escanear",
+  fieldLabels: {
+    dni_number: "Número de DNI o NIE",
+    full_name: "Nombre y apellidos",
+    birth_date: "Fecha de nacimiento (AAAA-MM-DD)",
+    sip_number: "Número SIP",
+  },
 };
 
 const va: Strings = {
@@ -122,6 +152,24 @@ const va: Strings = {
   highContrast: "Alt contrast",
   loading: "Carregant…",
   apiError: "No s'ha pogut connectar amb el servici. Demana ajuda al personal.",
+  scanTitle: "El teu document",
+  scanIntro:
+    "Llegirem les dades del teu document amb la càmera. Després podràs revisar-les i corregir-les abans d'usar-les.",
+  scanButton: "Escanejar document",
+  scanning: "Llegint el document…",
+  reviewTitle: "Comprova les teues dades",
+  reviewIntro: "Revisa que tot és correcte. Toca un camp per a corregir-lo.",
+  fieldReview: "Revisa esta dada",
+  fieldInvalid: "Esta dada no és vàlida",
+  confirmData: "Les dades són correctes",
+  dataConfirmed: "Dades confirmades. S'esborraran quan acabe la sessió.",
+  rescan: "Tornar a escanejar",
+  fieldLabels: {
+    dni_number: "Número de DNI o NIE",
+    full_name: "Nom i cognoms",
+    birth_date: "Data de naixement (AAAA-MM-DD)",
+    sip_number: "Número SIP",
+  },
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };
