@@ -52,6 +52,13 @@ type Strings = {
   dataConfirmed: string;
   rescan: string;
   fieldLabels: Record<string, string>;
+  askTitle: string;
+  askPlaceholder: string;
+  askButton: string;
+  askSourceLabel: string;
+  askUpdatedLabel: string;
+  askDisclaimer: string;
+  askNoAnswer: string;
 };
 
 const es: Strings = {
@@ -111,6 +118,15 @@ const es: Strings = {
     birth_date: "Fecha de nacimiento (AAAA-MM-DD)",
     sip_number: "Número SIP",
   },
+  askTitle: "¿Tienes alguna duda?",
+  askPlaceholder: "Por ejemplo: ¿qué documentos necesito?",
+  askButton: "Preguntar",
+  askSourceLabel: "Fuente",
+  askUpdatedLabel: "Consultado el",
+  askDisclaimer:
+    "Este texto procede de la fuente oficial indicada y puede haber cambiado. Compruébalo en el enlace.",
+  askNoAnswer:
+    "No he encontrado esa información en las fuentes oficiales. Consulta el enlace oficial o pide ayuda al personal.",
 };
 
 const va: Strings = {
@@ -170,6 +186,15 @@ const va: Strings = {
     birth_date: "Data de naixement (AAAA-MM-DD)",
     sip_number: "Número SIP",
   },
+  askTitle: "Tens algun dubte?",
+  askPlaceholder: "Per exemple: quins documents necessite?",
+  askButton: "Preguntar",
+  askSourceLabel: "Font",
+  askUpdatedLabel: "Consultat el",
+  askDisclaimer:
+    "Este text procedix de la font oficial indicada i pot haver canviat. Comprova-ho en l'enllaç.",
+  askNoAnswer:
+    "No he trobat eixa informació en les fonts oficials. Consulta l'enllaç oficial o demana ajuda al personal.",
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

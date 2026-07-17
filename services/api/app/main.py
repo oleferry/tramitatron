@@ -17,6 +17,8 @@ from .connectors.mock import MockConnector
 from .documents import router as documents_router_module
 from .gateway import router as gateway_router_module
 from .gateway.mock import MockModelGateway
+from .knowledge import router as knowledge_router_module
+from .knowledge.store import KnowledgeStore
 from .sessions import router as sessions_router_module
 from .sessions.memory import MemorySessionStore
 
@@ -29,6 +31,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(title="Tramitatrón API", version="0.1.0")
     app.state.settings = settings
     app.state.catalog = load_catalog(settings.catalog_path)
+    app.state.knowledge = KnowledgeStore(settings.knowledge_path)
     app.state.gateway = MockModelGateway()
     app.state.connectors = {"demo.mock": MockConnector()}
 
@@ -61,6 +64,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(documents_router_module.router)
     app.include_router(catalog_router_module.router)
     app.include_router(gateway_router_module.router)
+    app.include_router(knowledge_router_module.router)
     app.include_router(connectors_router_module.router)
     return app
 

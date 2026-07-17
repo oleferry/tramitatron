@@ -1,0 +1,34 @@
+[
+  {
+    "source_id": "gva-portal-paciente",
+    "fetched_at": "2026-07-17T14:39:48+00:00",
+    "sha256": "ee39cec89fbd2ee9fd99e164a726d826e6997660e694ae45ed92619b930c936a",
+    "status": "ok",
+    "text_file": "gva-portal-paciente-ee39cec8.txt",
+    "error": null
+  },
+  {
+    "source_id": "gva-cita-previa",
+    "fetched_at": "2026-07-17T14:39:48+00:00",
+    "sha256": "32c87157f52e323e20d4ccc5ac6b42047a37c5b8c86ca75ce83061e92218578a",
+    "status": "ok",
+    "text_file": "gva-cita-previa-32c87157.txt",
+    "error": null
+  },
+  {
+    "source_id": "sitval-itv",
+    "fetched_at": "2026-07-17T14:34:16+00:00",
+    "sha256": "276bcb6b3bb856b24c9817630b21c93587ff16773443eab08850aefccf0e995c",
+    "status": "ok",
+    "text_file": "sitval-itv-276bcb6b.txt",
+    "error": null
+  },
+  {
+    "source_id": "dipcas-admin-electronica",
+    "fetched_at": "2026-07-17T14:39:48+00:00",
+    "sha256": "a3a496dac3ccaf58b9a4ff193362f6abb1adfbc318d98e7dff5ec39f5bda3108",
+    "status": "ok",
+    "text_file": "dipcas-admin-electronica-a3a496da.txt",
+    "error": null
+  }
+]

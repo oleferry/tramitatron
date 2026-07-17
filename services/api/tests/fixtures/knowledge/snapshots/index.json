@@ -1,0 +1,18 @@
+[
+  {
+    "source_id": "test-salud",
+    "fetched_at": "2026-07-15T09:00:00+00:00",
+    "sha256": "aaaa",
+    "status": "ok",
+    "text_file": "test-salud.txt",
+    "error": null
+  },
+  {
+    "source_id": "test-itv",
+    "fetched_at": "2026-07-14T09:00:00+00:00",
+    "sha256": "bbbb",
+    "status": "ok",
+    "text_file": "test-itv.txt",
+    "error": null
+  }
+]

@@ -22,9 +22,11 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 ## Estado
 
-✅ **Hito 1 completado — repositorio ejecutable y núcleo anónimo** (PRD §32): API con sesiones efímeras, catálogo declarativo, gateway IA mock, conector mock, kiosco bilingüe con purga de datos, simulador de periféricos, pruebas de aislamiento/privacidad y CI.
+✅ **Hito 1 completado** (PRD §32): API con sesiones efímeras, catálogo declarativo, gateway IA mock, conector mock, kiosco bilingüe con purga de datos, simulador de periféricos, pruebas de aislamiento/privacidad y CI.
 
-🚧 Siguiente: Fase 2 — documentos y conocimiento oficial (captura efímera, extracción SIP/DNI, RAG).
+✅ **Fase 2 en curso**: servicio documental efímero (extracción con validadores deterministas DNI/NIE/SIP y revisión obligatoria del usuario) y RAG extractivo sobre fuentes oficiales versionadas (`knowledge/`), con organismo, fecha y enlace en cada respuesta.
+
+🚧 Siguiente: explicación de cartas administrativas (TT-404) y voz; después, conectores reales con Playwright (fase 3).
 
 ## Estructura
 
@@ -33,6 +35,7 @@ apps/kiosk/            Interfaz del tótem (React + TypeScript + Vite, PWA)
 services/api/          API FastAPI: sesiones, catálogo, gateway IA, conectores
 services/device-agent/ Agente de periféricos (hito 1: modo simulador)
 connectors/catalog/    Catálogo declarativo de trámites (YAML validado)
+knowledge/             Fuentes oficiales (allowlist) y snapshots versionados
 docs/adr/              Decisiones de arquitectura
 ```
 

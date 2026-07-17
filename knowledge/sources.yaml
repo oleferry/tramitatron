@@ -1,0 +1,38 @@
+# Allowlist de fuentes oficiales (PRD §16.2). Solo estas URLs pueden
+# ingerirse; la IA nunca consulta URLs arbitrarias (regla 7 del PRD §30).
+
+sources:
+  - id: gva-portal-paciente
+    url: https://www.san.gva.es/es/web/portal-del-paciente
+    organismo: Conselleria de Sanidad (GVA)
+    title: Portal del Paciente
+    territory: ES-VC
+    procedure_ids:
+      - gva.health.primary-care.appointment
+    review_cadence: daily
+
+  - id: gva-cita-previa
+    url: https://sede.gva.es/es/cita-previa
+    organismo: Generalitat Valenciana
+    title: Cita previa de la Generalitat
+    territory: ES-VC
+    procedure_ids:
+      - gva.health.primary-care.appointment
+    review_cadence: weekly
+
+  - id: sitval-itv
+    url: https://sitval.com/
+    organismo: SITVAL
+    title: Cita previa ITV en la Comunitat Valenciana
+    territory: ES-VC
+    procedure_ids:
+      - sitval.itv.appointment
+    review_cadence: weekly
+
+  - id: dipcas-admin-electronica
+    url: https://www.dipcas.es/es/administracionelectronica.html
+    organismo: Diputación de Castellón
+    title: Administración electrónica
+    territory: ES-VC-CS
+    procedure_ids: []
+    review_cadence: monthly

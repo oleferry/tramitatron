@@ -61,6 +61,17 @@ export type ConfirmDocumentResponse = {
   fields: ExtractedField[];
 };
 
+export type AskResponse = {
+  found: boolean;
+  answer: string | null;
+  source: {
+    organismo: string;
+    title: string;
+    url: string;
+    fetched_at: string;
+  } | null;
+};
+
 export type CameraCapture = {
   status: string;
   image_base64: string;
@@ -100,6 +111,11 @@ export const api = {
     request<ExecutionResult>(`/api/procedures/${procedureId}/execute`, {
       method: "POST",
       body: JSON.stringify({ session_id: sessionId, confirmed: true }),
+    }),
+  ask: (text: string, language: Lang, procedureId?: string) =>
+    request<AskResponse>("/api/assistant/ask", {
+      method: "POST",
+      body: JSON.stringify({ text, language, procedure_id: procedureId ?? null }),
     }),
   captureCamera: () =>
     request<CameraCapture>("/device/camera/capture", { method: "POST" }),
