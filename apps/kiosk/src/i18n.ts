@@ -61,6 +61,14 @@ type Strings = {
   askNoAnswer: string;
   claim: string;
   demoBadge: string;
+  uploadPhoto: string;
+  takePhoto: string;
+  retakePhoto: string;
+  usePhoto: string;
+  cancelCapture: string;
+  cameraStarting: string;
+  cameraError: string;
+  captureFrameHint: string;
 };
 
 const es: Strings = {
@@ -105,8 +113,8 @@ const es: Strings = {
   apiError: "No se ha podido conectar con el servicio. Pide ayuda al personal.",
   scanTitle: "Tu documento",
   scanIntro:
-    "Vamos a leer los datos de tu documento con la cámara. Después podrás revisarlos y corregirlos antes de usarlos.",
-  scanButton: "Escanear documento",
+    "Para leer tu documento usaremos la cámara. Usaremos tus datos solo durante esta sesión: podrás revisarlos antes de continuar y se borrarán cuando termines.",
+  scanButton: "Aceptar y usar la cámara",
   scanning: "Leyendo el documento…",
   reviewTitle: "Comprueba tus datos",
   reviewIntro: "Revisa que todo es correcto. Toca un campo para corregirlo.",
@@ -132,6 +140,15 @@ const es: Strings = {
     "No he encontrado esa información en las fuentes oficiales. Consulta el enlace oficial o pide ayuda al personal.",
   claim: "Tus trámites, paso a paso.",
   demoBadge: "Modo demostración · datos de ejemplo",
+  uploadPhoto: "O subir una foto del documento",
+  takePhoto: "Hacer la foto",
+  retakePhoto: "Repetir la foto",
+  usePhoto: "Usar esta foto",
+  cancelCapture: "Cancelar",
+  cameraStarting: "Encendiendo la cámara…",
+  cameraError: "No se ha podido usar la cámara. Puedes subir una foto del documento.",
+  captureFrameHint:
+    "Coloca el documento dentro del recuadro, sin reflejos y con las cuatro esquinas visibles.",
 };
 
 const va: Strings = {
@@ -176,8 +193,8 @@ const va: Strings = {
   apiError: "No s'ha pogut connectar amb el servici. Demana ajuda al personal.",
   scanTitle: "El teu document",
   scanIntro:
-    "Llegirem les dades del teu document amb la càmera. Després podràs revisar-les i corregir-les abans d'usar-les.",
-  scanButton: "Escanejar document",
+    "Per a llegir el teu document usarem la càmera. Usarem les teues dades només durant esta sessió: podràs revisar-les abans de continuar i s'esborraran quan acabes.",
+  scanButton: "Acceptar i usar la càmera",
   scanning: "Llegint el document…",
   reviewTitle: "Comprova les teues dades",
   reviewIntro: "Revisa que tot és correcte. Toca un camp per a corregir-lo.",
@@ -203,6 +220,15 @@ const va: Strings = {
     "No he trobat eixa informació en les fonts oficials. Consulta l'enllaç oficial o demana ajuda al personal.",
   claim: "Els teus tràmits, pas a pas.",
   demoBadge: "Mode demostració · dades d'exemple",
+  uploadPhoto: "O pujar una foto del document",
+  takePhoto: "Fer la foto",
+  retakePhoto: "Repetir la foto",
+  usePhoto: "Usar esta foto",
+  cancelCapture: "Cancel·lar",
+  cameraStarting: "Encenent la càmera…",
+  cameraError: "No s'ha pogut usar la càmera. Pots pujar una foto del document.",
+  captureFrameHint:
+    "Col·loca el document dins del requadre, sense reflexos i amb les quatre cantonades visibles.",
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

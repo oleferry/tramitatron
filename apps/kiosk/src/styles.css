@@ -619,6 +619,33 @@ button:focus-visible {
   flex-wrap: wrap;
 }
 
+.camera-box {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  background: #0b1420;
+  aspect-ratio: 4 / 3;
+}
+
+.camera-box video,
+.camera-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.camera-frame {
+  position: absolute;
+  inset: 8% 6%;
+  border: 3px dashed var(--color-guide);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
 .field-row {
   display: flex;
   flex-direction: column;
