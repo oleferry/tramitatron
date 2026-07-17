@@ -4,8 +4,11 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
-# Raíz del repo: services/api/app/config.py -> tres niveles arriba
-_REPO_ROOT = Path(__file__).resolve().parents[3]
+# Raíz del repo: services/api/app/config.py -> tres niveles arriba. En la
+# imagen Docker el árbol es más corto (/srv/app); ahí las rutas llegan por
+# variables de entorno y el fallback solo evita un IndexError en el import.
+_HERE = Path(__file__).resolve()
+_REPO_ROOT = _HERE.parents[3] if len(_HERE.parents) > 3 else _HERE.parents[-1]
 _DEFAULT_CATALOG = _REPO_ROOT / "connectors" / "catalog"
 _DEFAULT_KNOWLEDGE = _REPO_ROOT / "knowledge"
 

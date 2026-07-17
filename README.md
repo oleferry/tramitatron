@@ -71,6 +71,11 @@ npm run dev
 
 Sin Redis configurado, la API usa un almacén de sesiones en memoria (solo desarrollo). Con `REDIS_URL` definido, usa Redis con TTL nativo.
 
+### Despliegue
+
+- **Kiosco (web)**: Vercel, importando este repo tal cual (`vercel.json` define el build). Sin backend accesible, el kiosco pasa automáticamente a modo demostración con distintivo visible.
+- **API (región UE)**: Render mediante blueprint (`render.yaml`): servicio Docker + Redis gestionado, ambos en **Frankfurt**. En render.com → *New → Blueprint* → seleccionar este repositorio. La imagen es `infra/docker/api.Dockerfile` (incluye catálogo y snapshots de conocimiento). Cada push a `master` redespliega.
+
 ### Tests
 
 ```bash

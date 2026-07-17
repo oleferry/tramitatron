@@ -1,0 +1,32 @@
+# Blueprint de Render: API de Tramitatrón + Redis gestionado, todo en la UE
+# (Frankfurt). Despliegue: render.com -> New -> Blueprint -> este repositorio.
+# PRD §20.2: backend en región UE.
+
+services:
+  - type: web
+    name: tramitatron-api
+    runtime: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./infra/docker/api.Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: SESSION_TTL_SECONDS
+        value: "1200"
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: tramitatron-redis
+          property: connectionString
+      # Orígenes del kiosco web. Añade aquí tu dominio propio cuando lo actives.
+      - key: CORS_ORIGINS
+        value: https://tramitatron.vercel.app
+
+  - type: keyvalue
+    name: tramitatron-redis
+    region: frankfurt
+    plan: free
+    # Sin IPs externas: solo accesible desde los servicios internos de Render.
+    ipAllowList: []
