@@ -23,8 +23,13 @@ Lee `docs/TRAMITATRON_MASTER_PRD.md` antes de diseñar o implementar nada. Este 
 
 La estructura de monorepo está definida en PRD §9.3 (`apps/`, `services/`, `packages/`, `connectors/`, `knowledge/`, `infra/`, `docs/`, `tests/`, `legacy/`).
 
-## Próximo hito (PRD §32)
+## Estado y próximo hito (PRD §32)
 
-Hito 1 — repositorio ejecutable y núcleo anónimo: monorepo, Docker local, frontend kiosco con pantalla de idioma, API FastAPI con `/health`, sesión efímera con purga, catálogo mock, gateway IA mock, simulador de periféricos, pruebas de aislamiento, ADR-001.
+Hito 1 ✅ completado. Fase 2 en curso: servicio documental efímero y RAG extractivo funcionan; catálogo ampliado a 14 trámites (los de conector automático en `coming_soon`, los informativos activos). Pendientes de fase 2: explicación de cartas (TT-404) y voz. Después, conectores reales con Playwright (fase 3, TT-502..505).
 
-No trabajar en conectores reales (GVA Salud, SITVAL) hasta completar el hito 1 y las pruebas de privacidad.
+Reglas prácticas aprendidas:
+- La API carga catálogo y conocimiento **al arrancar**; tras editar YAMLs de `connectors/catalog/` o reingerir `knowledge/`, reinicia la API (`--reload` solo vigila `.py`).
+- Para añadir un trámite: YAML en `connectors/catalog/` + icono en `apps/kiosk/src/icons.ts` (prefijos específicos antes) + regla de intención en `app/gateway/mock.py` + fuente en `knowledge/sources.yaml` + `python -m app.knowledge.ingest` + tests.
+- La extracción de documentos es sintética (mock): ignora la imagen. No prometer lectura real de DNI hasta implementar un `ModelGateway` de visión.
+
+No trabajar en conectores reales (GVA Salud, SITVAL) hasta que las pruebas de privacidad de fase 2 estén completas.

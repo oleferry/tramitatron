@@ -1,0 +1,28 @@
+id: mjusticia.certificado-nacimiento
+name:
+  es: Certificado de nacimiento
+  ca-valencia: Certificat de naixement
+description:
+  es: Cómo pedir un certificado de nacimiento del Registro Civil, online o presencialmente.
+  ca-valencia: Com demanar un certificat de naixement del Registre Civil, en línia o presencialment.
+territory: ES
+execution_mode: information
+risk_class: A0
+status: available
+official_sources:
+  - https://sede.mjusticia.gob.es/es/tramites
+required_fields: []
+requirements:
+  - es: Para pedirlo online necesitarás identificarte con Cl@ve o certificado digital.
+    ca-valencia: Per a demanar-lo en línia necessitaràs identificar-te amb Cl@ve o certificat digital.
+  - es: También puede pedirse presencialmente en el Registro Civil.
+    ca-valencia: També pot demanar-se presencialment al Registre Civil.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.mjusticia
+healthcheck:
+  cadence: weekly
+  synthetic_data_only: true

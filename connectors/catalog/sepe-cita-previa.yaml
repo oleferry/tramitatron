@@ -1,0 +1,30 @@
+id: sepe.cita-previa
+name:
+  es: Cita previa con el SEPE (paro y prestaciones)
+  ca-valencia: Cita prèvia amb el SEPE (atur i prestacions)
+description:
+  es: Reservar cita en una oficina de prestaciones del SEPE para gestionar el paro u otras ayudas.
+  ca-valencia: Reservar cita en una oficina de prestacions del SEPE per a gestionar l'atur o altres ajudes.
+territory: ES
+execution_mode: assisted
+risk_class: A1
+status: coming_soon
+official_sources:
+  - https://sede.sepe.gob.es/portalSede/procedimientos-y-servicios/personas/proteccion-por-desempleo/cita-previa
+required_fields:
+  - postal_code
+  - dni_number
+requirements:
+  - es: Código postal de tu domicilio.
+    ca-valencia: Codi postal del teu domicili.
+  - es: Número de DNI o NIE.
+    ca-valencia: Número de DNI o NIE.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.sepe
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

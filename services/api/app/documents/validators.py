@@ -3,6 +3,7 @@ el sistema valida). Ningún dato extraído se usa sin pasar por aquí y sin
 revisión visual del ciudadano."""
 
 import re
+from collections.abc import Callable
 from datetime import date
 
 DNI_LETTERS = "TRWAGMYFPDXBNJZSQVHLCKE"
@@ -42,7 +43,7 @@ def validate_nonempty(value: str) -> bool:
 
 
 # Campo -> (id de validador para trazabilidad, función)
-FIELD_VALIDATORS: dict[str, tuple[str, callable]] = {
+FIELD_VALIDATORS: dict[str, tuple[str, Callable[[str], bool]]] = {
     "dni_number": ("dni_or_nie_v1", validate_dni_or_nie),
     "sip_number": ("sip_format_v1", validate_sip),
     "birth_date": ("iso_date_v1", validate_birth_date),
@@ -50,5 +51,5 @@ FIELD_VALIDATORS: dict[str, tuple[str, callable]] = {
 }
 
 
-def validator_for(field: str) -> tuple[str, callable]:
+def validator_for(field: str) -> tuple[str, Callable[[str], bool]]:
     return FIELD_VALIDATORS.get(field, ("nonempty_v1", validate_nonempty))

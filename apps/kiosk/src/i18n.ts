@@ -28,6 +28,7 @@ type Strings = {
   comingSoonBanner: string;
   comingSoonHelp: string;
   assistedModeNote: string;
+  informationModeNote: string;
   confirmAndRun: string;
   executionDone: string;
   receiptReference: string;
@@ -99,6 +100,8 @@ const es: Strings = {
     "Mientras tanto, puedes hacerlo en la web oficial o pedir ayuda al personal del centro.",
   assistedModeNote:
     "Este es un trámite asistido: el sistema te guía y tú confirmas cada paso importante.",
+  informationModeNote:
+    "Este es un trámite informativo: aquí te explicamos cómo hacerlo, y se completa en la web oficial o presencialmente.",
   confirmAndRun: "Confirmar y hacer la demostración",
   executionDone: "Demostración completada",
   receiptReference: "Referencia",
@@ -179,6 +182,8 @@ const va: Strings = {
     "Mentrestant, pots fer-lo en la web oficial o demanar ajuda al personal del centre.",
   assistedModeNote:
     "Este és un tràmit assistit: el sistema et guia i tu confirmes cada pas important.",
+  informationModeNote:
+    "Este és un tràmit informatiu: ací t'expliquem com fer-lo, i es completa en la web oficial o presencialment.",
   confirmAndRun: "Confirmar i fer la demostració",
   executionDone: "Demostració completada",
   receiptReference: "Referència",

@@ -1,0 +1,30 @@
+id: dgt.cita-previa
+name:
+  es: Cita previa con Tráfico (DGT)
+  ca-valencia: Cita prèvia amb Trànsit (DGT)
+description:
+  es: Reservar cita en la Jefatura de Tráfico para renovar el carné de conducir, duplicados o canjes.
+  ca-valencia: Reservar cita en la Prefectura de Trànsit per a renovar el carnet de conduir, duplicats o bescanvis.
+territory: ES
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://sede.dgt.gob.es/es/otros-tramites/cita-previa/
+required_fields:
+  - dni_number
+  - procedure_type
+requirements:
+  - es: Número de DNI o NIE.
+    ca-valencia: Número de DNI o NIE.
+  - es: Saber qué gestión necesitas (renovación, duplicado, canje…).
+    ca-valencia: Saber quina gestió necessites (renovació, duplicat, bescanvi…).
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.dgt
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

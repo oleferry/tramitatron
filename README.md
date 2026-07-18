@@ -26,6 +26,8 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 ✅ **Fase 2 en curso**: servicio documental efímero (extracción con validadores deterministas DNI/NIE/SIP y revisión obligatoria del usuario) y RAG extractivo sobre fuentes oficiales versionadas (`knowledge/`), con organismo, fecha y enlace en cada respuesta.
 
+✅ **Catálogo ampliado**: 14 trámites declarados — DNI, Hacienda (AEAT), Seguridad Social (INSS y vida laboral), SEPE, DGT, extranjería, tarjeta SIP, empadronamiento (Castelló) y certificados del Ministerio de Justicia — con fuente oficial ingerida para el asistente. Los que requieren conector automático quedan `coming_soon` (PRD §5.4: DNI/SS/AEAT no deben ser los primeros conectores por CAPTCHA y autenticación); los informativos (`execution_mode: information`) están activos y explican cómo hacer el trámite citando la fuente oficial.
+
 🚧 Siguiente: explicación de cartas administrativas (TT-404) y voz; después, conectores reales con Playwright (fase 3).
 
 ## Estructura
@@ -79,9 +81,27 @@ Sin Redis configurado, la API usa un almacén de sesiones en memoria (solo desar
 ### Tests
 
 ```bash
-cd services/api && .venv/Scripts/python -m pytest -q          # 27 tests
+cd services/api && .venv/Scripts/python -m pytest -q          # 56 tests
 cd services/device-agent && .venv/Scripts/python -m pytest -q # 3 tests
 cd apps/kiosk && npm run build                                # typecheck + build
 ```
 
 La suite incluye pruebas de **aislamiento entre sesiones** (E2E-05 del PRD) y de **privacidad**: valores centinela de PII no pueden aparecer en logs ni en respuestas de listado.
+
+### Probar con una webcam
+
+La captura de documentos usa la cámara del navegador (`getUserMedia`), que funciona en `localhost` sin HTTPS. Con los tres servicios arrancados:
+
+1. Abre el kiosco, elige idioma y entra en **Trámite de demostración** (el único `available` con captura).
+2. Pulsa el botón de capturar documento → el navegador pedirá permiso de cámara.
+3. Encuadra el documento, captura, revisa y confirma.
+
+**Importante:** la extracción actual es **sintética** (`MockModelGateway.extract_document` ignora la imagen y devuelve siempre `PERSONA SINTÉTICA DEMO`, DNI `12345678Z`). Sirve para probar cámara, encuadre, revisión y purga — no para leer documentos reales. La lectura real llegará al implementar un `ModelGateway` con proveedor de visión (`services/api/app/gateway/base.py`). Si no hay cámara, el flujo ofrece subir una foto como alternativa.
+
+### Actualizar el conocimiento del asistente
+
+```bash
+cd services/api && .venv/Scripts/python -m app.knowledge.ingest
+```
+
+Descarga las fuentes de `knowledge/sources.yaml` (allowlist), y solo escribe snapshot nuevo si el contenido cambió. El asistente responde siempre con extractos literales de estas fuentes, nunca texto inventado. **La API carga catálogo y conocimiento al arrancar: tras editar YAMLs o reingerir, reiníciala.**

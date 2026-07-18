@@ -1,0 +1,32 @@
+id: aeat.cita-previa
+name:
+  es: Cita previa con Hacienda
+  ca-valencia: Cita prèvia amb Hisenda
+description:
+  es: Reservar cita en una oficina de la Agencia Tributaria para Renta, requerimientos u otras gestiones.
+  ca-valencia: Reservar cita en una oficina de l'Agència Tributària per a Renda, requeriments o altres gestions.
+territory: ES
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://sede.agenciatributaria.gob.es/Sede/ayuda/consultas-informaticas/otros-servicios-ayuda-tecnica/peticion-cita-previa-traves-internet.html
+required_fields:
+  - dni_number
+  - full_name
+requirements:
+  - es: Número de DNI o NIE.
+    ca-valencia: Número de DNI o NIE.
+  - es: Nombre y apellidos tal como aparecen en el documento.
+    ca-valencia: Nom i cognoms tal com apareixen al document.
+  - es: Saber qué gestión necesitas (Renta, requerimiento, certificado…).
+    ca-valencia: Saber quina gestió necessites (Renda, requeriment, certificat…).
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.aeat
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

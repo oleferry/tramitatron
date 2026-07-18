@@ -1,0 +1,33 @@
+id: mir.extranjeria.cita-previa
+name:
+  es: Cita previa de extranjería (TIE, NIE, huellas)
+  ca-valencia: Cita prèvia d'estrangeria (TIE, NIE, empremtes)
+description:
+  es: Reservar cita en la Oficina de Extranjería para la tarjeta TIE, el NIE o la toma de huellas.
+  ca-valencia: Reservar cita a l'Oficina d'Estrangeria per a la targeta TIE, el NIE o la presa d'empremtes.
+territory: ES
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://icp.administracionelectronica.gob.es/icpplus/index.html
+  - https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus
+required_fields:
+  - nie_or_passport
+  - full_name
+requirements:
+  - es: NIE o pasaporte en vigor.
+    ca-valencia: NIE o passaport en vigor.
+  - es: Nombre y apellidos tal como aparecen en el documento.
+    ca-valencia: Nom i cognoms tal com apareixen al document.
+  - es: Saber qué trámite necesitas (TIE, huellas, certificado…).
+    ca-valencia: Saber quin tràmit necessites (TIE, empremtes, certificat…).
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.mir_extranjeria
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

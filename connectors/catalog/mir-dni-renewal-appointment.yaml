@@ -1,0 +1,33 @@
+id: mir.dni.renewal-appointment
+name:
+  es: Cita previa para renovar el DNI
+  ca-valencia: Cita prèvia per a renovar el DNI
+description:
+  es: Reservar cita en una oficina de expedición para renovar tu Documento Nacional de Identidad.
+  ca-valencia: Reservar cita en una oficina d'expedició per a renovar el teu Document Nacional d'Identitat.
+territory: ES
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/dni/cita-previa/
+  - https://www.citapreviadnie.es/
+required_fields:
+  - dni_number
+  - birth_date
+requirements:
+  - es: Número de tu DNI o NIE.
+    ca-valencia: Número del teu DNI o NIE.
+  - es: Fecha de nacimiento.
+    ca-valencia: Data de naixement.
+  - es: Tu DNI actual, aunque esté caducado.
+    ca-valencia: El teu DNI actual, encara que estiga caducat.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.mir_dni
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

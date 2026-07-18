@@ -16,16 +16,80 @@ from .base import (
 )
 
 _RULES: list[tuple[str, str, str]] = [
-    # (patrón, intent, procedure_id)
+    # (patrón, intent, procedure_id). El orden importa: gana la primera regla,
+    # así que los patrones más específicos van antes que los genéricos.
+    (
+        r"\b(vida laboral|informe laboral|cotizacion\w*|cotitzacio\w*)\b",
+        "REQUEST_WORK_HISTORY",
+        "seg-social.tgss.vida-laboral",
+    ),
+    (
+        r"\b(antecedentes|antecedents|penales|penals)\b",
+        "REQUEST_CRIMINAL_RECORD",
+        "mjusticia.antecedentes-penales",
+    ),
+    (
+        r"\b(nacimiento|naixement|registro civil|registre civil)\b",
+        "REQUEST_BIRTH_CERTIFICATE",
+        "mjusticia.certificado-nacimiento",
+    ),
+    (
+        r"\b(empadronamiento|empadronament|padron|padro|volante|volant)\b",
+        "REQUEST_CENSUS_CERTIFICATE",
+        "castello.padron.certificado",
+    ),
+    (
+        r"\b(tarjeta sanitaria|targeta sanitaria|sip)\b",
+        "RENEW_HEALTH_CARD",
+        "gva.health.sip-renewal",
+    ),
     (
         r"\b(medic\w*|metge\w*|salud|salut|doctor\w*|ambulatori\w*|centro de salud)\b",
         "BOOK_HEALTH_APPOINTMENT",
         "gva.health.primary-care.appointment",
     ),
     (
-        r"\b(itv|vehicul\w*|vehicle|coche|cotxe|moto|inspeccion tecnica)\b",
+        r"\b(itv|inspeccion tecnica|inspeccio tecnica)\b",
         "BOOK_ITV_APPOINTMENT",
         "sitval.itv.appointment",
+    ),
+    (
+        r"\b(carne\w? de conducir|carnet de conduir|permiso de conducir|permis de conduir"
+        r"|trafico|transit|dgt|canje\w*|bescanvi\w*)\b",
+        "BOOK_DGT_APPOINTMENT",
+        "dgt.cita-previa",
+    ),
+    (
+        r"\b(coche|cotxe|moto|vehicul\w*|vehicle)\b",
+        "BOOK_ITV_APPOINTMENT",
+        "sitval.itv.appointment",
+    ),
+    (
+        r"\b(extranjeria|estrangeria|nie|tie|huellas|empremtes|residencia)\b",
+        "BOOK_IMMIGRATION_APPOINTMENT",
+        "mir.extranjeria.cita-previa",
+    ),
+    (
+        r"\b(dni|documento nacional|pasaporte|passaport)\b",
+        "BOOK_DNI_APPOINTMENT",
+        "mir.dni.renewal-appointment",
+    ),
+    (
+        r"\b(hacienda|hisenda|renta|renda|irpf|declaracion|declaracio|impuesto\w*"
+        r"|impost\w*|agencia tributaria|tributari\w*)\b",
+        "BOOK_TAX_APPOINTMENT",
+        "aeat.cita-previa",
+    ),
+    (
+        r"\b(paro|atur|desempleo|desocupacio|sepe|subsidio|subsidi)\b",
+        "BOOK_SEPE_APPOINTMENT",
+        "sepe.cita-previa",
+    ),
+    (
+        r"\b(pension\w*|pensio\w*|jubilacion|jubilacio|viudedad|viudetat|viduitat"
+        r"|incapacidad|incapacitat|seguridad social|seguretat social)\b",
+        "BOOK_INSS_APPOINTMENT",
+        "seg-social.inss.cita-previa",
     ),
     (
         r"\b(demo|demostracion|demostracio|prueba|prova)\b",

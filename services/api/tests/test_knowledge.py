@@ -49,6 +49,25 @@ def test_ask_prefers_procedure_sources(kclient):
     assert result["source"]["organismo"] == "SITVAL de Prueba"
 
 
+def test_procedure_sources_have_strict_priority(kclient):
+    """Dentro de un trámite, responde SU fuente aunque otra puntúe más alto;
+    solo si sus fuentes no dicen nada se busca en el resto (fallback)."""
+    # "cita previa internet" aparece en AMBAS fuentes; el trámite decide.
+    result = _ask(
+        kclient, "cita previa internet",
+        procedure_id="gva.health.primary-care.appointment",
+    )
+    assert result["found"] is True
+    assert result["source"]["organismo"] == "Conselleria de Prueba"
+    # Fallback: el trámite de salud no habla de matrículas; se busca fuera.
+    result = _ask(
+        kclient, "matrícula del vehículo",
+        procedure_id="gva.health.primary-care.appointment",
+    )
+    assert result["found"] is True
+    assert result["source"]["organismo"] == "SITVAL de Prueba"
+
+
 def test_ask_unknown_topic_returns_not_found(kclient):
     result = _ask(kclient, "quiero adoptar un dinosaurio en marte")
     assert result["found"] is False

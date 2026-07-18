@@ -1,0 +1,31 @@
+id: gva.health.sip-renewal
+name:
+  es: Renovar o duplicar la tarjeta sanitaria SIP
+  ca-valencia: Renovar o duplicar la targeta sanitària SIP
+description:
+  es: Pedir una tarjeta SIP nueva por pérdida o deterioro, con recogida en tu centro de salud.
+  ca-valencia: Demanar una targeta SIP nova per pèrdua o deteriorament, amb recollida al teu centre de salut.
+territory: ES-VC
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://www.san.gva.es/es/web/tarjeta-sanitaria/tramites-tarjeta-sip
+  - https://sede.gva.es/es/detall-tramit?id_proc=21260
+required_fields:
+  - sip_number
+  - birth_date
+requirements:
+  - es: Número SIP, o bien DNI y fecha de nacimiento.
+    ca-valencia: Número SIP, o bé DNI i data de naixement.
+  - es: Si la tarjeta se ha perdido, hay que pagar una tasa (3,15 €).
+    ca-valencia: Si la targeta s'ha perdut, cal pagar una taxa (3,15 €).
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.gva_health
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

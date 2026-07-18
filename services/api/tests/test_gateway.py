@@ -21,6 +21,48 @@ def test_itv_intent(client):
     assert result["procedure_id"] == "sitval.itv.appointment"
 
 
+def test_expanded_intents_route_to_new_procedures(client):
+    """Cada trámite nuevo del catálogo ampliado es alcanzable desde el buscador."""
+    cases = [
+        ("quiero renovar el dni", "mir.dni.renewal-appointment"),
+        ("cita con hacienda para la renta", "aeat.cita-previa"),
+        ("necesito mi informe de vida laboral", "seg-social.tgss.vida-laboral"),
+        ("cita para la pensión de jubilación", "seg-social.inss.cita-previa"),
+        ("he perdido la tarjeta sanitaria", "gva.health.sip-renewal"),
+        ("estoy en el paro y necesito cita", "sepe.cita-previa"),
+        ("renovar el carné de conducir", "dgt.cita-previa"),
+        ("cita de extranjería para huellas", "mir.extranjeria.cita-previa"),
+        ("certificado de empadronamiento", "castello.padron.certificado"),
+        ("certificado de nacimiento", "mjusticia.certificado-nacimiento"),
+        ("antecedentes penales", "mjusticia.antecedentes-penales"),
+    ]
+    for text, expected in cases:
+        result = _intent(client, text)
+        assert result["procedure_id"] == expected, f"{text!r} -> {result['procedure_id']}"
+        assert result["next_action"] == "SHOW_PROCEDURE", text
+
+
+def test_expanded_intents_in_valencian(client):
+    cases = [
+        ("vull renovar el dni", "mir.dni.renewal-appointment"),
+        ("cita amb hisenda per a la renda", "aeat.cita-previa"),
+        ("estic a l'atur", "sepe.cita-previa"),
+        ("certificat d'empadronament", "castello.padron.certificado"),
+    ]
+    for text, expected in cases:
+        result = _intent(client, text, language="ca-valencia")
+        assert result["procedure_id"] == expected, f"{text!r} -> {result['procedure_id']}"
+
+
+def test_specific_rules_win_over_generic(client):
+    """'Vida laboral' no debe caer en la regla genérica de Seguridad Social."""
+    result = _intent(client, "vida laboral de la seguridad social")
+    assert result["procedure_id"] == "seg-social.tgss.vida-laboral"
+    # Y la tarjeta sanitaria no debe caer en la cita médica.
+    result = _intent(client, "renovar la tarjeta sanitaria")
+    assert result["procedure_id"] == "gva.health.sip-renewal"
+
+
 def test_unknown_intent_asks_clarification(client):
     result = _intent(client, "xyzzy plugh")
     assert result["intent"] == "UNKNOWN"

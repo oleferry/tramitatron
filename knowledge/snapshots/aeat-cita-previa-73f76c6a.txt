@@ -1,0 +1,37 @@
+Saltar al contenido principal
+Logotipo del Gobierno de EspañaLogotipo Organismo
+Otros Servicios - Ayuda técnica
+Petición de cita a través de internet
+La solicitud de cita a través de la sede electrónica consta de cuatro pasos:
+PASO 1. Para quién
+Si la gestión que vas a realizar es para ti, selecciona la opción "La cita es para mí". La solicitud de cita no requiere ningún sistema específico de identificación. Simplemente indica tu NIF, nombre y apellidos y pulsa "Siguiente".
+La aplicación de asistencia y cita también ofrece la opción "El titular de la cita No tiene NIF" para aquellas situaciones en las que el contribuyente no tiene NIF. No obstante, el número de servicios que ofrecen esta alternativa es limitado; concretamente asistencia para consultas informáticas y servicios concretos de No Residentes y Aduanas, que te mostramos en la siguiente imagen.
+Si la cita es para un tercero, selecciona la opción "La cita es para otra persona o una empresa". En este caso, deberás indicar los datos de la persona o empresa para la que es la cita y los datos de la persona que acudirá en su nombre.
+PASO 2. Para qué
+En el caso de que hayas recibido una notificación o comunicación de la Agencia Tributaria, para cuya gestión desees solicitar cita, selecciona la opción "He recibido una carta" y aporta el Código Seguro de Verificación de 16 caracteres que aparece al pie de la carta.
+Si al solicitar cita con CSV no estuviese disponible el trámite, se mostrará un mensaje indicando esta situación y, en ese caso, deberás seleccionar el servicio que corresponda.
+Si no dispones de CSV o el servicio no está disponible con CSV, marca "Otras gestiones" y elige directamente el servicio entre los disponibles en el listado.
+Los servicios se muestran agrupados en categorías. Escoge el servicio al que necesitas acudir. Una vez seleccionado comprobarás que, en el cuadro situado en el margen derecho, se incluye el servicio para el que estás solicitando la cita junto a tus datos. Pulsa "Siguiente" para continuar.
+PASO 3. Selección de cita
+Elige la oficina de la Agencia Tributaria a la que deseas acudir. Para ello, selecciona la provincia en el desplegable o introduce el código postal.
+Se van a mostrar los servicios disponibles en función de los datos especificados en la pestaña "Para quién" es la cita, además de seleccionar una cita para acudir a una oficina de la AEAT puedes optar por citas con atención inmediata, como una cita telefónica con un especialista o asistencia virtual con chat personalizado, además, dependiendo de la disponibilidad tendrás la posibilidad de seleccionar una cita para acudir a una oficina el mismo día de la solicitud. Pulsa "Ver más" para revisar el listado completo.
+Marca la opción que prefieras y pulsa sobre la fecha y hora. Se abrirá una ventana emergente con los días y franjas horarias disponibles.
+Si no te interesan las citas sugeridas por la aplicación, puedes filtrar por provincia o código postal, el tipo de cita (presencial, telefónica o atención inmediata), horario de mañana o de tarde, fecha y hora para localizar otras opciones de cita disponibles. Pulsa el desplegable "Filtros", marca tus criterios de búsqueda y haz clic en "Aplicar".
+Para escoger la fecha y la franja horaria, pulsa sobre el botón "Seleccionar" correspondiente a la opción elegida. El botón cambiará de color y pasará a "Seleccionado" y se añadirán los datos escogidos en el cuadro del margen derecho junto a tus datos. Pulsa "Confirmar cita" para continuar.
+PASO 4. Confirmación
+Por último, deberás facilitar y confirmar un número de teléfono (se admiten números extranjeros). Es importante indicar una dirección de correo electrónico válida ya que se te enviará un correo con los datos de tu cita desde el cual podrás gestionarla (modificar y anular), si fuese necesario. Además, puedes añadir un texto indicando el motivo de la consulta. Pulsa "Confirmar".
+Se mostrará un mensaje informando de que la cita se ha confirmado correctamente y el resumen de la misma: tipo de cita (presencial, telefónica), fecha y hora, lugar, datos de la persona o empresa, servicio solicitado, motivo de la consulta e información sobre la documentación que deberás llevar a la cita. Revisa los datos de la cita que acabas de obtener, si deseas modificar o anular tu cita en este momento, en la parte inferior dispones de un enlace para anularla o modificarla.
+Una vez confirmada, recibirás un email en la dirección que hayas indicado. Conserva este correo ya que te permitirá gestionar tu cita en caso de que la necesites modificar o anular.
+También es posible modificar o anular la cita, accediendo de nuevo a la solicitud de cita y pulsando sobre el enlace "¿Tienes ya una cita? Puedes anular o modificar tu cita".
+Para ello, será necesario que te identifiques con Cl@ve, con certificado o DNI electrónico.
+A continuación, se mostrará la relación de citas que tengas concertadas. Pulsa "Modificar" para cambiar el lugar o la fecha de la cita, o bien "Anular", para eliminarla por completo.
+Si modificas la cita, deberás indicar nuevamente el teléfono y correo electrónico donde se te enviará un recordatorio de la nueva cita, esto te permitirá gestionar tu cita en caso de que la necesites nuevamente modificar o anular. También desde el enlace "¿Tienes ya una cita? Puedes anular o modificar tu cita" con certificado, DNe o Cl@ve Móvil accediendo de nuevo a la solicitud de cita.
+En cambio, si anulas la cita no se pedirá teléfono ni correo electrónico. No obstante, puedes realizar la consulta con certificado, DNIe o Cl@ve Móvil accediendo de nuevo a la solicitud de cita, desde el enlace "¿Tienes ya una cita? Puedes anular o modificar tu cita" o desde el correo que recibiste al solicitarla y verificar que no tienes citas pendientes.
+Asistencia y Cita para particularesAyuda
+Asistencia y Cita para colaboradores socialesAyuda
+Asistencia y Cita para profesionales Código de Buenas Prácticas
+Vídeos de ayuda
+Cita para otras gestiones
+Cita con CSV de una carta recibida
+Cita para colaboradores sociales
+Página actualizada: 21/abril/2026

@@ -113,7 +113,9 @@ class KnowledgeStore:
 
     def retrieve(self, query: str, procedure_id: str | None = None) -> Chunk | None:
         """Mejor fragmento para la consulta, o None si nada es suficientemente
-        relevante. Con procedure_id, se prefieren las fuentes de ese trámite."""
+        relevante. Con procedure_id, las fuentes de ese trámite tienen prioridad
+        estricta: una pregunta hecha dentro de un trámite debe responderse con
+        SU organismo, y solo si sus fuentes no dicen nada se busca en el resto."""
         query_tokens = set(_tokens(query))
         if not query_tokens or not self._chunks:
             return None
@@ -130,17 +132,29 @@ class KnowledgeStore:
             value = sum(
                 1.0 + math.log(total / (1 + self._doc_freq.get(t, 0))) for t in matched
             )
-            value *= chunk.prose_weight
-            if chunk.source_id in preferred_sources:
-                value *= 3.0
-            return value
+            return value * chunk.prose_weight
 
-        best = max(self._chunks, key=score)
-        matched = query_tokens & best.token_set
-        # Umbral de relevancia: 2 términos, o 1 si la consulta solo tiene 1.
-        if len(matched) < min(2, len(query_tokens)):
-            return None
-        return best
+        def best_of(chunks: list[Chunk], min_matched: int) -> Chunk | None:
+            if not chunks:
+                return None
+            best = max(chunks, key=score)
+            matched = query_tokens & best.token_set
+            if len(matched) < min(min_matched, len(query_tokens)):
+                return None
+            return best
+
+        # En las fuentes del trámite basta 1 término: el contexto ya acota
+        # ("renovar" no casa con "renovación" al no haber stemming, y exigir
+        # 2 términos expulsaba la consulta hacia fuentes de otros organismos).
+        if preferred_sources:
+            preferred = best_of(
+                [c for c in self._chunks if c.source_id in preferred_sources],
+                min_matched=1,
+            )
+            if preferred is not None:
+                return preferred
+        # Fuera del trámite, el umbral de 2 términos evita respuestas por ruido.
+        return best_of(self._chunks, min_matched=2)
 
     def excerpt(self, chunk: Chunk, query: str = "") -> str:
         text = chunk.text.strip()

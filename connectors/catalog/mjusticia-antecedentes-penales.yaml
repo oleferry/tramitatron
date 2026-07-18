@@ -1,0 +1,28 @@
+id: mjusticia.antecedentes-penales
+name:
+  es: Certificado de antecedentes penales
+  ca-valencia: Certificat d'antecedents penals
+description:
+  es: Cómo pedir el certificado de antecedentes penales del Ministerio de Justicia.
+  ca-valencia: Com demanar el certificat d'antecedents penals del Ministeri de Justícia.
+territory: ES
+execution_mode: information
+risk_class: A0
+status: available
+official_sources:
+  - https://sede.mjusticia.gob.es/es/tramites/certificado-antecedentes
+required_fields: []
+requirements:
+  - es: Para pedirlo online necesitarás identificarte con Cl@ve o certificado digital.
+    ca-valencia: Per a demanar-lo en línia necessitaràs identificar-te amb Cl@ve o certificat digital.
+  - es: Suele emitirse en el momento o en un plazo de 24 horas.
+    ca-valencia: Sol emetre's en el moment o en un termini de 24 hores.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.mjusticia
+healthcheck:
+  cadence: weekly
+  synthetic_data_only: true

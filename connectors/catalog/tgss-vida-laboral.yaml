@@ -1,0 +1,33 @@
+id: seg-social.tgss.vida-laboral
+name:
+  es: Informe de vida laboral
+  ca-valencia: Informe de vida laboral
+description:
+  es: Pedir el informe de vida laboral por SMS o para recibirlo por correo postal en casa (portal Import@ss).
+  ca-valencia: Demanar l'informe de vida laboral per SMS o per a rebre'l per correu postal a casa (portal Import@ss).
+territory: ES
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Vida+laboral+e+informes/Informes+sobre+tu+situacion+laboral/Informe+de+tu+vida+laboral
+required_fields:
+  - dni_number
+  - birth_date
+  - phone_number
+requirements:
+  - es: Número de DNI o NIE y fecha de nacimiento.
+    ca-valencia: Número de DNI o NIE i data de naixement.
+  - es: Móvil comunicado previamente a la Seguridad Social (para el código SMS).
+    ca-valencia: Mòbil comunicat prèviament a la Seguretat Social (per al codi SMS).
+  - es: Si no tienes móvil registrado, puede enviarse por correo postal a tu domicilio.
+    ca-valencia: Si no tens mòbil registrat, pot enviar-se per correu postal al teu domicili.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.seg_social
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

@@ -105,7 +105,14 @@ export function ProcedureScreen({
         <p className="subtitle">{strings.assistedModeNote}</p>
       )}
 
-      {procedure.status === "available" && procedure.required_fields.length > 0 && !result && (
+      {procedure.execution_mode === "information" && (
+        <p className="subtitle">{strings.informationModeNote}</p>
+      )}
+
+      {procedure.status === "available" &&
+        procedure.execution_mode !== "information" &&
+        procedure.required_fields.length > 0 &&
+        !result && (
         <DocumentStep
           lang={lang}
           sessionId={sessionId}
@@ -115,6 +122,7 @@ export function ProcedureScreen({
       )}
 
       {procedure.status === "available" &&
+        procedure.execution_mode !== "information" &&
         !result &&
         (procedure.required_fields.length === 0 || documentConfirmed) && (
           <button className="btn-primary btn-xl" onClick={() => void execute()}>

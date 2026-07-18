@@ -36,3 +36,93 @@ sources:
     territory: ES-VC-CS
     procedure_ids: []
     review_cadence: monthly
+
+  - id: interior-dni-cita-previa
+    url: https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/dni/cita-previa/
+    organismo: Ministerio del Interior
+    title: Cita previa para el DNI
+    territory: ES
+    procedure_ids:
+      - mir.dni.renewal-appointment
+    review_cadence: weekly
+
+  - id: aeat-cita-previa
+    url: https://sede.agenciatributaria.gob.es/Sede/ayuda/consultas-informaticas/otros-servicios-ayuda-tecnica/peticion-cita-previa-traves-internet.html
+    organismo: Agencia Tributaria
+    title: Petición de cita previa por internet
+    territory: ES
+    procedure_ids:
+      - aeat.cita-previa
+    review_cadence: weekly
+
+  - id: seg-social-cita-previa
+    url: https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/cita+previa+para+pensiones+y+otras+prestaciones/202910SinC
+    organismo: Instituto Nacional de la Seguridad Social
+    title: Cita previa para pensiones y otras prestaciones
+    territory: ES
+    procedure_ids:
+      - seg-social.inss.cita-previa
+    review_cadence: weekly
+
+  - id: importass-vida-laboral
+    url: https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Vida+laboral+e+informes/Informes+sobre+tu+situacion+laboral/Informe+de+tu+vida+laboral
+    organismo: Tesorería General de la Seguridad Social
+    title: Informe de tu vida laboral (Import@ss)
+    territory: ES
+    procedure_ids:
+      - seg-social.tgss.vida-laboral
+    review_cadence: weekly
+
+  - id: sepe-cita-previa
+    url: https://sede.sepe.gob.es/portalSede/procedimientos-y-servicios/personas/proteccion-por-desempleo/cita-previa
+    organismo: Servicio Público de Empleo Estatal
+    title: Cita previa del SEPE
+    territory: ES
+    procedure_ids:
+      - sepe.cita-previa
+    review_cadence: weekly
+
+  - id: san-gva-tarjeta-sip
+    url: https://www.san.gva.es/es/web/tarjeta-sanitaria/tramites-tarjeta-sip
+    organismo: Conselleria de Sanidad (GVA)
+    title: Trámites de la tarjeta SIP
+    territory: ES-VC
+    procedure_ids:
+      - gva.health.sip-renewal
+    review_cadence: weekly
+
+  - id: dgt-cita-previa
+    url: https://sede.dgt.gob.es/es/otros-tramites/cita-previa/
+    organismo: Dirección General de Tráfico
+    title: Cita previa en Jefaturas de Tráfico
+    territory: ES
+    procedure_ids:
+      - dgt.cita-previa
+    review_cadence: weekly
+
+  - id: extranjeria-cita-previa
+    url: https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus
+    organismo: Secretaría de Estado de Administraciones Públicas
+    title: Cita previa de extranjería
+    territory: ES
+    procedure_ids:
+      - mir.extranjeria.cita-previa
+    review_cadence: weekly
+
+  - id: castello-padron
+    url: https://www.castello.es/es/w/padron-habitantes
+    organismo: Ayuntamiento de Castelló de la Plana
+    title: Padrón de habitantes
+    territory: ES-VC-CS
+    procedure_ids:
+      - castello.padron.certificado
+    review_cadence: monthly
+
+  - id: mjusticia-antecedentes
+    url: https://www.mjusticia.gob.es/es/ciudadania/tramites/certificado-antecedentes
+    organismo: Ministerio de Justicia
+    title: Certificado de antecedentes penales
+    territory: ES
+    procedure_ids:
+      - mjusticia.antecedentes-penales
+    review_cadence: monthly

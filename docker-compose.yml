@@ -14,9 +14,11 @@ services:
       SESSION_TTL_SECONDS: ${SESSION_TTL_SECONDS:-1200}
       REDIS_URL: redis://redis:6379/0
       CATALOG_PATH: /catalog
+      KNOWLEDGE_PATH: /knowledge
       CORS_ORIGINS: http://localhost:5173
     volumes:
       - ./connectors/catalog:/catalog:ro
+      - ./knowledge:/knowledge:ro
     depends_on:
       - redis
 

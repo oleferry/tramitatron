@@ -1,0 +1,30 @@
+id: seg-social.inss.cita-previa
+name:
+  es: Cita previa con la Seguridad Social (pensiones y prestaciones)
+  ca-valencia: Cita prèvia amb la Seguretat Social (pensions i prestacions)
+description:
+  es: Reservar cita en un centro de atención (CAISS) para pensiones, incapacidad, viudedad u otras prestaciones.
+  ca-valencia: Reservar cita en un centre d'atenció (CAISS) per a pensions, incapacitat, viudetat o altres prestacions.
+territory: ES
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/cita+previa+para+pensiones+y+otras+prestaciones/202910SinC
+required_fields:
+  - dni_number
+  - postal_code
+requirements:
+  - es: Número de DNI o NIE.
+    ca-valencia: Número de DNI o NIE.
+  - es: Código postal para elegir la oficina más cercana.
+    ca-valencia: Codi postal per a triar l'oficina més pròxima.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.seg_social
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true
