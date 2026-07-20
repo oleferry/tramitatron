@@ -44,7 +44,33 @@ class DocumentResult(BaseModel):
     fields: list[RawExtractedField]
 
 
+class ExplainRequest(BaseModel):
+    """Carta administrativa fotografiada (PRD §5.2, caso D)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    image_base64: str
+    mime_type: str = "image/png"
+    language: Literal["es", "ca-valencia"] = "es"
+
+
+class ExplainResult(BaseModel):
+    """Transcripción literal de la carta, SIN interpretar.
+
+    El gateway solo lee: quién firma, qué pone y con qué confianza. La
+    clasificación de riesgo y la detección de plazos son deterministas y
+    viven fuera del modelo (PRD §6.3: la IA explica, el sistema valida),
+    para que una alucinación no pueda rebajar el riesgo de un embargo.
+    """
+
+    text: str
+    organismo: str | None = None
+    confidence: float = Field(ge=0.0, le=1.0)
+
+
 class ModelGateway(Protocol):
     async def classify_intent(self, request: IntentRequest) -> IntentResult: ...
 
     async def extract_document(self, request: DocumentRequest) -> DocumentResult: ...
+
+    async def explain_official_content(self, request: ExplainRequest) -> ExplainResult: ...

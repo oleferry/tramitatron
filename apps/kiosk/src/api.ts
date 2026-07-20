@@ -79,6 +79,29 @@ export type CameraCapture = {
   mime_type: "image/png" | "image/jpeg";
 };
 
+// Explicación de cartas (TT-404). La respuesta separa a propósito los hechos
+// leídos del documento de la lectura que hace el sistema.
+export type LetterAnalysis = {
+  letter_id: string;
+  transcription_confidence: number;
+  facts: {
+    organismo: string | null;
+    deadlines: string[];
+    // Tipos de dato detectados ("dni", "iban"…), nunca los valores.
+    sensitive_data: string[];
+    excerpt: string;
+  };
+  explanation: {
+    summary: string;
+    risk_level: "normal" | "high";
+    risk_terms: string[];
+    ambiguous_deadline: boolean;
+    recommend_human: boolean;
+    human_advice: string | null;
+    disclaimer: string;
+  };
+};
+
 export class NetworkError extends Error {}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -153,6 +176,22 @@ const realApi = {
       `/api/session/${sessionId}/documents/${documentId}/confirm`,
       { method: "POST", body: JSON.stringify({ fields }) },
     ),
+  explainLetter: (
+    sessionId: string,
+    imageBase64: string,
+    mimeType: CameraCapture["mime_type"],
+    language: Lang,
+  ) =>
+    request<LetterAnalysis>(`/api/session/${sessionId}/letters`, {
+      method: "POST",
+      body: JSON.stringify({
+        image_base64: imageBase64,
+        mime_type: mimeType,
+        language,
+      }),
+    }),
+  purgeLetter: (sessionId: string, letterId: string) =>
+    request<void>(`/api/session/${sessionId}/letters/${letterId}`, { method: "DELETE" }),
   printReceipt: (lines: string[]) =>
     request<{ job_id: string }>("/device/printer/print", {
       method: "POST",
@@ -191,5 +230,7 @@ export const api: typeof realApi = {
   uploadDocument: withDemoFallback(realApi.uploadDocument, demoApi.uploadDocument),
   confirmDocument: withDemoFallback(realApi.confirmDocument, demoApi.confirmDocument),
   executeProcedure: withDemoFallback(realApi.executeProcedure, demoApi.executeProcedure),
+  explainLetter: withDemoFallback(realApi.explainLetter, demoApi.explainLetter),
+  purgeLetter: withDemoFallback(realApi.purgeLetter, demoApi.purgeLetter),
   printReceipt: withDemoFallback(realApi.printReceipt, demoApi.printReceipt),
 };

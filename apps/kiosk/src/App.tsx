@@ -5,6 +5,7 @@ import type { Lang } from "./i18n";
 import { t } from "./i18n";
 import { HomeScreen } from "./screens/HomeScreen";
 import { LanguageScreen } from "./screens/LanguageScreen";
+import { LetterScreen } from "./screens/LetterScreen";
 import { ProcedureScreen } from "./screens/ProcedureScreen";
 
 // Tiempos de inactividad del kiosco (más cortos que el TTL del servidor):
@@ -17,6 +18,7 @@ type Screen =
   | { kind: "language" }
   | { kind: "home" }
   | { kind: "procedure"; procedureId: string }
+  | { kind: "letter" }
   | { kind: "ended" };
 
 export function App() {
@@ -122,7 +124,7 @@ export function App() {
   };
 
   const goBack = () => {
-    if (screen.kind === "procedure") setScreen({ kind: "home" });
+    if (screen.kind === "procedure" || screen.kind === "letter") setScreen({ kind: "home" });
     else if (screen.kind === "home") setConfirmEndOpen(true);
   };
 
@@ -164,11 +166,20 @@ export function App() {
           <HomeScreen
             lang={lang}
             onOpenProcedure={(procedureId) => setScreen({ kind: "procedure", procedureId })}
+            onOpenLetter={() => setScreen({ kind: "letter" })}
           />
         )}
 
         {screen.kind === "procedure" && sessionId && (
           <ProcedureScreen lang={lang} sessionId={sessionId} procedureId={screen.procedureId} />
+        )}
+
+        {screen.kind === "letter" && sessionId && (
+          <LetterScreen
+            lang={lang}
+            sessionId={sessionId}
+            onClose={() => setScreen({ kind: "home" })}
+          />
         )}
 
         {screen.kind === "ended" && (

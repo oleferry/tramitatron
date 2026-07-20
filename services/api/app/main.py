@@ -19,6 +19,7 @@ from .gateway import router as gateway_router_module
 from .gateway.mock import MockModelGateway
 from .knowledge import router as knowledge_router_module
 from .knowledge.store import KnowledgeStore
+from .letters import router as letters_router_module
 from .sessions import router as sessions_router_module
 from .sessions.memory import MemorySessionStore
 
@@ -62,6 +63,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(sessions_router_module.router)
     app.include_router(documents_router_module.router)
+    app.include_router(letters_router_module.router)
     app.include_router(catalog_router_module.router)
     app.include_router(gateway_router_module.router)
     app.include_router(knowledge_router_module.router)

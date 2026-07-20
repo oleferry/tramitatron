@@ -4,12 +4,16 @@ Sirve para desarrollar y probar el kiosco sin ningún proveedor de IA. El texto
 del ciudadano no se registra ni se conserva: entra, se clasifica y se descarta.
 """
 
+import base64
+import binascii
 import re
 import unicodedata
 
 from .base import (
     DocumentRequest,
     DocumentResult,
+    ExplainRequest,
+    ExplainResult,
     IntentRequest,
     IntentResult,
     RawExtractedField,
@@ -109,6 +113,65 @@ def _normalize(text: str) -> str:
     return "".join(c for c in text if not unicodedata.combining(c))
 
 
+# Cartas sintéticas para el explicador (TT-404). Todos los datos son
+# inventados: NIF de prueba, expedientes ficticios e importes de ejemplo.
+_SYNTHETIC_LETTERS: list[dict] = [
+    {
+        # Riesgo alto + plazo relativo explícito.
+        "organismo": "Agencia Tributaria",
+        "confidence": 0.88,
+        "text": (
+            "AGENCIA ESTATAL DE ADMINISTRACIÓN TRIBUTARIA\n"
+            "Delegación de Castellón\n\n"
+            "Expediente: 2026/EJ/004521\n"
+            "Interesado: PERSONA SINTÉTICA DEMO, DNI 12345678Z\n\n"
+            "PROVIDENCIA DE APREMIO\n\n"
+            "Se comunica que, no habiéndose satisfecho la deuda en periodo "
+            "voluntario, se ha dictado providencia de apremio por importe de "
+            "1.240,50 €, iniciándose la vía ejecutiva.\n\n"
+            "Podrá interponer recurso de reposición en el plazo de un mes "
+            "contado desde el día siguiente a la notificación. De no atender "
+            "este requerimiento se procederá al embargo de bienes.\n"
+        ),
+    },
+    {
+        # Carta rutinaria: sin riesgo, con fecha explícita de cita.
+        "organismo": "Conselleria de Sanidad",
+        "confidence": 0.91,
+        "text": (
+            "CONSELLERIA DE SANIDAD UNIVERSAL Y SALUD PÚBLICA\n"
+            "Departamento de Salud de Castellón\n\n"
+            "Estimado usuario:\n\n"
+            "Le informamos de que su cita de revisión ha quedado asignada en el "
+            "Centro de Salud Gran Vía. Debe presentarse hasta el 30/09/2026 "
+            "aportando su tarjeta SIP.\n\n"
+            "Si no puede acudir, puede anular la cita por teléfono en el "
+            "960 123 456 o a través del Portal del Paciente.\n"
+        ),
+    },
+    {
+        # Plazo ambiguo: menciona plazo pero sin fecha -> debe derivar a humano.
+        "organismo": "Ayuntamiento de Castelló de la Plana",
+        "confidence": 0.83,
+        "text": (
+            "AYUNTAMIENTO DE CASTELLÓ DE LA PLANA\n"
+            "Servicio de Gestión Tributaria\n\n"
+            "Expediente: 2026/URB/00871\n\n"
+            "Se le comunica que debe aportar la documentación que falta en su "
+            "solicitud a la mayor brevedad, conforme a la normativa vigente.\n\n"
+            "Puede presentarla en el registro municipal o en la sede "
+            "electrónica del Ayuntamiento.\n"
+        ),
+    },
+    {
+        # Foto ilegible: confianza por debajo del umbral -> no se interpreta.
+        "organismo": None,
+        "confidence": 0.31,
+        "text": "...ilegible...",
+    },
+]
+
+
 class MockModelGateway:
     async def classify_intent(self, request: IntentRequest) -> IntentResult:
         normalized = _normalize(request.text)
@@ -149,4 +212,22 @@ class MockModelGateway:
         return DocumentResult(
             document_class=request.document_class,
             fields=synthetic[request.document_class],
+        )
+
+    async def explain_official_content(self, request: ExplainRequest) -> ExplainResult:
+        """Transcripción SINTÉTICA: ignora la imagen (no hay OCR sin modelo de
+        visión). Rota entre cartas de ejemplo según el tamaño en bytes de la
+        imagen, para poder ejercitar los distintos caminos del análisis
+        —riesgo alto, rutinaria, plazo ambiguo e ilegible— sin depender de un
+        proveedor. Se usa la longitud DECODIFICADA y no la del base64 porque
+        esta última es siempre múltiplo de 4 y devolvería siempre la misma."""
+        try:
+            size = len(base64.b64decode(request.image_base64, validate=True))
+        except (binascii.Error, ValueError):
+            size = len(request.image_base64)
+        sample = _SYNTHETIC_LETTERS[size % len(_SYNTHETIC_LETTERS)]
+        return ExplainResult(
+            text=sample["text"],
+            organismo=sample["organismo"],
+            confidence=sample["confidence"],
         )

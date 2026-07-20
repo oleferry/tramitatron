@@ -9,9 +9,11 @@ import { procedureIcon } from "../icons";
 export function HomeScreen({
   lang,
   onOpenProcedure,
+  onOpenLetter,
 }: {
   lang: Lang;
   onOpenProcedure: (id: string) => void;
+  onOpenLetter: () => void;
 }) {
   const strings = t(lang);
   const [catalog, setCatalog] = useState<CatalogItem[] | null>(null);
@@ -65,6 +67,19 @@ export function HomeScreen({
           {strings.searchButton}
         </button>
       </div>
+
+      {/* Caso D del PRD: entrar por "tengo una carta" es tan legítimo como
+          buscar un trámite, así que va al mismo nivel que el buscador. */}
+      <button className="letter-entry" onClick={onOpenLetter}>
+        <span className="card-icon" aria-hidden="true">
+          ✉️
+        </span>
+        <span className="letter-entry-text">
+          <strong>{strings.letterEntryTitle}</strong>
+          <span>{strings.letterEntryBody}</span>
+        </span>
+        <span className="letter-entry-cta">{strings.letterEntryButton}</span>
+      </button>
 
       {clarification && <div className="clarification">{clarification}</div>}
       {failed && <div className="banner banner-info">{strings.apiError}</div>}

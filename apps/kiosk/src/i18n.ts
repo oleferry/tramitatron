@@ -70,6 +70,24 @@ type Strings = {
   cameraStarting: string;
   cameraError: string;
   captureFrameHint: string;
+  letterEntryTitle: string;
+  letterEntryBody: string;
+  letterEntryButton: string;
+  letterTitle: string;
+  letterIntro: string;
+  letterStart: string;
+  letterReading: string;
+  letterFactsTitle: string;
+  letterOrganismo: string;
+  letterDeadlines: string;
+  letterSensitive: string;
+  letterExcerptTitle: string;
+  letterExplanationTitle: string;
+  letterHighRisk: string;
+  letterAnother: string;
+  letterDone: string;
+  letterPurged: string;
+  sensitiveLabels: Record<string, string>;
 };
 
 const es: Strings = {
@@ -152,6 +170,33 @@ const es: Strings = {
   cameraError: "No se ha podido usar la cámara. Puedes subir una foto del documento.",
   captureFrameHint:
     "Coloca el documento dentro del recuadro, sin reflejos y con las cuatro esquinas visibles.",
+  letterEntryTitle: "¿Has recibido una carta y no la entiendes?",
+  letterEntryBody: "Te la leemos y te la explicamos con palabras sencillas.",
+  letterEntryButton: "Entender una carta",
+  letterTitle: "Entender una carta",
+  letterIntro:
+    "Haz una foto de la carta. La leeremos solo durante esta sesión y se borrará cuando termines. No guardamos ninguna copia.",
+  letterStart: "📷 Hacer la foto de la carta",
+  letterReading: "Leyendo la carta…",
+  letterFactsTitle: "Lo que pone la carta",
+  letterOrganismo: "Quién la envía",
+  letterDeadlines: "Plazo que aparece",
+  letterSensitive: "Contiene datos personales",
+  letterExcerptTitle: "Texto leído",
+  letterExplanationTitle: "Lo que entendemos nosotros",
+  letterHighRisk: "Es mejor que te ayude una persona",
+  letterAnother: "Leer otra carta",
+  letterDone: "Terminar",
+  letterPurged: "La carta se ha borrado.",
+  sensitiveLabels: {
+    dni: "DNI",
+    nie: "NIE",
+    iban: "número de cuenta",
+    telefono: "teléfono",
+    email: "correo electrónico",
+    importe: "importe de dinero",
+    expediente: "número de expediente",
+  },
 };
 
 const va: Strings = {
@@ -234,6 +279,33 @@ const va: Strings = {
   cameraError: "No s'ha pogut usar la càmera. Pots pujar una foto del document.",
   captureFrameHint:
     "Col·loca el document dins del requadre, sense reflexos i amb les quatre cantonades visibles.",
+  letterEntryTitle: "Has rebut una carta i no l'entens?",
+  letterEntryBody: "Te la llegim i te l'expliquem amb paraules senzilles.",
+  letterEntryButton: "Entendre una carta",
+  letterTitle: "Entendre una carta",
+  letterIntro:
+    "Fes una foto de la carta. La llegirem només durant esta sessió i s'esborrarà quan acabes. No guardem cap còpia.",
+  letterStart: "📷 Fer la foto de la carta",
+  letterReading: "Llegint la carta…",
+  letterFactsTitle: "El que diu la carta",
+  letterOrganismo: "Qui l'envia",
+  letterDeadlines: "Termini que apareix",
+  letterSensitive: "Conté dades personals",
+  letterExcerptTitle: "Text llegit",
+  letterExplanationTitle: "El que entenem nosaltres",
+  letterHighRisk: "És millor que t'ajude una persona",
+  letterAnother: "Llegir una altra carta",
+  letterDone: "Acabar",
+  letterPurged: "La carta s'ha esborrat.",
+  sensitiveLabels: {
+    dni: "DNI",
+    nie: "NIE",
+    iban: "número de compte",
+    telefono: "telèfon",
+    email: "correu electrònic",
+    importe: "import de diners",
+    expediente: "número d'expedient",
+  },
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

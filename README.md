@@ -28,7 +28,9 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 ✅ **Catálogo ampliado**: 14 trámites declarados — DNI, Hacienda (AEAT), Seguridad Social (INSS y vida laboral), SEPE, DGT, extranjería, tarjeta SIP, empadronamiento (Castelló) y certificados del Ministerio de Justicia — con fuente oficial ingerida para el asistente. Los que requieren conector automático quedan `coming_soon` (PRD §5.4: DNI/SS/AEAT no deben ser los primeros conectores por CAPTCHA y autenticación); los informativos (`execution_mode: information`) están activos y explican cómo hacer el trámite citando la fuente oficial.
 
-🚧 Siguiente: explicación de cartas administrativas (TT-404) y voz; después, conectores reales con Playwright (fase 3).
+✅ **Explicación de cartas (TT-404)**: el ciudadano fotografía una carta administrativa y el kiosco le separa **lo que pone el documento** de **lo que entiende el sistema**. El modelo solo transcribe; el riesgo, los plazos y los datos sensibles se deciden con reglas deterministas auditables ([ADR-004](docs/adr/ADR-004-explicacion-de-cartas.md)), de modo que una alucinación no pueda rebajar la gravedad de un embargo. Ante términos de riesgo o plazos ambiguos, deriva a atención humana y nunca sugiere una actuación jurídica concreta.
+
+🚧 Siguiente: voz (push-to-talk, transcripción y lectura en voz alta); después, conectores reales con Playwright (fase 3).
 
 ## Estructura
 
@@ -81,7 +83,7 @@ Sin Redis configurado, la API usa un almacén de sesiones en memoria (solo desar
 ### Tests
 
 ```bash
-cd services/api && .venv/Scripts/python -m pytest -q          # 56 tests
+cd services/api && .venv/Scripts/python -m pytest -q          # 81 tests
 cd services/device-agent && .venv/Scripts/python -m pytest -q # 3 tests
 cd apps/kiosk && npm run build                                # typecheck + build
 ```

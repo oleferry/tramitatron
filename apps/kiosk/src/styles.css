@@ -544,6 +544,81 @@ button:focus-visible {
   color: var(--color-teal);
 }
 
+/* Aviso de carta de alto riesgo: usa incident_red porque es la señal más
+   fuerte del kit de marca. Va siempre arriba del resultado. */
+.banner-warning {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border: 2px solid var(--color-danger);
+}
+
+/* ── Explicación de cartas (TT-404) ───────────────────────── */
+
+.letter-entry {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  background: var(--color-teal-soft);
+  border: 2px solid var(--color-teal);
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--color-text);
+}
+
+.letter-entry:hover,
+.letter-entry:focus-visible {
+  background: var(--color-surface);
+}
+
+.letter-entry-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.25rem;
+}
+
+.letter-entry-cta {
+  flex-shrink: 0;
+  padding: 0.75rem 1.25rem;
+  font-weight: 700;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-radius: var(--radius);
+}
+
+/* Texto literal de la carta: se distingue de la explicación del sistema. */
+.letter-excerpt {
+  padding: 1rem;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+  font-size: 0.9em;
+  white-space: pre-wrap;
+  background: var(--color-primary-soft);
+  border-left: 4px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.disclaimer {
+  font-size: 0.9em;
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.upload-fallback {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--color-primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.upload-fallback input {
+  display: none;
+}
+
 /* ── Modales ──────────────────────────────────────────────── */
 
 .modal-overlay {

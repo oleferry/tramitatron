@@ -13,6 +13,7 @@ import type {
   ExecutionResult,
   ExtractedField,
   IntentResult,
+  LetterAnalysis,
   Procedure,
   SessionInfo,
 } from "./api";
@@ -676,6 +677,74 @@ export const demoApi = {
       message: null,
     };
   },
+
+  explainLetter: async (
+    _sessionId: string,
+    imageBase64: string,
+    _mimeType: "image/png" | "image/jpeg",
+    language: Lang,
+  ): Promise<LetterAnalysis> => {
+    const es = language === "es";
+    // Se alterna entre carta de riesgo y carta rutinaria según el tamaño de
+    // la imagen, para que la demostración enseñe ambos caminos.
+    const highRisk = imageBase64.length % 2 === 0;
+    const disclaimer = es
+      ? "Esta es una lectura automática y puede contener errores. No es asesoramiento jurídico. Consulta siempre el documento original."
+      : "Esta és una lectura automàtica i pot contindre errors. No és assessorament jurídic. Consulta sempre el document original.";
+    const humanAdvice = es
+      ? "Por su contenido, es mejor que te ayude una persona. Pide ayuda al personal del centro o acude a la oficina del organismo que firma la carta."
+      : "Pel seu contingut, és millor que t'ajude una persona. Demana ajuda al personal del centre o acudix a l'oficina de l'organisme que firma la carta.";
+
+    if (highRisk) {
+      return {
+        letter_id: `demo-letter-${Math.random().toString(36).slice(2, 8)}`,
+        transcription_confidence: 0.88,
+        facts: {
+          organismo: "AGENCIA ESTATAL DE ADMINISTRACIÓN TRIBUTARIA",
+          deadlines: [es ? "1 mes" : "1 mes"],
+          sensitive_data: ["dni", "importe", "expediente"],
+          excerpt:
+            "AGENCIA ESTATAL DE ADMINISTRACIÓN TRIBUTARIA. PROVIDENCIA DE APREMIO. No habiéndose satisfecho la deuda en periodo voluntario, se inicia la vía ejecutiva. Podrá interponer recurso de reposición en el plazo de un mes. De no atender este requerimiento se procederá al embargo de bienes.",
+        },
+        explanation: {
+          summary: es
+            ? "Esta carta la envía AGENCIA ESTATAL DE ADMINISTRACIÓN TRIBUTARIA. Menciona un embargo, un procedimiento de apremio, la vía ejecutiva, un recurso, una deuda y un requerimiento. Es un asunto importante. Aparece un plazo: 1 mes. El documento contiene datos personales (tu DNI, un importe de dinero, un número de expediente): no lo dejes olvidado aquí."
+            : "Esta carta l'envia AGENCIA ESTATAL DE ADMINISTRACIÓN TRIBUTARIA. Menciona un embargament, un procediment de constrenyiment, la via executiva, un recurs, un deute i un requeriment. És un assumpte important. Apareix un termini: 1 mes. El document conté dades personals (el teu DNI, un import de diners, un número d'expedient): no el deixes oblidat ací.",
+          risk_level: "high",
+          risk_terms: ["apremio", "deuda", "embargo", "recurso", "requerimiento", "via_ejecutiva"],
+          ambiguous_deadline: false,
+          recommend_human: true,
+          human_advice: humanAdvice,
+          disclaimer,
+        },
+      };
+    }
+
+    return {
+      letter_id: `demo-letter-${Math.random().toString(36).slice(2, 8)}`,
+      transcription_confidence: 0.91,
+      facts: {
+        organismo: "CONSELLERIA DE SANIDAD UNIVERSAL Y SALUD PÚBLICA",
+        deadlines: ["30/09/2026"],
+        sensitive_data: ["telefono"],
+        excerpt:
+          "CONSELLERIA DE SANIDAD UNIVERSAL Y SALUD PÚBLICA. Le informamos de que su cita de revisión ha quedado asignada en el Centro de Salud Gran Vía. Debe presentarse hasta el 30/09/2026 aportando su tarjeta SIP.",
+      },
+      explanation: {
+        summary: es
+          ? "Esta carta la envía CONSELLERIA DE SANIDAD UNIVERSAL Y SALUD PÚBLICA. Aparece un plazo: 30/09/2026. El documento contiene datos personales (un teléfono): no lo dejes olvidado aquí."
+          : "Esta carta l'envia CONSELLERIA DE SANIDAD UNIVERSAL Y SALUD PÚBLICA. Apareix un termini: 30/09/2026. El document conté dades personals (un telèfon): no el deixes oblidat ací.",
+        risk_level: "normal",
+        risk_terms: [],
+        ambiguous_deadline: false,
+        recommend_human: false,
+        human_advice: null,
+        disclaimer,
+      },
+    };
+  },
+
+  purgeLetter: async (): Promise<void> => undefined,
 
   printReceipt: async (): Promise<{ job_id: string }> => ({ job_id: "demo-print" }),
 };
