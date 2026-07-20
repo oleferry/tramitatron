@@ -7,15 +7,18 @@ import { t } from "../i18n";
 import { procedureIcon } from "../icons";
 import { AskPanel } from "./AskPanel";
 import { DocumentStep } from "./DocumentStep";
+import { ReadAloudButton } from "./ReadAloudButton";
 
 export function ProcedureScreen({
   lang,
   sessionId,
   procedureId,
+  voiceEnabled,
 }: {
   lang: Lang;
   sessionId: string;
   procedureId: string;
+  voiceEnabled: boolean;
 }) {
   const strings = t(lang);
   const [procedure, setProcedure] = useState<Procedure | null>(null);
@@ -83,6 +86,16 @@ export function ProcedureScreen({
               <li key={i}>{req[lang]}</li>
             ))}
           </ul>
+          {voiceEnabled && (
+            <ReadAloudButton
+              lang={lang}
+              text={[
+                procedure.name[lang],
+                strings.requirementsTitle,
+                ...procedure.requirements.map((req) => req[lang]),
+              ].join(". ")}
+            />
+          )}
         </div>
       )}
 

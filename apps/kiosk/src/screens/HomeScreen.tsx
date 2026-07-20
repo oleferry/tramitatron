@@ -5,13 +5,18 @@ import { api } from "../api";
 import type { Lang } from "../i18n";
 import { t } from "../i18n";
 import { procedureIcon } from "../icons";
+import { VoiceInput } from "./VoiceInput";
 
 export function HomeScreen({
   lang,
+  sessionId,
+  voiceEnabled,
   onOpenProcedure,
   onOpenLetter,
 }: {
   lang: Lang;
+  sessionId: string;
+  voiceEnabled: boolean;
   onOpenProcedure: (id: string) => void;
   onOpenLetter: () => void;
 }) {
@@ -29,8 +34,10 @@ export function HomeScreen({
       .catch(() => setFailed(true));
   }, []);
 
-  const search = async () => {
-    const text = query.trim();
+  // Acepta el texto por parámetro: al confirmar una transcripción hay que
+  // buscar con ella, no con el valor que tuviera el input en ese render.
+  const search = async (spoken?: string) => {
+    const text = (spoken ?? query).trim();
     if (!text) return;
     setClarification(null);
     setHighlighted(null);
@@ -67,6 +74,18 @@ export function HomeScreen({
           {strings.searchButton}
         </button>
       </div>
+
+      {/* La voz acompaña al buscador; nunca lo sustituye (PRD §14.3). */}
+      {voiceEnabled && (
+        <VoiceInput
+          lang={lang}
+          sessionId={sessionId}
+          onConfirmed={(text) => {
+            setQuery(text);
+            void search(text);
+          }}
+        />
+      )}
 
       {/* Caso D del PRD: entrar por "tengo una carta" es tan legítimo como
           buscar un trámite, así que va al mismo nivel que el buscador. */}

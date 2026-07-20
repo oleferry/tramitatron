@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "./api";
 import type { Lang } from "./i18n";
 import { t } from "./i18n";
+import { stopSpeaking } from "./speech";
 import { HomeScreen } from "./screens/HomeScreen";
 import { LanguageScreen } from "./screens/LanguageScreen";
 import { LetterScreen } from "./screens/LetterScreen";
@@ -27,6 +28,9 @@ export function App() {
   const [screen, setScreen] = useState<Screen>({ kind: "language" });
   const [fontScaleIdx, setFontScaleIdx] = useState(0);
   const [highContrast, setHighContrast] = useState(false);
+  // La voz es un canal opcional y desactivable (PRD §14.3). Nunca es el
+  // único: todo lo que se puede hacer hablando se puede hacer escribiendo.
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [confirmEndOpen, setConfirmEndOpen] = useState(false);
   const [inactivityWarn, setInactivityWarn] = useState(false);
   const [error, setError] = useState(false);
@@ -59,6 +63,8 @@ export function App() {
   }, []);
 
   const endSession = useCallback(async () => {
+    // Al cerrar la sesión no puede quedar una voz leyendo datos del anterior.
+    stopSpeaking();
     const current = sessionRef.current;
     if (current) {
       try {
@@ -154,6 +160,16 @@ export function App() {
           >
             {strings.highContrast}
           </button>
+          <button
+            className="btn-secondary btn-small"
+            onClick={() => {
+              stopSpeaking();
+              setVoiceEnabled(!voiceEnabled);
+            }}
+            aria-pressed={voiceEnabled}
+          >
+            {voiceEnabled ? "🔊" : "🔇"} {strings.voiceToggle}
+          </button>
         </div>
       </header>
 
@@ -165,19 +181,27 @@ export function App() {
         {screen.kind === "home" && sessionId && (
           <HomeScreen
             lang={lang}
+            sessionId={sessionId}
+            voiceEnabled={voiceEnabled}
             onOpenProcedure={(procedureId) => setScreen({ kind: "procedure", procedureId })}
             onOpenLetter={() => setScreen({ kind: "letter" })}
           />
         )}
 
         {screen.kind === "procedure" && sessionId && (
-          <ProcedureScreen lang={lang} sessionId={sessionId} procedureId={screen.procedureId} />
+          <ProcedureScreen
+            lang={lang}
+            sessionId={sessionId}
+            procedureId={screen.procedureId}
+            voiceEnabled={voiceEnabled}
+          />
         )}
 
         {screen.kind === "letter" && sessionId && (
           <LetterScreen
             lang={lang}
             sessionId={sessionId}
+            voiceEnabled={voiceEnabled}
             onClose={() => setScreen({ kind: "home" })}
           />
         )}

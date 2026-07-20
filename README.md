@@ -30,7 +30,9 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 ✅ **Explicación de cartas (TT-404)**: el ciudadano fotografía una carta administrativa y el kiosco le separa **lo que pone el documento** de **lo que entiende el sistema**. El modelo solo transcribe; el riesgo, los plazos y los datos sensibles se deciden con reglas deterministas auditables ([ADR-004](docs/adr/ADR-004-explicacion-de-cartas.md)), de modo que una alucinación no pueda rebajar la gravedad de un embargo. Ante términos de riesgo o plazos ambiguos, deriva a atención humana y nunca sugiere una actuación jurídica concreta.
 
-🚧 Siguiente: voz (push-to-talk, transcripción y lectura en voz alta); después, conectores reales con Playwright (fase 3).
+✅ **Voz**: pulsar para hablar con indicador de grabación, transcripción visible y confirmación obligatoria antes de usarla, botón de borrar y desactivación desde la cabecera. Ni el audio ni la transcripción se guardan en ningún sitio ([ADR-005](docs/adr/ADR-005-canal-de-voz.md)). La lectura en voz alta usa la síntesis local del navegador, para no enviar el contenido de las cartas a un proveedor externo.
+
+🚧 Siguiente: conectores reales con Playwright (fase 3).
 
 ## Estructura
 
@@ -83,7 +85,7 @@ Sin Redis configurado, la API usa un almacén de sesiones en memoria (solo desar
 ### Tests
 
 ```bash
-cd services/api && .venv/Scripts/python -m pytest -q          # 81 tests
+cd services/api && .venv/Scripts/python -m pytest -q          # 91 tests
 cd services/device-agent && .venv/Scripts/python -m pytest -q # 3 tests
 cd apps/kiosk && npm run build                                # typecheck + build
 ```

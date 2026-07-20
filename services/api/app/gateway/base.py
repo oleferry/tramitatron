@@ -68,9 +68,33 @@ class ExplainResult(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0)
 
 
+class AudioRequest(BaseModel):
+    """Fragmento de voz del ciudadano (PRD §14.3, pulsar para hablar)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    audio_base64: str
+    mime_type: str = "audio/webm"
+    language: Literal["es", "ca-valencia"] = "es"
+
+
+class TranscriptResult(BaseModel):
+    """Transcripción para MOSTRAR al ciudadano, nunca para actuar directamente.
+
+    El audio es dato prohibido de persistir (PRD §13.2) y la transcripción es
+    texto libre: viven durante la petición y nada más. Quien decide si el texto
+    es correcto es la persona, confirmándolo en pantalla (PRD §14.3).
+    """
+
+    text: str
+    confidence: float = Field(ge=0.0, le=1.0)
+
+
 class ModelGateway(Protocol):
     async def classify_intent(self, request: IntentRequest) -> IntentResult: ...
 
     async def extract_document(self, request: DocumentRequest) -> DocumentResult: ...
 
     async def explain_official_content(self, request: ExplainRequest) -> ExplainResult: ...
+
+    async def transcribe(self, request: AudioRequest) -> TranscriptResult: ...

@@ -16,6 +16,7 @@ import type {
   LetterAnalysis,
   Procedure,
   SessionInfo,
+  TranscriptResponse,
 } from "./api";
 import type { Lang } from "./i18n";
 
@@ -745,6 +746,29 @@ export const demoApi = {
   },
 
   purgeLetter: async (): Promise<void> => undefined,
+
+  transcribeAudio: async (
+    _sessionId: string,
+    audioBase64: string,
+    _mimeType: string,
+    language: Lang,
+  ): Promise<TranscriptResponse> => {
+    // Frases de ejemplo, iguales que las del gateway mock del backend.
+    const samples =
+      language === "es"
+        ? [
+            { text: "quiero pedir cita para el médico", confidence: 0.94 },
+            { text: "necesito renovar el dni", confidence: 0.91 },
+            { text: "tengo que pasar la itv del coche", confidence: 0.89 },
+          ]
+        : [
+            { text: "vull demanar cita amb el metge", confidence: 0.93 },
+            { text: "necessite renovar el dni", confidence: 0.9 },
+            { text: "he de passar la itv del cotxe", confidence: 0.88 },
+          ];
+    const sample = samples[audioBase64.length % samples.length];
+    return { ...sample, usable: sample.confidence >= 0.6 };
+  },
 
   printReceipt: async (): Promise<{ job_id: string }> => ({ job_id: "demo-print" }),
 };

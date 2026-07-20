@@ -5,6 +5,7 @@ import { api } from "../api";
 import type { Lang } from "../i18n";
 import { t } from "../i18n";
 import { CameraCapture } from "./CameraCapture";
+import { ReadAloudButton } from "./ReadAloudButton";
 
 type Phase = "idle" | "capture" | "reading" | "result" | "error";
 
@@ -19,10 +20,12 @@ type Phase = "idle" | "capture" | "reading" | "result" | "error";
 export function LetterScreen({
   lang,
   sessionId,
+  voiceEnabled,
   onClose,
 }: {
   lang: Lang;
   sessionId: string;
+  voiceEnabled: boolean;
   onClose: () => void;
 }) {
   const strings = t(lang);
@@ -153,6 +156,22 @@ export function LetterScreen({
             </h3>
             <p>{analysis.explanation.summary}</p>
             <p className="disclaimer">{analysis.explanation.disclaimer}</p>
+            {/* Quien no entiende una carta a menudo tampoco la lee con
+                comodidad: escucharla es aquí más útil que en ningún sitio. */}
+            {voiceEnabled && (
+              <ReadAloudButton
+                lang={lang}
+                text={[
+                  analysis.explanation.recommend_human
+                    ? analysis.explanation.human_advice ?? ""
+                    : "",
+                  analysis.explanation.summary,
+                  analysis.explanation.disclaimer,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              />
+            )}
           </div>
 
           <button className="btn-secondary" onClick={() => void restart()}>

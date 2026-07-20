@@ -88,6 +88,18 @@ type Strings = {
   letterDone: string;
   letterPurged: string;
   sensitiveLabels: Record<string, string>;
+  voiceStart: string;
+  voiceStop: string;
+  voiceTranscribing: string;
+  voiceHeard: string;
+  voiceConfirm: string;
+  voiceRetry: string;
+  voiceDiscard: string;
+  voiceUnclear: string;
+  voiceError: string;
+  voiceToggle: string;
+  readAloud: string;
+  stopReading: string;
 };
 
 const es: Strings = {
@@ -197,6 +209,18 @@ const es: Strings = {
     importe: "importe de dinero",
     expediente: "número de expediente",
   },
+  voiceStart: "Hablar",
+  voiceStop: "Estoy grabando · toca para parar",
+  voiceTranscribing: "Escuchando lo que has dicho…",
+  voiceHeard: "Esto es lo que hemos entendido",
+  voiceConfirm: "Sí, es eso",
+  voiceRetry: "Repetir",
+  voiceDiscard: "Borrar",
+  voiceUnclear: "No se ha entendido bien. Prueba a repetirlo más despacio.",
+  voiceError: "No se ha podido usar el micrófono. Puedes escribir lo que necesitas.",
+  voiceToggle: "Voz",
+  readAloud: "Leer en voz alta",
+  stopReading: "Parar la lectura",
 };
 
 const va: Strings = {
@@ -306,6 +330,18 @@ const va: Strings = {
     importe: "import de diners",
     expediente: "número d'expedient",
   },
+  voiceStart: "Parlar",
+  voiceStop: "Estic gravant · toca per a parar",
+  voiceTranscribing: "Escoltant el que has dit…",
+  voiceHeard: "Açò és el que hem entés",
+  voiceConfirm: "Sí, és això",
+  voiceRetry: "Repetir",
+  voiceDiscard: "Esborrar",
+  voiceUnclear: "No s'ha entés bé. Prova a repetir-ho més a poc a poc.",
+  voiceError: "No s'ha pogut usar el micròfon. Pots escriure el que necessites.",
+  voiceToggle: "Veu",
+  readAloud: "Llegir en veu alta",
+  stopReading: "Parar la lectura",
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

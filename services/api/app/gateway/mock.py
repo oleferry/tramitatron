@@ -10,6 +10,7 @@ import re
 import unicodedata
 
 from .base import (
+    AudioRequest,
     DocumentRequest,
     DocumentResult,
     ExplainRequest,
@@ -17,6 +18,7 @@ from .base import (
     IntentRequest,
     IntentResult,
     RawExtractedField,
+    TranscriptResult,
 )
 
 _RULES: list[tuple[str, str, str]] = [
@@ -112,6 +114,24 @@ def _normalize(text: str) -> str:
     text = unicodedata.normalize("NFKD", text.lower())
     return "".join(c for c in text if not unicodedata.combining(c))
 
+
+# Transcripciones sintéticas para el flujo de voz. Frases que un ciudadano
+# diría de verdad ante el tótem, para que el buscador tenga algo que clasificar.
+_SYNTHETIC_TRANSCRIPTS: dict[str, list[dict]] = {
+    "es": [
+        {"text": "quiero pedir cita para el médico", "confidence": 0.94},
+        {"text": "necesito renovar el dni", "confidence": 0.91},
+        {"text": "tengo que pasar la itv del coche", "confidence": 0.89},
+        # Confianza baja a propósito: ejercita el aviso de repetir.
+        {"text": "eeeh… no sé… una cosa del…", "confidence": 0.38},
+    ],
+    "ca-valencia": [
+        {"text": "vull demanar cita amb el metge", "confidence": 0.93},
+        {"text": "necessite renovar el dni", "confidence": 0.90},
+        {"text": "he de passar la itv del cotxe", "confidence": 0.88},
+        {"text": "eeeh… no sé… una cosa del…", "confidence": 0.36},
+    ],
+}
 
 # Cartas sintéticas para el explicador (TT-404). Todos los datos son
 # inventados: NIF de prueba, expedientes ficticios e importes de ejemplo.
@@ -213,6 +233,21 @@ class MockModelGateway:
             document_class=request.document_class,
             fields=synthetic[request.document_class],
         )
+
+    async def transcribe(self, request: AudioRequest) -> TranscriptResult:
+        """Transcripción SINTÉTICA: ignora el audio (no hay STT sin proveedor).
+
+        Rota entre frases típicas para poder ejercitar el flujo completo
+        —grabar, ver la transcripción, confirmarla o borrarla— y para que el
+        buscador reciba texto que sus reglas sí reconocen. Una de las frases
+        llega con confianza baja a propósito, para probar el aviso de repetir.
+        """
+        try:
+            size = len(base64.b64decode(request.audio_base64, validate=True))
+        except (binascii.Error, ValueError):
+            size = len(request.audio_base64)
+        samples = _SYNTHETIC_TRANSCRIPTS[request.language]
+        return TranscriptResult(**samples[size % len(samples)])
 
     async def explain_official_content(self, request: ExplainRequest) -> ExplainResult:
         """Transcripción SINTÉTICA: ignora la imagen (no hay OCR sin modelo de

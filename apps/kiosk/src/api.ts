@@ -102,6 +102,15 @@ export type LetterAnalysis = {
   };
 };
 
+// Transcripción de voz. Ni el audio ni el texto se guardan en el servidor:
+// el texto vive aquí, en memoria, hasta que la persona lo confirma o lo borra.
+export type TranscriptResponse = {
+  text: string;
+  confidence: number;
+  // En falso, la interfaz ofrece repetir en lugar de confirmar.
+  usable: boolean;
+};
+
 export class NetworkError extends Error {}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -192,6 +201,20 @@ const realApi = {
     }),
   purgeLetter: (sessionId: string, letterId: string) =>
     request<void>(`/api/session/${sessionId}/letters/${letterId}`, { method: "DELETE" }),
+  transcribeAudio: (
+    sessionId: string,
+    audioBase64: string,
+    mimeType: string,
+    language: Lang,
+  ) =>
+    request<TranscriptResponse>(`/api/session/${sessionId}/voice/transcribe`, {
+      method: "POST",
+      body: JSON.stringify({
+        audio_base64: audioBase64,
+        mime_type: mimeType,
+        language,
+      }),
+    }),
   printReceipt: (lines: string[]) =>
     request<{ job_id: string }>("/device/printer/print", {
       method: "POST",
@@ -232,5 +255,6 @@ export const api: typeof realApi = {
   executeProcedure: withDemoFallback(realApi.executeProcedure, demoApi.executeProcedure),
   explainLetter: withDemoFallback(realApi.explainLetter, demoApi.explainLetter),
   purgeLetter: withDemoFallback(realApi.purgeLetter, demoApi.purgeLetter),
+  transcribeAudio: withDemoFallback(realApi.transcribeAudio, demoApi.transcribeAudio),
   printReceipt: withDemoFallback(realApi.printReceipt, demoApi.printReceipt),
 };
