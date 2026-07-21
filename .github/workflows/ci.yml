@@ -34,6 +34,20 @@ jobs:
       - run: ruff check app tests
       - run: pytest -q
 
+  browser-worker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/browser-worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - run: ruff check app tests
+      - run: pytest -q
+
   kiosk:
     runs-on: ubuntu-latest
     defaults:

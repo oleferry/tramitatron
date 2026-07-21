@@ -25,7 +25,7 @@ La estructura de monorepo está definida en PRD §9.3 (`apps/`, `services/`, `pa
 
 ## Estado y próximo hito (PRD §32)
 
-Hito 1 ✅ y **fase 2 completa**: servicio documental efímero, RAG extractivo, explicación de cartas (TT-404) y canal de voz. Catálogo ampliado a 14 trámites (los de conector automático en `coming_soon`, los informativos activos). Siguiente: conectores reales con Playwright (fase 3, TT-502..505).
+Hito 1 ✅, **fase 2 completa** (servicio documental efímero, RAG extractivo, cartas TT-404, voz) y **fase 3 iniciada**: worker de navegación asistida (`services/browser-worker`, TT-502/505) con Playwright, verificado en local. Catálogo de 14 trámites (los de conector automático en `coming_soon`, los informativos activos). Siguiente: conectar el worker al kiosco (pantalla de handoff) y, tras la EIPD, un portal real.
 
 Reglas prácticas aprendidas:
 - La API carga catálogo y conocimiento **al arrancar**; tras editar YAMLs de `connectors/catalog/` o reingerir `knowledge/`, reinicia la API (`--reload` solo vigila `.py`).
@@ -35,6 +35,7 @@ Reglas prácticas aprendidas:
 - En cartas (`app/letters/`), la IA **solo transcribe**: riesgo, plazos y datos sensibles son reglas deterministas (ADR-004). No mover esa lógica a un modelo. Ante la duda, el análisis escala el riesgo, nunca lo baja.
 - De los datos sensibles se informa del **tipo** ("contiene tu DNI"), jamás del valor. Hay tests que lo fijan.
 - Si tocas `demo.ts`, recuerda que replica el backend para la preview de Vercel: al añadir un endpoint o un trámite hay que actualizarlo también.
+- Worker de navegación (`services/browser-worker/`): servicio SEPARADO (regla 8). **Prepara y cede**: nunca reserva ni automatiza CAPTCHA/Cl@ve (regla 5); su resultado terminal es siempre `user_handoff`. Allowlist estricta de hosts (regla 7). Driver simulado (httpx, por defecto y en tests) y Playwright (extra opcional). Portales reales (GVA, SITVAL) declarados pero `enabled=False` hasta EIPD (ADR-007). El driver de Playwright no está en el extra `dev` (CI no lo instala): los tests usan el simulado.
 - Gateway de IA (`app/gateway/`): `AnthropicModelGateway` es real pero **el mock es el valor por defecto** y el fallback permanente (regla 12). Sin `ANTHROPIC_API_KEY` no sale nada de la máquina. Los datos A2 (imágenes de DNI/SIP, cartas) van detrás de `ANTHROPIC_ALLOW_DOCUMENTS` (apagado; requiere EIPD, PRD §10.4 y §13.2, ADR-006). La voz nunca usa Claude (no hace STT). El gateway no registra valores de PII. El camino con llamadas reales a Claude no está probado en local (sin clave).
 
 No trabajar en conectores reales (GVA Salud, SITVAL) hasta que las pruebas de privacidad de fase 2 estén completas.

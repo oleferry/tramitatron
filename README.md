@@ -34,7 +34,9 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 ✅ **Proveedor de IA real (opcional)**: el gateway (PRD §10) tiene ya una implementación sobre Claude además del mock. **Seguro por defecto**: sin `ANTHROPIC_API_KEY` funciona con el mock y no sale ningún dato de la máquina. Con clave, la clasificación de intención usa Claude; el envío de imágenes de DNI/SIP y cartas (datos A2) va detrás de un segundo interruptor **apagado por defecto** porque requiere EIPD ([ADR-006](docs/adr/ADR-006-proveedor-ia-real.md)). La voz nunca usa Claude (no hace STT de audio).
 
-🚧 Siguiente: conectores reales con Playwright (fase 3).
+✅ **Fase 3 — worker de navegación asistida (Playwright)**: servicio separado (`services/browser-worker`) que **prepara y cede** (TT-502): navega el portal de la allowlist, precompleta los campos seguros y **se detiene** en el CAPTCHA, la identificación y la confirmación, que hace la persona. Nunca reserva ni automatiza CAPTCHA/Cl@ve (regla 5). Dos drivers: simulado (httpx contra un portal de pruebas local, por defecto y en tests) y Playwright real (Chromium, extra opcional, verificado en local). Healthchecks sintéticos que no reservan (TT-505). Los portales reales (GVA, SITVAL) están declarados pero **desactivados** hasta completar privacidad/EIPD ([ADR-007](docs/adr/ADR-007-worker-navegacion-asistida.md)).
+
+🚧 Siguiente: conectar el worker al kiosco (pantalla de handoff) y, tras la EIPD, un portal real.
 
 ## Estructura
 
@@ -42,6 +44,7 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 apps/kiosk/            Interfaz del tótem (React + TypeScript + Vite, PWA)
 services/api/          API FastAPI: sesiones, catálogo, gateway IA, conectores
 services/device-agent/ Agente de periféricos (hito 1: modo simulador)
+services/browser-worker/ Worker de navegación asistida (Playwright): prepara y cede
 connectors/catalog/    Catálogo declarativo de trámites (YAML validado)
 knowledge/             Fuentes oficiales (allowlist) y snapshots versionados
 docs/adr/              Decisiones de arquitectura
@@ -89,6 +92,7 @@ Sin Redis configurado, la API usa un almacén de sesiones en memoria (solo desar
 ```bash
 cd services/api && .venv/Scripts/python -m pytest -q          # 103 tests
 cd services/device-agent && .venv/Scripts/python -m pytest -q # 3 tests
+cd services/browser-worker && .venv/Scripts/python -m pytest -q # 10 tests
 cd apps/kiosk && npm run build                                # typecheck + build
 ```
 
