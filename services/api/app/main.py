@@ -14,6 +14,7 @@ from .catalog.loader import load_catalog
 from .config import Settings
 from .connectors import router as connectors_router_module
 from .connectors.mock import MockConnector
+from .connectors.worker import WorkerConnector
 from .documents import router as documents_router_module
 from .gateway import router as gateway_router_module
 from .gateway.mock import MockModelGateway
@@ -59,7 +60,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.catalog = load_catalog(settings.catalog_path)
     app.state.knowledge = KnowledgeStore(settings.knowledge_path)
     app.state.gateway = _build_gateway(settings, app.state.catalog)
-    app.state.connectors = {"demo.mock": MockConnector()}
+    app.state.connectors = {
+        "demo.mock": MockConnector(),
+        # Trámite de demostración por navegación asistida (worker Playwright).
+        # Si no hay worker configurado, responde "no disponible" sin romperse.
+        "connectors.worker.demo": WorkerConnector(
+            name="connectors.worker.demo",
+            worker_url=settings.browser_worker_url,
+            worker_connector="demo.worker.appointment",
+        ),
+    }
 
     if settings.redis_url:
         from .sessions.redis_store import RedisSessionStore

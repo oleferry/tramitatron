@@ -158,6 +158,47 @@ export function ProcedureScreen({
           )}
         </div>
       )}
+
+      {/* Navegación asistida: el sistema ha preparado el trámite y cede a la
+          persona. Se muestra la URL oficial y los pasos que le quedan. */}
+      {result?.status === "user_handoff" && result.receipt && (
+        <div className="banner banner-info handoff">
+          <p>
+            <strong>{strings.handoffTitle}</strong>
+          </p>
+          {result.receipt.url && (
+            <p className="handoff-url">
+              {strings.handoffContinue} <span>{result.receipt.url}</span>
+            </p>
+          )}
+          {result.receipt.pending && (
+            <>
+              <p>{strings.handoffPending}</p>
+              <ul>
+                {result.receipt.pending.split(", ").map((step) => (
+                  <li key={step}>{strings.pendingLabels[step] ?? step}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {voiceEnabled && (
+            <ReadAloudButton
+              lang={lang}
+              text={[
+                strings.handoffTitle,
+                strings.handoffPending,
+                ...(result.receipt.pending ?? "")
+                  .split(", ")
+                  .map((step) => strings.pendingLabels[step] ?? step),
+              ].join(". ")}
+            />
+          )}
+        </div>
+      )}
+
+      {result?.status === "failed" && (
+        <div className="banner banner-info">{result.message ?? strings.handoffFailed}</div>
+      )}
     </div>
   );
 }

@@ -56,6 +56,33 @@ const PROCEDURES: Procedure[] = [
     confirmation_required: true,
   },
   {
+    id: "demo.worker.appointment",
+    name: {
+      es: "Demostración de navegación asistida",
+      "ca-valencia": "Demostració de navegació assistida",
+    },
+    description: {
+      es: "Ejemplo del asistente que prepara una cita en un portal y te cede el paso final.",
+      "ca-valencia":
+        "Exemple de l'assistent que prepara una cita en un portal i et cedix el pas final.",
+    },
+    status: "available",
+    execution_mode: "integrated",
+    official_sources: [],
+    requirements: [
+      {
+        es: "El sistema navega el portal de pruebas y precompleta lo que puede.",
+        "ca-valencia": "El sistema navega el portal de proves i precompleta el que pot.",
+      },
+      {
+        es: "El CAPTCHA y la confirmación de la cita los haces tú.",
+        "ca-valencia": "El CAPTCHA i la confirmació de la cita els fas tu.",
+      },
+    ],
+    required_fields: [],
+    confirmation_required: true,
+  },
+  {
     id: "gva.health.primary-care.appointment",
     name: { es: "Cita de atención primaria", "ca-valencia": "Cita d'atenció primària" },
     description: {
@@ -667,6 +694,17 @@ export const demoApi = {
   },
 
   executeProcedure: async (procedureId: string): Promise<ExecutionResult> => {
+    if (procedureId === "demo.worker.appointment") {
+      // El worker prepara y cede: nunca "completed", siempre handoff.
+      return {
+        status: "user_handoff",
+        receipt: {
+          url: "https://portal-de-pruebas.example/cita",
+          pending: "captcha, confirmar",
+        },
+        message: null,
+      };
+    }
     if (procedureId !== "demo.mock.appointment") throw new Error("HTTP 409");
     return {
       status: "completed",

@@ -698,6 +698,13 @@ button:focus-visible {
   margin-top: 1rem;
 }
 
+/* ── Navegación asistida: handoff ─────────────────────────── */
+
+.handoff-url span {
+  font-weight: 700;
+  word-break: break-all;
+}
+
 /* ── Modales ──────────────────────────────────────────────── */
 
 .modal-overlay {

@@ -4,7 +4,11 @@ def _session(client) -> str:
 
 def test_connectors_health(client):
     body = client.get("/api/connectors/health").json()
-    assert body == [{"connector": "demo.mock", "healthy": True, "detail": "simulado"}]
+    by_id = {c["connector"]: c for c in body}
+    assert by_id["demo.mock"] == {"connector": "demo.mock", "healthy": True, "detail": "simulado"}
+    # El conector del worker existe; sin worker configurado, no está sano.
+    assert by_id["connectors.worker.demo"]["healthy"] is False
+    assert by_id["connectors.worker.demo"]["detail"] == "no configurado"
 
 
 def test_execute_requires_confirmation(client):

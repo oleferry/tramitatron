@@ -56,3 +56,10 @@ class Settings:
         default_factory=lambda: os.getenv("ANTHROPIC_ALLOW_DOCUMENTS", "").strip().lower()
         in {"1", "true", "yes", "si", "sí"}
     )
+
+    # URL del worker de navegación asistida (servicio separado, PRD §9.3). Sin
+    # ella, los trámites por navegador responden "no disponible" con un mensaje
+    # claro, en vez de romperse.
+    browser_worker_url: str | None = field(
+        default_factory=lambda: os.getenv("BROWSER_WORKER_URL") or None
+    )

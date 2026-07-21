@@ -36,7 +36,9 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 ✅ **Fase 3 — worker de navegación asistida (Playwright)**: servicio separado (`services/browser-worker`) que **prepara y cede** (TT-502): navega el portal de la allowlist, precompleta los campos seguros y **se detiene** en el CAPTCHA, la identificación y la confirmación, que hace la persona. Nunca reserva ni automatiza CAPTCHA/Cl@ve (regla 5). Dos drivers: simulado (httpx contra un portal de pruebas local, por defecto y en tests) y Playwright real (Chromium, extra opcional, verificado en local). Healthchecks sintéticos que no reservan (TT-505). Los portales reales (GVA, SITVAL) están declarados pero **desactivados** hasta completar privacidad/EIPD ([ADR-007](docs/adr/ADR-007-worker-navegacion-asistida.md)).
 
-🚧 Siguiente: conectar el worker al kiosco (pantalla de handoff) y, tras la EIPD, un portal real.
+El worker está **conectado al kiosco**: el trámite «Demostración de navegación asistida» se dispara desde el tótem, la API llama al worker, este prepara la cita en el portal de pruebas y el kiosco muestra la URL oficial y los pasos que quedan (CAPTCHA, confirmación) para que los haga la persona.
+
+🚧 Siguiente: tras la EIPD, habilitar un portal real (GVA, SITVAL).
 
 ## Estructura
 
@@ -82,6 +84,18 @@ npm run dev
 
 Sin Redis configurado, la API usa un almacén de sesiones en memoria (solo desarrollo). Con `REDIS_URL` definido, usa Redis con TTL nativo.
 
+**Navegación asistida (opcional)**: para probar el trámite «Demostración de navegación asistida», arranca también el worker y apunta la API a él:
+
+```bash
+# 4. Worker de navegación asistida (http://localhost:8220)
+cd services/browser-worker
+python -m venv .venv && .venv/Scripts/pip install -e ".[dev]"
+.venv/Scripts/python -m uvicorn app.main:app --reload --port 8220
+# y arranca la API con:  BROWSER_WORKER_URL=http://127.0.0.1:8220
+```
+
+Por defecto el worker usa el driver simulado (httpx contra un portal de pruebas local, sin navegador). Para el driver real de Playwright: `pip install -e ".[playwright]" && playwright install chromium`, y arranca con `BROWSER_DRIVER=playwright PORTAL_HOST=127.0.0.1:8220`. Sin worker, el trámite responde «no disponible» sin romperse.
+
 ### Despliegue
 
 - **Kiosco (web)**: Vercel, importando este repo tal cual (`vercel.json` define el build). Sin backend accesible, el kiosco pasa automáticamente a modo demostración con distintivo visible.
@@ -90,7 +104,7 @@ Sin Redis configurado, la API usa un almacén de sesiones en memoria (solo desar
 ### Tests
 
 ```bash
-cd services/api && .venv/Scripts/python -m pytest -q          # 103 tests
+cd services/api && .venv/Scripts/python -m pytest -q          # 110 tests
 cd services/device-agent && .venv/Scripts/python -m pytest -q # 3 tests
 cd services/browser-worker && .venv/Scripts/python -m pytest -q # 10 tests
 cd apps/kiosk && npm run build                                # typecheck + build

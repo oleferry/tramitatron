@@ -100,6 +100,11 @@ type Strings = {
   voiceToggle: string;
   readAloud: string;
   stopReading: string;
+  handoffTitle: string;
+  handoffContinue: string;
+  handoffPending: string;
+  handoffFailed: string;
+  pendingLabels: Record<string, string>;
 };
 
 const es: Strings = {
@@ -221,6 +226,15 @@ const es: Strings = {
   voiceToggle: "Voz",
   readAloud: "Leer en voz alta",
   stopReading: "Parar la lectura",
+  handoffTitle: "Trámite preparado. Ahora continúas tú.",
+  handoffContinue: "Sigue en el portal oficial:",
+  handoffPending: "Lo que tienes que hacer tú:",
+  handoffFailed: "Ahora mismo no se puede preparar este trámite. Pide ayuda al personal del centro.",
+  pendingLabels: {
+    captcha: "escribir el código de seguridad (CAPTCHA)",
+    identificación: "identificarte (Cl@ve o certificado)",
+    confirmar: "revisar y confirmar la cita",
+  },
 };
 
 const va: Strings = {
@@ -342,6 +356,15 @@ const va: Strings = {
   voiceToggle: "Veu",
   readAloud: "Llegir en veu alta",
   stopReading: "Parar la lectura",
+  handoffTitle: "Tràmit preparat. Ara continues tu.",
+  handoffContinue: "Continua al portal oficial:",
+  handoffPending: "El que has de fer tu:",
+  handoffFailed: "Ara mateix no es pot preparar este tràmit. Demana ajuda al personal del centre.",
+  pendingLabels: {
+    captcha: "escriure el codi de seguretat (CAPTCHA)",
+    identificación: "identificar-te (Cl@ve o certificat)",
+    confirmar: "revisar i confirmar la cita",
+  },
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };
