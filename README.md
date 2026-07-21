@@ -32,6 +32,8 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 ✅ **Voz**: pulsar para hablar con indicador de grabación, transcripción visible y confirmación obligatoria antes de usarla, botón de borrar y desactivación desde la cabecera. Ni el audio ni la transcripción se guardan en ningún sitio ([ADR-005](docs/adr/ADR-005-canal-de-voz.md)). La lectura en voz alta usa la síntesis local del navegador, para no enviar el contenido de las cartas a un proveedor externo.
 
+✅ **Proveedor de IA real (opcional)**: el gateway (PRD §10) tiene ya una implementación sobre Claude además del mock. **Seguro por defecto**: sin `ANTHROPIC_API_KEY` funciona con el mock y no sale ningún dato de la máquina. Con clave, la clasificación de intención usa Claude; el envío de imágenes de DNI/SIP y cartas (datos A2) va detrás de un segundo interruptor **apagado por defecto** porque requiere EIPD ([ADR-006](docs/adr/ADR-006-proveedor-ia-real.md)). La voz nunca usa Claude (no hace STT de audio).
+
 🚧 Siguiente: conectores reales con Playwright (fase 3).
 
 ## Estructura
@@ -85,7 +87,7 @@ Sin Redis configurado, la API usa un almacén de sesiones en memoria (solo desar
 ### Tests
 
 ```bash
-cd services/api && .venv/Scripts/python -m pytest -q          # 91 tests
+cd services/api && .venv/Scripts/python -m pytest -q          # 103 tests
 cd services/device-agent && .venv/Scripts/python -m pytest -q # 3 tests
 cd apps/kiosk && npm run build                                # typecheck + build
 ```

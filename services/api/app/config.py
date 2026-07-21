@@ -32,3 +32,27 @@ class Settings:
             if o.strip()
         )
     )
+
+    # --- Gateway de IA (PRD §10) --------------------------------------------
+    # Sin clave, el proveedor es "mock" y no sale ningún dato de la máquina
+    # (regla 12). Con ANTHROPIC_API_KEY presente se activa el proveedor real,
+    # salvo que MODEL_PROVIDER lo fuerce.
+    anthropic_api_key: str | None = field(
+        default_factory=lambda: os.getenv("ANTHROPIC_API_KEY") or None
+    )
+    model_provider: str = field(
+        default_factory=lambda: os.getenv("MODEL_PROVIDER")
+        or ("anthropic" if os.getenv("ANTHROPIC_API_KEY") else "mock")
+    )
+    anthropic_model: str = field(
+        default_factory=lambda: os.getenv("ANTHROPIC_MODEL", "claude-opus-4-8")
+    )
+    # Enviar imágenes de documentos y cartas (datos A2, PRD §13.2) a un
+    # proveedor externo requiere una decisión de arquitectura y EIPD (§10.4).
+    # Por eso va detrás de su propio interruptor y está DESACTIVADO por defecto:
+    # con el proveedor real, la extracción de DNI/SIP y el OCR de cartas siguen
+    # siendo mock hasta que un operador lo habilite explícitamente.
+    allow_external_documents: bool = field(
+        default_factory=lambda: os.getenv("ANTHROPIC_ALLOW_DOCUMENTS", "").strip().lower()
+        in {"1", "true", "yes", "si", "sí"}
+    )

@@ -35,5 +35,6 @@ Reglas prácticas aprendidas:
 - En cartas (`app/letters/`), la IA **solo transcribe**: riesgo, plazos y datos sensibles son reglas deterministas (ADR-004). No mover esa lógica a un modelo. Ante la duda, el análisis escala el riesgo, nunca lo baja.
 - De los datos sensibles se informa del **tipo** ("contiene tu DNI"), jamás del valor. Hay tests que lo fijan.
 - Si tocas `demo.ts`, recuerda que replica el backend para la preview de Vercel: al añadir un endpoint o un trámite hay que actualizarlo también.
+- Gateway de IA (`app/gateway/`): `AnthropicModelGateway` es real pero **el mock es el valor por defecto** y el fallback permanente (regla 12). Sin `ANTHROPIC_API_KEY` no sale nada de la máquina. Los datos A2 (imágenes de DNI/SIP, cartas) van detrás de `ANTHROPIC_ALLOW_DOCUMENTS` (apagado; requiere EIPD, PRD §10.4 y §13.2, ADR-006). La voz nunca usa Claude (no hace STT). El gateway no registra valores de PII. El camino con llamadas reales a Claude no está probado en local (sin clave).
 
 No trabajar en conectores reales (GVA Salud, SITVAL) hasta que las pruebas de privacidad de fase 2 estén completas.

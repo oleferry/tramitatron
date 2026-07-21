@@ -25,6 +25,30 @@ from .sessions.memory import MemorySessionStore
 from .voice import router as voice_router_module
 
 access_logger = logging.getLogger("tramitatron.access")
+gateway_logger = logging.getLogger("tramitatron.gateway")
+
+
+def _build_gateway(settings: Settings, catalog):
+    """Elige el gateway de IA (PRD §10). Mock por defecto; proveedor real solo
+    si hay clave. Sin clave no sale ningún dato de la máquina (regla 12)."""
+    mock = MockModelGateway()
+    if settings.model_provider == "anthropic" and settings.anthropic_api_key:
+        from .gateway.anthropic_gateway import AnthropicModelGateway
+
+        gateway_logger.info(
+            "Gateway: Anthropic (%s); documentos externos: %s",
+            settings.anthropic_model,
+            "ON" if settings.allow_external_documents else "OFF (mock)",
+        )
+        return AnthropicModelGateway(
+            api_key=settings.anthropic_api_key,
+            model=settings.anthropic_model,
+            catalog=catalog,
+            fallback=mock,
+            allow_documents=settings.allow_external_documents,
+        )
+    gateway_logger.info("Gateway: mock (sin proveedor de IA; nada sale de la máquina)")
+    return mock
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -34,7 +58,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.settings = settings
     app.state.catalog = load_catalog(settings.catalog_path)
     app.state.knowledge = KnowledgeStore(settings.knowledge_path)
-    app.state.gateway = MockModelGateway()
+    app.state.gateway = _build_gateway(settings, app.state.catalog)
     app.state.connectors = {"demo.mock": MockConnector()}
 
     if settings.redis_url:
