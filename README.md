@@ -38,9 +38,9 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 El worker está **conectado al kiosco**: el trámite «Demostración de navegación asistida» se dispara desde el tótem, la API llama al worker, este prepara la cita en el portal de pruebas y el kiosco muestra la URL oficial y los pasos que quedan (CAPTCHA, confirmación) para que los haga la persona.
 
-✅ **EPIC 7 iniciada — tests de accesibilidad (TT-701)**: suite Playwright + axe-core que audita WCAG 2.2 AA sobre la app real (contraste en ambos temas, teclado, objetivos táctiles, reflow, idioma), en castellano y valenciano, con job propio en CI. La app pasa sin violaciones.
+✅ **EPIC 7 en curso**: tests de accesibilidad (TT-701) — suite Playwright + axe-core que audita WCAG 2.2 AA sobre la app real (contraste en ambos temas, teclado, objetivos táctiles, reflow, idioma), en castellano y valenciano, con job propio en CI; la app pasa sin violaciones. Y **borrador de threat model** (TT-702) en [`docs/security/threat-model.md`](docs/security/threat-model.md): STRIDE por límite de confianza, con cada mitigación referida al código o al ADR que la fija, para revisión de seguridad/jurídica y como entrada de la EIPD.
 
-🚧 Siguiente: tras la EIPD, habilitar un portal real (GVA, SITVAL); resto de EPIC 7 (threat model, EIPD técnica, pentest, prueba con usuarios).
+🚧 Siguiente: tras la EIPD, habilitar un portal real (GVA, SITVAL); resto de EPIC 7 (EIPD técnica, plan ENS, pentest, prueba con usuarios).
 
 ## Estructura
 
