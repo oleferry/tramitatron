@@ -99,7 +99,7 @@ Límites de confianza:
 | # | Amenaza | Mitigación actual | Riesgo residual |
 |---|---|---|---|
 | S1 | Un tótem falso o MITM se hace pasar por el backend | HTTPS asumido en despliegue; CORS con orígenes restringidos (`main.py`, `CORS_ORIGINS`) | **Medio** — pinning/mTLS y arranque seguro son pendientes de infraestructura (§15.4) |
-| S2 | Un proceso local suplanta al device-agent | El device-agent debe escuchar **solo en localhost** (PRD §17.2); en compose se hace bind a `127.0.0.1` | **Medio** — falta autenticar el device-agent al frontend (deuda conocida) |
+| S2 | Un proceso local suplanta al device-agent | El device-agent debe escuchar **solo en localhost** (PRD §17.2); en compose se hace bind a `127.0.0.1`; **token opcional `X-Device-Token`** en las operaciones (`DEVICE_AGENT_TOKEN`) para que solo el frontend del tótem accione los periféricos | **Bajo-Medio** — el token en el navegador no es secreto perfecto, pero eleva el listón sobre "cualquiera en localhost" |
 | S3 | Suplantación del ciudadano | **Fuera de alcance**: el sistema es anónimo, no autentica a nadie; no automatiza Cl@ve/firma (regla 5) | Bajo por diseño |
 
 ### 4.2 Tampering (manipulación)
@@ -137,7 +137,7 @@ Límites de confianza:
 | D1 | Imagen/audio enormes agotan memoria | Límites de tamaño: 8 MiB documentos/cartas, 4 MiB audio (rechazo 413) | Bajo |
 | D2 | El worker se cuelga en un portal lento | Timeout por preparación en el worker (`WORKER_TIMEOUT_SECONDS`) | Bajo |
 | D3 | Un proveedor de IA caído tumba el flujo | Degradación: la intención cae al mock determinista; documentos/cartas devuelven baja confianza para pedir repetir (ADR-006) | Bajo |
-| D4 | Inundar la API con sesiones | Sin rate limiting hoy | **Medio** — pendiente (recomendación §8) |
+| D4 | Inundar la API con peticiones | **Límite por cliente y ventana** (middleware, `RATE_LIMIT_REQUESTS`): 429 con Retry-After al superarlo | Bajo (por proceso; con varias réplicas conviene llevar el contador a Redis) |
 | D5 | Texto de intención muy largo | Límite de longitud (500 chars, `IntentRequest`) | Bajo |
 
 ### 4.6 Elevation of privilege (elevación)
@@ -226,9 +226,9 @@ verificación es **bloqueante** antes de encenderlo.
 | **Alta** | I4 / L4 — envío de A2 a Anthropic | Completar §10.4 + EIPD **antes** de activar `ANTHROPIC_ALLOW_DOCUMENTS` |
 | **Alta** | I3 — restos en el navegador del tótem (TT-203) | Verificar purga de cachés/almacenamiento/autocompletado del navegador entre sesiones |
 | **Alta** | Infra §15.4 | Documentar y verificar arranque seguro, cifrado, usuario sin privilegios, MDM, secretos en vault |
-| Media | D4 — rate limiting | Añadir límite por IP/sesión en la API |
-| Media | S2 — device-agent sin auth | Autenticar el device-agent al frontend (token local) |
-| Media | Cadena de suministro | SBOM, revisar `npm audit`, escaneo de dependencias en CI |
+| ✅ Hecho | D4 — rate limiting | Middleware de límite por cliente en la API (`RATE_LIMIT_REQUESTS`) |
+| ✅ Hecho | S2 — device-agent sin auth | Token opcional `X-Device-Token` (`DEVICE_AGENT_TOKEN`) |
+| ✅ Hecho | Cadena de suministro | Job `deps` en CI: pip-audit + npm audit `--omit=dev` + SBOM CycloneDX |
 | Media | E4 — sandbox de Playwright | Usuario sin privilegios y seccomp en el contenedor del worker |
 | Baja | R1 — trazabilidad | Confirmar con la parte jurídica que el nivel de log anónimo es suficiente |
 

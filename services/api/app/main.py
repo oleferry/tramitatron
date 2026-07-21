@@ -8,6 +8,7 @@ import logging
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from .catalog import router as catalog_router_module
 from .catalog.loader import load_catalog
@@ -21,6 +22,7 @@ from .gateway.mock import MockModelGateway
 from .knowledge import router as knowledge_router_module
 from .knowledge.store import KnowledgeStore
 from .letters import router as letters_router_module
+from .ratelimit import RateLimiter, client_key
 from .sessions import router as sessions_router_module
 from .sessions.memory import MemorySessionStore
 from .voice import router as voice_router_module
@@ -84,6 +86,24 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    app.state.rate_limiter = RateLimiter(
+        settings.rate_limit_requests, settings.rate_limit_window_seconds
+    )
+
+    @app.middleware("http")
+    async def rate_limit(request: Request, call_next):
+        # El liveness no se limita: debe responder siempre.
+        limiter: RateLimiter = app.state.rate_limiter
+        if request.url.path != "/health":
+            allowed, retry_after = limiter.check(client_key(request))
+            if not allowed:
+                return JSONResponse(
+                    status_code=429,
+                    content={"detail": "Demasiadas peticiones. Inténtalo en un momento."},
+                    headers={"Retry-After": str(int(retry_after) + 1)},
+                )
+        return await call_next(request)
 
     @app.middleware("http")
     async def access_log(request: Request, call_next):

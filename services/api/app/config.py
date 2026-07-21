@@ -63,3 +63,12 @@ class Settings:
     browser_worker_url: str | None = field(
         default_factory=lambda: os.getenv("BROWSER_WORKER_URL") or None
     )
+
+    # Límite de peticiones por cliente y ventana (ENS mp.s.2, threat model D4).
+    # Generoso para un tótem normal; frena una inundación. 0 desactiva el límite.
+    rate_limit_requests: int = field(
+        default_factory=lambda: int(os.getenv("RATE_LIMIT_REQUESTS", "240"))
+    )
+    rate_limit_window_seconds: float = field(
+        default_factory=lambda: float(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60"))
+    )

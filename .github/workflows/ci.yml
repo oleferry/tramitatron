@@ -88,3 +88,37 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Escaneo de dependencias + SBOM (ENS op.pl.3 / mp.sw). Falla si hay
+  # vulnerabilidades conocidas en las dependencias que se despliegan.
+  deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install pip-audit
+      # Auditoría de cada servicio Python (ignora el paquete editable local).
+      - name: pip-audit (api)
+        run: pip install -e ./services/api && pip-audit --skip-editable
+      - name: pip-audit (device-agent)
+        run: pip install -e ./services/device-agent && pip-audit --skip-editable
+      - name: pip-audit (browser-worker)
+        run: pip install -e ./services/browser-worker && pip-audit --skip-editable
+      # Solo dependencias de producción del kiosco (el tooling de dev no se
+      # despliega). Falla en severidad alta o superior.
+      - name: npm audit (kiosk, producción)
+        working-directory: apps/kiosk
+        run: npm ci && npm audit --omit=dev --audit-level=high
+      # SBOM (CycloneDX) del artefacto que se despliega, como evidencia.
+      - name: SBOM del kiosco
+        working-directory: apps/kiosk
+        run: npm sbom --sbom-format=cyclonedx > sbom-kiosk.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: apps/kiosk/sbom-kiosk.cdx.json

@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from app.main import SPOOL_DIR, app
+from app.main import SPOOL_DIR, app, create_app
 
 client = TestClient(app)
 
@@ -26,3 +26,25 @@ def test_capture_returns_synthetic_image():
     assert body["status"] == "simulated"
     assert body["mime_type"] == "image/png"
     assert len(body["image_base64"]) > 0
+
+
+def test_no_token_means_open_in_dev():
+    """Sin token configurado, el agente queda abierto (solo desarrollo)."""
+    assert client.get("/device/health").json()["auth"] == "open"
+
+
+def test_operations_require_token_when_configured():
+    """Con token, accionar un periférico exige la cabecera X-Device-Token."""
+    secured = TestClient(create_app("token-secreto"))
+
+    # El healthcheck sigue abierto (liveness).
+    assert secured.get("/device/health").json()["auth"] == "required"
+
+    # Sin cabecera: 401.
+    assert secured.post("/device/camera/capture").status_code == 401
+    # Con token incorrecto: 401.
+    bad = secured.post("/device/camera/capture", headers={"X-Device-Token": "otro"})
+    assert bad.status_code == 401
+    # Con el token correcto: 200.
+    ok = secured.post("/device/camera/capture", headers={"X-Device-Token": "token-secreto"})
+    assert ok.status_code == 200

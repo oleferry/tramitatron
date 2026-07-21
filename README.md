@@ -40,6 +40,8 @@ El worker está **conectado al kiosco**: el trámite «Demostración de navegaci
 
 ✅ **EPIC 7 en curso**: tests de accesibilidad (TT-701) — suite Playwright + axe-core que audita WCAG 2.2 AA sobre la app real (contraste en ambos temas, teclado, objetivos táctiles, reflow, idioma), en castellano y valenciano, con job propio en CI; la app pasa sin violaciones. **Borrador de threat model** (TT-702) en [`docs/security/threat-model.md`](docs/security/threat-model.md): STRIDE por límite de confianza, cada mitigación referida al código o al ADR que la fija. **Borrador de EIPD técnica** (TT-703) en [`docs/security/eipd-tecnica.md`](docs/security/eipd-tecnica.md): evaluación de impacto (Art. 35 RGPD) con el ciclo de vida del dato, la evaluación de riesgos para los derechos de la persona y las medidas pendientes. Y **borrador de plan de adecuación al ENS** (TT-704) en [`docs/security/plan-ens.md`](docs/security/plan-ens.md): categorización del sistema en las cinco dimensiones (RD 311/2022) y mapeo de las medidas del Anexo II, distinguiendo lo que aporta el código de lo que corresponde a la administración que despliega.
 
+Cerrada la **deuda de código de seguridad** que señalaban esos documentos: límite de peticiones por cliente en la API (429 con Retry-After), token opcional del agente de periféricos (`X-Device-Token`), y job de CI `deps` con escaneo de dependencias (pip-audit + `npm audit --omit=dev`) y SBOM CycloneDX del kiosco.
+
 🚧 Siguiente: tras la EIPD, habilitar un portal real (GVA, SITVAL); pendientes de EPIC 7 con personas (pentest TT-705, prueba con usuarios TT-706).
 
 ## Estructura
@@ -106,8 +108,8 @@ Por defecto el worker usa el driver simulado (httpx contra un portal de pruebas 
 ### Tests
 
 ```bash
-cd services/api && .venv/Scripts/python -m pytest -q          # 110 tests
-cd services/device-agent && .venv/Scripts/python -m pytest -q # 3 tests
+cd services/api && .venv/Scripts/python -m pytest -q          # 115 tests
+cd services/device-agent && .venv/Scripts/python -m pytest -q # 5 tests
 cd services/browser-worker && .venv/Scripts/python -m pytest -q # 10 tests
 cd apps/kiosk && npm run build                                # typecheck + build
 cd apps/kiosk && npm run test:a11y                            # accesibilidad (Playwright + axe)

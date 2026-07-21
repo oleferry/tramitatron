@@ -143,12 +143,14 @@ Lo que **depende de la administración/integrador** (no del código):
 - Contratos de encargado con proveedores y op.nub (op.ext, jurídica).
 - Monitorización y alertas centralizadas (op.mon).
 
-Deuda **del código** a cerrar:
+Deuda **del código** — estado:
 
-- Autenticar el device-agent al frontend (op.acc).
-- Rate limiting en la API (mp.s.2).
-- SBOM y escaneo de dependencias en CI (op.pl.3); revisar `npm audit`.
-- Verificar cifrado en reposo de la sesión si Redis persiste (mp.info.3).
+- ✅ Autenticar el device-agent al frontend (op.acc): token `X-Device-Token`.
+- ✅ Rate limiting en la API (mp.s.2): middleware por cliente y ventana.
+- ✅ SBOM y escaneo de dependencias en CI (op.pl.3): job `deps` con pip-audit,
+  `npm audit --omit=dev` y SBOM CycloneDX del kiosco.
+- ⏳ Verificar cifrado en reposo de la sesión si Redis persiste (mp.info.3):
+  depende de la configuración de Redis en el despliegue (infra).
 
 ---
 
