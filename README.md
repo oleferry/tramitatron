@@ -38,7 +38,9 @@ Ese documento es la **fuente única de verdad** del proyecto. Léelo íntegramen
 
 El worker está **conectado al kiosco**: el trámite «Demostración de navegación asistida» se dispara desde el tótem, la API llama al worker, este prepara la cita en el portal de pruebas y el kiosco muestra la URL oficial y los pasos que quedan (CAPTCHA, confirmación) para que los haga la persona.
 
-🚧 Siguiente: tras la EIPD, habilitar un portal real (GVA, SITVAL).
+✅ **EPIC 7 iniciada — tests de accesibilidad (TT-701)**: suite Playwright + axe-core que audita WCAG 2.2 AA sobre la app real (contraste en ambos temas, teclado, objetivos táctiles, reflow, idioma), en castellano y valenciano, con job propio en CI. La app pasa sin violaciones.
+
+🚧 Siguiente: tras la EIPD, habilitar un portal real (GVA, SITVAL); resto de EPIC 7 (threat model, EIPD técnica, pentest, prueba con usuarios).
 
 ## Estructura
 
@@ -108,7 +110,10 @@ cd services/api && .venv/Scripts/python -m pytest -q          # 110 tests
 cd services/device-agent && .venv/Scripts/python -m pytest -q # 3 tests
 cd services/browser-worker && .venv/Scripts/python -m pytest -q # 10 tests
 cd apps/kiosk && npm run build                                # typecheck + build
+cd apps/kiosk && npm run test:a11y                            # accesibilidad (Playwright + axe)
 ```
+
+Los **tests de accesibilidad** (TT-701) ejecutan [axe-core](https://github.com/dequelabs/axe-core) sobre la app real en Chromium y comprueban WCAG 2.2 AA / EN 301 549 (PRD §14.5): contraste en tema normal y de alto contraste, operabilidad por teclado, tamaño de los objetivos táctiles, ausencia de scroll horizontal con la letra grande (reflow) y el idioma declarado, en castellano y valenciano. Requieren el navegador de Playwright: `npx playwright install chromium`.
 
 La suite incluye pruebas de **aislamiento entre sesiones** (E2E-05 del PRD) y de **privacidad**: valores centinela de PII no pueden aparecer en logs ni en respuestas de listado.
 

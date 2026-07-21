@@ -25,6 +25,11 @@ build/
 coverage/
 *.tsbuildinfo
 
+# Playwright (tests de accesibilidad)
+test-results/
+playwright-report/
+.playwright/
+
 # Docker / datos locales
 *.local.yml
 data/

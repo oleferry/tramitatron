@@ -28,6 +28,7 @@ La estructura de monorepo está definida en PRD §9.3 (`apps/`, `services/`, `pa
 Hito 1 ✅, **fase 2 completa** (servicio documental efímero, RAG extractivo, cartas TT-404, voz) y **fase 3 iniciada**: worker de navegación asistida (`services/browser-worker`, TT-502/505) con Playwright, verificado en local. Catálogo de 14 trámites (los de conector automático en `coming_soon`, los informativos activos). Siguiente: conectar el worker al kiosco (pantalla de handoff) y, tras la EIPD, un portal real.
 
 Reglas prácticas aprendidas:
+- Accesibilidad (TT-701, EPIC 7): `apps/kiosk/tests/a11y.spec.ts` corre axe-core (Playwright) sobre la app real y exige WCAG 2.2 AA (PRD §14.5). Cualquier cambio de UI o de la paleta debe mantener `npm run test:a11y` en verde, en tema normal y alto contraste. Necesita `npx playwright install chromium`; hay job de CI `a11y`.
 - La API carga catálogo y conocimiento **al arrancar**; tras editar YAMLs de `connectors/catalog/` o reingerir `knowledge/`, reinicia la API (`--reload` solo vigila `.py`).
 - Para añadir un trámite: YAML en `connectors/catalog/` + icono en `apps/kiosk/src/icons.ts` (prefijos específicos antes) + regla de intención en `app/gateway/mock.py` + fuente en `knowledge/sources.yaml` + `python -m app.knowledge.ingest` + tests.
 - La extracción de documentos, el OCR de cartas y la transcripción de voz son sintéticos (mock): ignoran la imagen y el audio. No prometer lectura real de DNI, OCR ni reconocimiento de voz hasta conectar proveedores.
