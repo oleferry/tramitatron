@@ -103,3 +103,7 @@ class Settings:
     totem_offline_after_seconds: float = field(
         default_factory=lambda: float(os.getenv("TOTEM_OFFLINE_AFTER_SECONDS", "180"))
     )
+
+    # Identificador de la release desplegada (TT-604): normalmente el SHA de git,
+    # inyectado por el pipeline. Opcional; complementa a APP_VERSION.
+    release: str | None = field(default_factory=lambda: os.getenv("RELEASE_SHA") or None)

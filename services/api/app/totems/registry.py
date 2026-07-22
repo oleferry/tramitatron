@@ -47,9 +47,11 @@ class TotemRegistry:
         declared: list[DeclaredTotem] | None = None,
         now: Callable[[], datetime] | None = None,
         offline_after_seconds: float = 180.0,
+        current_version: str | None = None,
     ) -> None:
         self._now = now or _default_clock
         self._offline_after = offline_after_seconds
+        self._current_version = current_version
         self._declared = {t.id: t for t in (declared or [])}
         self._live: dict[str, _Live] = {}
         self._lock = threading.Lock()
@@ -80,17 +82,22 @@ class TotemRegistry:
         # el operador espera verlo, así que lo mostramos como offline.
         if live is None and declared is not None:
             state = "offline"
+        version = live.version if live else None
+        outdated = bool(
+            version and self._current_version and version != self._current_version
+        )
         return TotemStatus(
             id=totem_id,
             label=declared.label if declared else None,
             municipality=declared.municipality if declared else None,
             state=state,
-            version=live.version if live else None,
+            version=version,
             peripherals=live.peripherals if live else None,
             last_seen=live.last_seen.isoformat(timespec="seconds") if live else None,
             seconds_since_seen=round(age, 1) if age is not None else None,
             declared=declared is not None,
             auto_registered=declared is None,
+            outdated=outdated,
         )
 
     def _ids(self) -> list[str]:
@@ -115,6 +122,7 @@ class TotemRegistry:
         return FleetView(
             generated_at=now.isoformat(timespec="seconds"),
             offline_after_seconds=self._offline_after,
+            current_version=self._current_version,
             summary=FleetSummary(total=len(statuses), **counts),
             totems=statuses,
         )

@@ -325,6 +325,11 @@
       ].filter(([, n]) => n > 0)
        .map(([st, n]) => `<span class="pill st-${st}">${n} ${STATE_LABELS[st]}</span>`).join("");
 
+      if (f.current_version) {
+        $("fleetPills").innerHTML +=
+          `<span class="pill st-unknown" title="Versión desplegada de referencia">v${esc(f.current_version)}</span>`;
+      }
+
       if (!f.totems.length) {
         $("fleetTable").innerHTML = '<p class="empty">No hay tótems declarados ni reportando.</p>';
         return;
@@ -336,7 +341,7 @@
             <tr>
               <td class="pid">${esc(t.id)}${t.auto_registered ? " ·auto" : ""}</td>
               <td>${esc(t.label || t.municipality || "—")}</td>
-              <td>${esc(t.version || "—")}</td>
+              <td>${esc(t.version || "—")}${t.outdated ? ' <span class="badge sev-S3" title="Versión distinta de la desplegada">desactualizado</span>' : ""}</td>
               <td><span class="badge st-${t.state}">${STATE_LABELS[t.state]}</span></td>
               <td>${fmtSince(t.seconds_since_seen)}</td>
               <td>${peripheralsHtml(t.peripherals)}</td>

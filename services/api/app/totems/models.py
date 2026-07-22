@@ -50,6 +50,8 @@ class TotemStatus(BaseModel):
     declared: bool
     # Reportó un latido sin estar declarado (alta automática).
     auto_registered: bool
+    # Reportó una versión distinta de la desplegada actual (TT-604).
+    outdated: bool
 
 
 class FleetSummary(BaseModel):
@@ -63,5 +65,7 @@ class FleetSummary(BaseModel):
 class FleetView(BaseModel):
     generated_at: str
     offline_after_seconds: float
+    # Versión desplegada de referencia (TT-604): los tótems con otra van desactualizados.
+    current_version: str | None
     summary: FleetSummary
     totems: list[TotemStatus]

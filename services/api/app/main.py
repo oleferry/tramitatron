@@ -72,9 +72,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # Métricas agregadas del piloto (TT-602). Solo contadores; sin identidad.
     app.state.metrics = MetricsRegistry()
     # Registro de tótems (TT-601): parque declarado + salud en vivo por latido.
+    # La versión desplegada actual (TT-604) sirve para marcar tótems atrasados.
     app.state.totems = TotemRegistry(
         load_totems(settings.totems_path),
         offline_after_seconds=settings.totem_offline_after_seconds,
+        current_version=APP_VERSION,
     )
     # Incidencias y soporte (TT-603): error técnico redactado, sin PII.
     app.state.incidents = IncidentRegistry()
@@ -131,6 +133,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/health", tags=["ops"])
     def health() -> dict[str, str]:
         return {"status": "ok", "service": "tramitatron-api", "version": APP_VERSION}
+
+    @app.get("/api/version", tags=["ops"])
+    def version() -> dict:
+        # Versión desplegada e inventario cargado (TT-604). Público: no es
+        # sensible y ayuda al soporte a saber qué corre en cada sitio.
+        return {
+            "service": "tramitatron-api",
+            "version": APP_VERSION,
+            "release": settings.release,
+            "catalog_procedures": len(app.state.catalog),
+            "knowledge_sources": len(app.state.knowledge.sources),
+        }
 
     app.include_router(sessions_router_module.router)
     app.include_router(documents_router_module.router)

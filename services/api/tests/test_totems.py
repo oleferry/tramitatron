@@ -77,6 +77,26 @@ def test_low_paper_is_degraded():
     assert reg.get("cyl-burgos-01").state == "degraded"
 
 
+def test_version_skew_marks_totem_outdated():
+    # La versión desplegada es 0.2.0; un tótem que reporta 0.1.0 va atrasado (TT-604).
+    reg = TotemRegistry(
+        _declared(), now=_Clock(datetime(2026, 7, 22, tzinfo=UTC)), current_version="0.2.0"
+    )
+    reg.heartbeat("cyl-valladolid-01", "0.1.0", Peripherals())
+    reg.heartbeat("cyl-burgos-01", "0.2.0", Peripherals())
+    by_id = {t.id: t for t in reg.snapshot().totems}
+    assert by_id["cyl-valladolid-01"].outdated is True
+    assert by_id["cyl-burgos-01"].outdated is False
+    # Sin versión de referencia, nadie se marca atrasado.
+    assert reg.snapshot().current_version == "0.2.0"
+
+
+def test_totem_without_reference_version_is_never_outdated():
+    reg = TotemRegistry(_declared(), now=_Clock(datetime(2026, 7, 22, tzinfo=UTC)))
+    reg.heartbeat("cyl-valladolid-01", "9.9.9", Peripherals())
+    assert reg.get("cyl-valladolid-01").outdated is False
+
+
 def test_auto_registration_of_undeclared_totem():
     reg = TotemRegistry(_declared(), now=_Clock(datetime(2026, 7, 22, tzinfo=UTC)))
     reg.heartbeat("pop-up-feria-01", "0.1.0", Peripherals())
