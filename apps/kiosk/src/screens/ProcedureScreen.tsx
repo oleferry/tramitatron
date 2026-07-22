@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { ExecutionResult, Procedure } from "../api";
 import { api } from "../api";
@@ -28,8 +28,13 @@ export function ProcedureScreen({
   const [printed, setPrinted] = useState(false);
   const [handoffPrinted, setHandoffPrinted] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [executing, setExecuting] = useState(false);
   const [documentConfirmed, setDocumentConfirmed] = useState(false);
   const [intakeDone, setIntakeDone] = useState(false);
+  // Cerrojo SÍNCRONO: el estado de React se actualiza de forma diferida, así que
+  // dos toques en el mismo ciclo verían ambos executing=false. El ref se lee y
+  // escribe al instante y sí bloquea la segunda ejecución.
+  const executingRef = useRef(false);
 
   useEffect(() => {
     api
@@ -42,10 +47,20 @@ export function ProcedureScreen({
   if (!procedure) return <p className="subtitle">{strings.loading}</p>;
 
   const execute = async () => {
+    // Guarda contra doble ejecución: el conector del worker recorre un portal
+    // de varias páginas y tarda; sin esto, un segundo toque lanzaría otra
+    // ejecución (otra incidencia y otra métrica) sobre la misma sesión. El ref
+    // corta ya en el mismo tick; el estado solo pinta el "Preparando…".
+    if (executingRef.current) return;
+    executingRef.current = true;
+    setExecuting(true);
     try {
       setResult(await api.executeProcedure(procedureId, sessionId));
     } catch {
       setFailed(true);
+    } finally {
+      executingRef.current = false;
+      setExecuting(false);
     }
   };
 
@@ -180,7 +195,16 @@ export function ProcedureScreen({
             />
           );
         }
-        // 3) Todo recogido: lanzar el conector.
+        // 3) Todo recogido: lanzar el conector. Mientras prepara (el worker
+        // puede tardar) el botón se sustituye por un estado anunciable, de modo
+        // que no se puede volver a pulsar y el lector de pantalla oye el avance.
+        if (executing) {
+          return (
+            <p className="subtitle" role="status">
+              ⏳ {strings.executing}
+            </p>
+          );
+        }
         return (
           <button className="btn-primary btn-xl" onClick={() => void execute()}>
             {strings.confirmAndRun}

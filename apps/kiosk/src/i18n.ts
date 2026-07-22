@@ -33,6 +33,7 @@ type Strings = {
   assistedModeNote: string;
   informationModeNote: string;
   confirmAndRun: string;
+  executing: string;
   executionDone: string;
   receiptReference: string;
   printReceipt: string;
@@ -157,6 +158,7 @@ const es: Strings = {
   informationModeNote:
     "Este es un trámite informativo: aquí te explicamos cómo hacerlo, y se completa en la web oficial o presencialmente.",
   confirmAndRun: "Confirmar y hacer la demostración",
+  executing: "Preparando el trámite… no cierres esta pantalla.",
   executionDone: "Demostración completada",
   receiptReference: "Referencia",
   printReceipt: "Imprimir justificante",
@@ -304,6 +306,7 @@ const va: Strings = {
   informationModeNote:
     "Este és un tràmit informatiu: ací t'expliquem com fer-lo, i es completa en la web oficial o presencialment.",
   confirmAndRun: "Confirmar i fer la demostració",
+  executing: "Preparant el tràmit… no tanques esta pantalla.",
   executionDone: "Demostració completada",
   receiptReference: "Referència",
   printReceipt: "Imprimir justificant",
