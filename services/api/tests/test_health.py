@@ -16,3 +16,6 @@ def test_version_reports_deployed_version_and_inventory(client):
     # El inventario refleja lo cargado al arrancar.
     assert body["catalog_procedures"] >= 1
     assert body["knowledge_sources"] >= 1
+    # Postura de datos: por defecto, mock y sin documentos a la IA (opción 3 off).
+    assert body["ai_provider"] == "mock"
+    assert body["documents_to_ai"] is False

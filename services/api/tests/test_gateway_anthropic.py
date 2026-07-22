@@ -181,6 +181,54 @@ def test_documents_extracted_when_enabled(catalog):
     assert result.fields[0].value == "12345678Z"
 
 
+def test_document_request_shape_matches_current_api(catalog):
+    """Fija la FORMA de la llamada a Claude (visión + structured outputs), para
+    detectar si la API deriva antes de activar la opción 3 con una clave real."""
+    captured: dict = {}
+
+    def capture(kw):
+        captured.update(kw)
+        return _json_resp(
+            {"fields": [{"field": "dni_number", "value": "X", "confidence": 0.9}]}
+        )
+
+    gw = _gw(catalog, capture, allow_documents=True)
+    asyncio.run(gw.extract_document(DocumentRequest(document_class="dni", image_base64=IMG)))
+
+    assert captured["model"] == "claude-opus-4-8"
+    # Structured outputs: forma vigente output_config.format.json_schema.
+    fmt = captured["output_config"]["format"]
+    assert fmt["type"] == "json_schema"
+    assert "fields" in fmt["schema"]["properties"]
+    # Bloque de imagen base64 con la forma vigente de visión.
+    content = captured["messages"][0]["content"]
+    image = next(b for b in content if b.get("type") == "image")
+    assert image["source"]["type"] == "base64"
+    assert image["source"]["media_type"] == "image/png"
+    assert image["source"]["data"] == IMG
+    # Se piden exactamente los campos del DNI, ni más ni menos.
+    assert "dni_number" in captured["system"]
+    assert "full_name" in captured["system"]
+
+
+def test_letter_request_is_transcription_only(catalog):
+    """La carta se TRANSCRIBE (ADR-004): el prompt no pide resumir ni valorar."""
+    captured: dict = {}
+
+    def capture(kw):
+        captured.update(kw)
+        return _json_resp({"text": "x", "organismo": None, "confidence": 0.8})
+
+    gw = _gw(catalog, capture, allow_documents=True)
+    asyncio.run(gw.explain_official_content(ExplainRequest(image_base64=IMG)))
+
+    system = captured["system"].lower()
+    assert "transcribe" in system
+    assert "no resumas" in system  # ni resumen ni interpretación
+    content = captured["messages"][0]["content"]
+    assert any(b.get("type") == "image" for b in content)
+
+
 def test_documents_degrade_to_empty_on_error(catalog):
     """Si la imagen no se lee, campos vacíos con confianza 0 (pedir repetir),
     nunca datos sintéticos presentados como reales."""

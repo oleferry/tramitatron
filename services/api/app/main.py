@@ -144,6 +144,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "release": settings.release,
             "catalog_procedures": len(app.state.catalog),
             "knowledge_sources": len(app.state.knowledge.sources),
+            # Postura de datos (transparencia, PRD §13.2). `ai_provider` es
+            # "mock" salvo que haya clave; `documents_to_ai` indica si las
+            # imágenes de DNI/SIP y cartas (datos A2) salen a la IA (opción 3,
+            # tras EIPD). Apagado por defecto.
+            "ai_provider": settings.model_provider,
+            "documents_to_ai": settings.allow_external_documents,
         }
 
     app.include_router(sessions_router_module.router)
