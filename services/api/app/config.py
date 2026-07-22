@@ -13,6 +13,11 @@ _DEFAULT_CATALOG = _REPO_ROOT / "connectors" / "catalog"
 _DEFAULT_KNOWLEDGE = _REPO_ROOT / "knowledge"
 
 
+def _anthropic_key() -> str | None:
+    """Clave de Anthropic: nombre propio del proyecto primero, estándar después."""
+    return os.getenv("TRAMITATRON_ANTHROPIC_API_KEY") or os.getenv("ANTHROPIC_API_KEY") or None
+
+
 @dataclass(frozen=True)
 class Settings:
     session_ttl_seconds: float = field(
@@ -35,14 +40,16 @@ class Settings:
 
     # --- Gateway de IA (PRD §10) --------------------------------------------
     # Sin clave, el proveedor es "mock" y no sale ningún dato de la máquina
-    # (regla 12). Con ANTHROPIC_API_KEY presente se activa el proveedor real,
-    # salvo que MODEL_PROVIDER lo fuerce.
-    anthropic_api_key: str | None = field(
-        default_factory=lambda: os.getenv("ANTHROPIC_API_KEY") or None
-    )
+    # (regla 12). Con la clave presente se activa el proveedor real, salvo que
+    # MODEL_PROVIDER lo fuerce. La clave se lee de TRAMITATRON_ANTHROPIC_API_KEY
+    # (nombre propio del proyecto, para no mezclar claves de varios proyectos) y,
+    # como respaldo, de ANTHROPIC_API_KEY. Ojo: separar el gasto por proyecto se
+    # consigue usando una CLAVE distinta por proyecto (Anthropic factura por
+    # clave), no por el nombre de la variable.
+    anthropic_api_key: str | None = field(default_factory=lambda: _anthropic_key())
     model_provider: str = field(
         default_factory=lambda: os.getenv("MODEL_PROVIDER")
-        or ("anthropic" if os.getenv("ANTHROPIC_API_KEY") else "mock")
+        or ("anthropic" if _anthropic_key() else "mock")
     )
     anthropic_model: str = field(
         default_factory=lambda: os.getenv("ANTHROPIC_MODEL", "claude-opus-4-8")

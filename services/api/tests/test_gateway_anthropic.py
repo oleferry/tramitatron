@@ -82,6 +82,27 @@ def test_default_gateway_is_mock(catalog):
     assert isinstance(_build_gateway(Settings(), catalog), MockModelGateway)
 
 
+def test_key_read_from_project_specific_var(monkeypatch):
+    """La clave se lee del nombre propio del proyecto, con prioridad."""
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.setenv("TRAMITATRON_ANTHROPIC_API_KEY", "sk-proyecto")
+    settings = Settings()
+    assert settings.anthropic_api_key == "sk-proyecto"
+    assert settings.model_provider == "anthropic"
+
+
+def test_project_var_takes_precedence_over_standard(monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-estandar")
+    monkeypatch.setenv("TRAMITATRON_ANTHROPIC_API_KEY", "sk-proyecto")
+    assert Settings().anthropic_api_key == "sk-proyecto"
+
+
+def test_standard_var_still_works_as_fallback(monkeypatch):
+    monkeypatch.delenv("TRAMITATRON_ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-estandar")
+    assert Settings().anthropic_api_key == "sk-estandar"
+
+
 # --- Intención (texto) -----------------------------------------------------
 
 
