@@ -114,35 +114,57 @@ export function DocumentStep({
         />
       )}
 
-      {phase === "scanning" && <p className="subtitle">{strings.scanning}</p>}
+      {phase === "scanning" && (
+        <p className="subtitle" role="status">
+          {strings.scanning}
+        </p>
+      )}
 
       {phase === "review" && extraction && (
         <div className="doc-step">
           <p className="subtitle">
             <strong>{strings.reviewTitle}.</strong> {strings.reviewIntro}
           </p>
-          {extraction.fields.map((f) => (
-            <label key={f.field} className="field-row">
-              <span className="field-label">{strings.fieldLabels[f.field] ?? f.field}</span>
-              <input
-                value={values[f.field] ?? ""}
-                onChange={(e) => setValues({ ...values, [f.field]: e.target.value })}
-                className={
-                  fieldStatus[f.field] === "INVALID"
-                    ? "field-invalid"
-                    : fieldStatus[f.field] === "REVIEW_REQUIRED"
-                      ? "field-review"
-                      : ""
-                }
-              />
-              {fieldStatus[f.field] === "REVIEW_REQUIRED" && (
-                <span className="field-hint field-hint-review">⚠️ {strings.fieldReview}</span>
-              )}
-              {fieldStatus[f.field] === "INVALID" && (
-                <span className="field-hint field-hint-invalid">✖ {strings.fieldInvalid}</span>
-              )}
-            </label>
-          ))}
+          {extraction.fields.map((f) => {
+            const status = fieldStatus[f.field];
+            const hasHint = status === "REVIEW_REQUIRED" || status === "INVALID";
+            const hintId = `dochint-${f.field}`;
+            return (
+              <label key={f.field} className="field-row">
+                <span className="field-label">{strings.fieldLabels[f.field] ?? f.field}</span>
+                <input
+                  value={values[f.field] ?? ""}
+                  onChange={(e) => setValues({ ...values, [f.field]: e.target.value })}
+                  className={
+                    status === "INVALID"
+                      ? "field-invalid"
+                      : status === "REVIEW_REQUIRED"
+                        ? "field-review"
+                        : ""
+                  }
+                  // El lector de pantalla anuncia el estado del campo y por qué;
+                  // no basta con el color (WCAG 3.3.1/4.1.2).
+                  aria-invalid={status === "INVALID"}
+                  aria-describedby={hasHint ? hintId : undefined}
+                  // Tótem COMPARTIDO: sin autocompletar ni guardar datos sensibles
+                  // en el navegador; nada del anterior debe reaparecer.
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                />
+                {status === "REVIEW_REQUIRED" && (
+                  <span id={hintId} className="field-hint field-hint-review">
+                    ⚠️ {strings.fieldReview}
+                  </span>
+                )}
+                {status === "INVALID" && (
+                  <span id={hintId} className="field-hint field-hint-invalid">
+                    ✖ {strings.fieldInvalid}
+                  </span>
+                )}
+              </label>
+            );
+          })}
           <div className="doc-step-buttons">
             <button className="btn-primary" onClick={() => void confirm()}>
               {strings.confirmData}

@@ -115,7 +115,7 @@ export function VoiceInput({
       )}
 
       {phase === "transcribing" && (
-        <p className="subtitle" aria-live="polite">
+        <p className="subtitle" role="status">
           {strings.voiceTranscribing}
         </p>
       )}

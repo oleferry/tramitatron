@@ -6,6 +6,14 @@ import { t } from "../i18n";
 // Captura con la cámara del dispositivo (getUserMedia). El vídeo nunca sale
 // del navegador: solo la foto que el usuario decide usar se envía a la API.
 // Si no hay cámara o se deniega el permiso, el paso ofrece subir una foto.
+
+// Restricciones de la cámara en UN solo sitio: cámara trasera y resolución alta
+// para leer un documento. Se usan al arrancar y al reiniciar, sin duplicarlas.
+const CAMERA_CONSTRAINTS: MediaStreamConstraints = {
+  video: { facingMode: "environment", width: { ideal: 1600 } },
+  audio: false,
+};
+
 export function CameraCapture({
   lang,
   onCaptured,
@@ -30,10 +38,7 @@ export function CameraCapture({
     let cancelled = false;
     (async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment", width: { ideal: 1600 } },
-          audio: false,
-        });
+        const stream = await navigator.mediaDevices.getUserMedia(CAMERA_CONSTRAINTS);
         if (cancelled) {
           stream.getTracks().forEach((track) => track.stop());
           return;
@@ -72,10 +77,7 @@ export function CameraCapture({
     // Reinicia el efecto volviendo a montar el stream.
     (async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment", width: { ideal: 1600 } },
-          audio: false,
-        });
+        const stream = await navigator.mediaDevices.getUserMedia(CAMERA_CONSTRAINTS);
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -115,7 +117,11 @@ export function CameraCapture({
         {phase === "preview" && photo && <img src={photo} alt={strings.scanTitle} />}
         <div className="camera-frame" aria-hidden="true" />
       </div>
-      {phase === "starting" && <p className="subtitle">{strings.cameraStarting}</p>}
+      {phase === "starting" && (
+        <p className="subtitle" role="status">
+          {strings.cameraStarting}
+        </p>
+      )}
       <div className="doc-step-buttons">
         {phase === "live" && (
           <button className="btn-primary btn-xl" onClick={takePhoto}>

@@ -106,14 +106,20 @@ export function LetterScreen({
         />
       )}
 
-      {phase === "reading" && <p className="subtitle">{strings.letterReading}</p>}
+      {phase === "reading" && (
+        <p className="subtitle" role="status">
+          {strings.letterReading}
+        </p>
+      )}
 
       {phase === "error" && <div className="banner banner-info">{strings.apiError}</div>}
 
       {phase === "result" && analysis && (
         <>
           {analysis.explanation.recommend_human && (
-            <div className="banner banner-warning">
+            // role="alert": el aviso de acudir a una persona (p. ej. una carta de
+            // embargo) se anuncia de inmediato al lector de pantalla.
+            <div className="banner banner-warning" role="alert">
               <strong>⚠️ {strings.letterHighRisk}</strong>
               {analysis.explanation.human_advice && <p>{analysis.explanation.human_advice}</p>}
             </div>
