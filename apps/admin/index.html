@@ -38,6 +38,7 @@
     p { margin: 0; }
     :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
     .wrap { width: min(1180px, 100% - 2.5rem); margin-inline: auto; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
     header.top {
       background: var(--navy); color: var(--white);
@@ -102,6 +103,9 @@
     .bar-fill.lang { background: var(--navy); }
     .bar-row .num { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
 
+    /* Las tablas anchas hacen scroll DENTRO de su contenedor: la página nunca
+       se desplaza en horizontal, ni en móvil. */
+    #procTable, #fleetTable, #incTable { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: .84rem; }
     th, td { text-align: right; padding: .45rem .5rem; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
     th:first-child, td:first-child { text-align: left; }
@@ -255,13 +259,25 @@
     }
     function pct(v) { return v == null ? "—" : v.toFixed(1) + "%"; }
 
+    // Formato español: 1.234 en vez de 1234; fechas legibles en vez de ISO crudo.
+    const NF = new Intl.NumberFormat("es-ES");
+    const num = (n) => (typeof n === "number" ? NF.format(n) : n);
+    function fmtTime(iso) {
+      const d = new Date(iso);
+      return isNaN(d.getTime())
+        ? iso
+        : d.toLocaleString("es-ES", {
+            day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
+          });
+    }
+
     function bars(el, entries, cls) {
       const max = Math.max(1, ...entries.map((e) => e[1]));
       el.innerHTML = entries.map(([label, value]) => `
         <div class="bar-row">
           <span class="lbl" title="${esc(label)}">${esc(label)}</span>
           <span class="bar-track"><span class="bar-fill ${cls || ""}" style="width:${(100 * value / max).toFixed(1)}%"></span></span>
-          <span class="num">${value}</span>
+          <span class="num">${num(value)}</span>
         </div>`).join("");
     }
 
@@ -272,10 +288,10 @@
       const u = d.usage, p = d.procedures, s = d.satisfaction;
 
       $("cards").innerHTML = `
-        <div class="card accent"><div class="k">Sesiones</div><div class="v">${u.sessions}</div></div>
+        <div class="card accent"><div class="k">Sesiones</div><div class="v">${num(u.sessions)}</div></div>
         <div class="card good"><div class="k">Tasa de éxito</div><div class="v">${pct(p.success_rate_pct)}</div></div>
         <div class="card info"><div class="k">Derivaciones</div><div class="v">${pct(p.handoff_rate_pct)}</div></div>
-        <div class="card warn"><div class="k">Satisfacción media</div><div class="v">${s.average == null ? "—" : s.average.toFixed(2)}<small> /5 · ${s.votes} votos</small></div></div>
+        <div class="card warn"><div class="k">Satisfacción media</div><div class="v">${s.average == null ? "—" : s.average.toFixed(2)}<small> /5 · ${num(s.votes)} votos</small></div></div>
       `;
 
       bars($("byHour"), Object.entries(u.by_hour).map(([h, n]) => [h.padStart(2, "0") + "h", n]), "hour");
@@ -292,15 +308,12 @@
       } else {
         $("procTable").innerHTML = `
           <table>
-            <thead><tr><th>Trámite</th><th>Iniciados</th><th>Completados</th><th>Derivados</th><th>Fallos</th><th>Abandonos</th></tr></thead>
+            <thead><tr><th scope="col">Trámite</th><th scope="col">Iniciados</th><th scope="col">Completados</th><th scope="col">Derivados</th><th scope="col">Fallos</th><th scope="col">Abandonos</th></tr></thead>
             <tbody>${rows.map(([pid, c]) => `
-              <tr><td class="pid">${esc(pid)}</td><td>${c.started}</td><td>${c.completed}</td><td>${c.handoff}</td><td>${c.failed}</td><td>${c.abandoned}</td></tr>`).join("")}
+              <tr><td class="pid">${esc(pid)}</td><td>${num(c.started)}</td><td>${num(c.completed)}</td><td>${num(c.handoff)}</td><td>${num(c.failed)}</td><td>${num(c.abandoned)}</td></tr>`).join("")}
             </tbody>
           </table>`;
       }
-
-      $("status").className = "status";
-      $("status").textContent = `Actualizado ${new Date().toLocaleTimeString()} · datos desde ${d.since}`;
     }
 
     const STATE_LABELS = { online: "En línea", degraded: "Degradado", offline: "Sin conexión", unknown: "Sin datos" };
@@ -315,7 +328,8 @@
     function peripheralsHtml(p) {
       if (!p) return '<span class="peri">—</span>';
       const cell = (label, v) => `<b>${label}</b> ${v === "down" ? '<span class="down">✕</span>' : v === "ok" ? "✓" : "?"}`;
-      return `<span class="peri">${cell("Cám", p.camera)} · ${cell("Esc", p.scanner)} · ${cell("Imp", p.printer)} · <b>Papel</b> ${p.paper_level}%</span>`;
+      const lowPaper = p.paper_level < 10 ? ' class="down"' : "";
+      return `<span class="peri">${cell("Cám", p.camera)} · ${cell("Esc", p.scanner)} · ${cell("Imp", p.printer)} · <b>Papel</b> <span${lowPaper}>${num(p.paper_level)}%</span></span>`;
     }
 
     function renderTotems(f) {
@@ -336,7 +350,7 @@
       }
       $("fleetTable").innerHTML = `
         <table>
-          <thead><tr><th>Tótem</th><th>Ubicación</th><th>Versión</th><th>Estado</th><th>Últ. latido</th><th>Periféricos</th></tr></thead>
+          <thead><tr><th scope="col">Tótem</th><th scope="col">Ubicación</th><th scope="col">Versión</th><th scope="col">Estado</th><th scope="col">Últ. latido</th><th scope="col">Periféricos</th></tr></thead>
           <tbody>${f.totems.map((t) => `
             <tr>
               <td class="pid">${esc(t.id)}${t.auto_registered ? " ·auto" : ""}</td>
@@ -366,7 +380,7 @@
       }
       $("incTable").innerHTML = `
         <table>
-          <thead><tr><th>Código</th><th>Componente</th><th>Sev.</th><th>Error (redactado)</th><th>Tótem</th><th>Estado</th><th></th></tr></thead>
+          <thead><tr><th scope="col">Código</th><th scope="col">Componente</th><th scope="col">Sev.</th><th scope="col">Error (redactado)</th><th scope="col">Tótem</th><th scope="col">Estado</th><th scope="col"><span class="sr-only">Acción</span></th></tr></thead>
           <tbody>${d.incidents.map((i) => `
             <tr>
               <td class="pid">${esc(i.code)}</td>
@@ -398,21 +412,29 @@
       }
     }
 
-    async function load() {
+    async function load(silent) {
       const base = apiBase();
       localStorage.setItem("tt_api", $("api").value.trim());
       localStorage.setItem("tt_token", $("token").value.trim());
-      $("status").className = "status";
-      $("status").textContent = "Cargando…";
+      // El auto-refresco no muestra "Cargando…" en cada tick: no parpadea.
+      if (!silent) {
+        $("status").className = "status";
+        $("status").textContent = "Cargando…";
+      }
       try {
         const res = await fetch(base + "/api/metrics/summary", { headers: authHeaders() });
         if (res.status === 401) throw new Error("El panel está protegido: introduce el token.");
         if (!res.ok) throw new Error("La API respondió " + res.status + ".");
-        render(await res.json());
+        const summary = await res.json();
+        render(summary);
         const fleetRes = await fetch(base + "/api/totems", { headers: authHeaders() });
         if (fleetRes.ok) renderTotems(await fleetRes.json());
         const incRes = await fetch(base + "/api/incidents", { headers: authHeaders() });
         if (incRes.ok) renderIncidents(await incRes.json());
+        const auto = $("auto").checked ? " · auto" : "";
+        $("status").className = "status";
+        $("status").textContent =
+          `Actualizado ${fmtTime(new Date().toISOString())} · datos desde ${fmtTime(summary.since)}${auto}`;
       } catch (e) {
         $("status").className = "status err";
         const hint = e instanceof TypeError
@@ -444,7 +466,7 @@
     $("csv").addEventListener("click", downloadCsv);
     $("auto").addEventListener("change", (e) => {
       clearInterval(autoTimer);
-      if (e.target.checked) { autoTimer = setInterval(load, 30000); load(); }
+      if (e.target.checked) { autoTimer = setInterval(() => load(true), 30000); load(); }
     });
     [$("api"), $("token")].forEach((el) =>
       el.addEventListener("keydown", (e) => { if (e.key === "Enter") load(); }));
