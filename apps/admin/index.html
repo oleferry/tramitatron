@@ -109,6 +109,17 @@
     tbody tr:hover { background: #f4f7fb; }
     .pid { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .78rem; }
 
+    .fleet-pills { display: inline-flex; gap: .4rem; margin-left: .5rem; vertical-align: middle; }
+    .pill { font-size: .72rem; font-weight: 700; padding: .12rem .5rem; border-radius: 999px; }
+    .badge { font-size: .74rem; font-weight: 700; padding: .12rem .55rem; border-radius: 999px; white-space: nowrap; }
+    .st-online { background: #e3f4ea; color: #1f6f43; }
+    .st-degraded { background: #fdf3d8; color: #8a6100; }
+    .st-offline { background: #fbe3e1; color: #b3261e; }
+    .st-unknown { background: #eceff3; color: #566878; }
+    .peri { font-size: .74rem; color: var(--muted); }
+    .peri b { font-weight: 700; }
+    .peri .down { color: #b3261e; }
+
     .privacy {
       margin-top: 1.5rem; font-size: .8rem; color: var(--muted);
       background: #eef4ef; border: 1px solid #cfe3d6; border-radius: var(--r-s);
@@ -188,6 +199,15 @@
         </p>
       </div>
 
+      <div class="panel">
+        <h2>Salud de tótems <span id="fleetPills" class="fleet-pills"></span></h2>
+        <div id="fleetTable"></div>
+        <p class="empty" style="margin-top:.6rem">
+          Datos operativos del dispositivo (no personales). El estado se deriva del último latido:
+          «offline» si no llega en la ventana configurada; «degradado» si un periférico falla o el papel está bajo.
+        </p>
+      </div>
+
       <p class="privacy">
         <strong>Observabilidad sin vigilancia.</strong> Todo lo que se muestra son contadores agregados.
         No hay identificadores de sesión, ni textos, imágenes o audio, ni forma de seguir a una persona
@@ -263,6 +283,48 @@
       $("status").textContent = `Actualizado ${new Date().toLocaleTimeString()} · datos desde ${d.since}`;
     }
 
+    const STATE_LABELS = { online: "En línea", degraded: "Degradado", offline: "Sin conexión", unknown: "Sin datos" };
+
+    function fmtSince(secs) {
+      if (secs == null) return "—";
+      if (secs < 60) return Math.round(secs) + " s";
+      if (secs < 3600) return Math.round(secs / 60) + " min";
+      return Math.round(secs / 3600) + " h";
+    }
+
+    function peripheralsHtml(p) {
+      if (!p) return '<span class="peri">—</span>';
+      const cell = (label, v) => `<b>${label}</b> ${v === "down" ? '<span class="down">✕</span>' : v === "ok" ? "✓" : "?"}`;
+      return `<span class="peri">${cell("Cám", p.camera)} · ${cell("Esc", p.scanner)} · ${cell("Imp", p.printer)} · <b>Papel</b> ${p.paper_level}%</span>`;
+    }
+
+    function renderTotems(f) {
+      const s = f.summary;
+      $("fleetPills").innerHTML = [
+        ["online", s.online], ["degraded", s.degraded], ["offline", s.offline], ["unknown", s.unknown],
+      ].filter(([, n]) => n > 0)
+       .map(([st, n]) => `<span class="pill st-${st}">${n} ${STATE_LABELS[st]}</span>`).join("");
+
+      if (!f.totems.length) {
+        $("fleetTable").innerHTML = '<p class="empty">No hay tótems declarados ni reportando.</p>';
+        return;
+      }
+      $("fleetTable").innerHTML = `
+        <table>
+          <thead><tr><th>Tótem</th><th>Ubicación</th><th>Versión</th><th>Estado</th><th>Últ. latido</th><th>Periféricos</th></tr></thead>
+          <tbody>${f.totems.map((t) => `
+            <tr>
+              <td class="pid">${esc(t.id)}${t.auto_registered ? " ·auto" : ""}</td>
+              <td>${esc(t.label || t.municipality || "—")}</td>
+              <td>${esc(t.version || "—")}</td>
+              <td><span class="badge st-${t.state}">${STATE_LABELS[t.state]}</span></td>
+              <td>${fmtSince(t.seconds_since_seen)}</td>
+              <td>${peripheralsHtml(t.peripherals)}</td>
+            </tr>`).join("")}
+          </tbody>
+        </table>`;
+    }
+
     async function load() {
       const base = apiBase();
       localStorage.setItem("tt_api", $("api").value.trim());
@@ -274,6 +336,8 @@
         if (res.status === 401) throw new Error("El panel está protegido: introduce el token.");
         if (!res.ok) throw new Error("La API respondió " + res.status + ".");
         render(await res.json());
+        const fleetRes = await fetch(base + "/api/totems", { headers: authHeaders() });
+        if (fleetRes.ok) renderTotems(await fleetRes.json());
       } catch (e) {
         $("status").className = "status err";
         const hint = e instanceof TypeError

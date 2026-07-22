@@ -7,10 +7,15 @@ from pathlib import Path
 # Raíz del repo: services/api/app/config.py -> tres niveles arriba. En la
 # imagen Docker el árbol es más corto (/srv/app); ahí las rutas llegan por
 # variables de entorno y el fallback solo evita un IndexError en el import.
+# Versión desplegada de la API (PRD §18.1 Operación, TT-604). Una constante por
+# ahora; en su día vendrá del pipeline de release.
+APP_VERSION = "0.1.0"
+
 _HERE = Path(__file__).resolve()
 _REPO_ROOT = _HERE.parents[3] if len(_HERE.parents) > 3 else _HERE.parents[-1]
 _DEFAULT_CATALOG = _REPO_ROOT / "connectors" / "catalog"
 _DEFAULT_KNOWLEDGE = _REPO_ROOT / "knowledge"
+_DEFAULT_TOTEMS = _REPO_ROOT / "infra" / "totems.yaml"
 
 
 def _anthropic_key() -> str | None:
@@ -80,8 +85,21 @@ class Settings:
         default_factory=lambda: float(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60"))
     )
 
-    # Token del panel institucional (TT-602). Si se define, la LECTURA del cuadro
-    # de mando exige `Authorization: Bearer <token>`. Sin definir, el panel queda
-    # abierto (demo local); no contiene PII, solo agregados. La ingesta de
-    # eventos del kiosco es siempre pública (el kiosco es anónimo).
+    # Token del panel institucional (TT-602/TT-601). Si se define, la LECTURA del
+    # cuadro de mando (KPIs y salud de tótems) exige `Authorization: Bearer
+    # <token>`. Sin definir, el panel queda abierto (demo local); no contiene PII,
+    # solo agregados y datos operativos del dispositivo. La ingesta de eventos del
+    # kiosco y los latidos de tótem son siempre públicos.
     admin_token: str | None = field(default_factory=lambda: os.getenv("ADMIN_TOKEN") or None)
+
+    # Registro de tótems (TT-601). Parque declarado (opcional) y política de
+    # latido. `TOTEM_TOKEN`, si se define, exige `X-Totem-Token` en el latido
+    # (como el device-agent). La ventana sin latido tras la que un tótem se marca
+    # «offline» (por defecto 180 s: tres latidos de 60 s perdidos).
+    totems_path: Path = field(
+        default_factory=lambda: Path(os.getenv("TOTEMS_PATH", str(_DEFAULT_TOTEMS)))
+    )
+    totem_token: str | None = field(default_factory=lambda: os.getenv("TOTEM_TOKEN") or None)
+    totem_offline_after_seconds: float = field(
+        default_factory=lambda: float(os.getenv("TOTEM_OFFLINE_AFTER_SECONDS", "180"))
+    )

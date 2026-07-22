@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { api, metrics } from "./api";
+import { api, metrics, telemetry } from "./api";
 import type { Lang } from "./i18n";
 import { t } from "./i18n";
 import { stopSpeaking } from "./speech";
@@ -43,6 +43,14 @@ export function App() {
     const onDemo = () => setDemoMode(true);
     window.addEventListener("tramitatron:demo", onDemo);
     return () => window.removeEventListener("tramitatron:demo", onDemo);
+  }, []);
+
+  // Latido del tótem (TT-601): al arrancar y cada 60 s, sin depender de que
+  // haya una sesión abierta. A fuego y olvido; sin backend no hace nada.
+  useEffect(() => {
+    void telemetry.heartbeat();
+    const id = window.setInterval(() => void telemetry.heartbeat(), 60_000);
+    return () => window.clearInterval(id);
   }, []);
 
   const warnTimer = useRef<number | undefined>(undefined);

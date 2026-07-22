@@ -16,8 +16,8 @@ import io
 
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 
+from ..adminauth import require_admin as _require_admin
 from ..catalog.models import Procedure
-from ..config import Settings
 from .models import FeedbackRequest, ProcedureEventRequest
 from .registry import MetricsRegistry
 
@@ -26,16 +26,6 @@ router = APIRouter(prefix="/api/metrics", tags=["metrics"])
 
 def _registry(request: Request) -> MetricsRegistry:
     return request.app.state.metrics
-
-
-def _require_admin(request: Request, authorization: str | None) -> None:
-    settings: Settings = request.app.state.settings
-    token = settings.admin_token
-    if not token:
-        return  # Sin token configurado: abierto (demo local).
-    expected = f"Bearer {token}"
-    if authorization != expected:
-        raise HTTPException(status_code=401, detail="Panel restringido")
 
 
 @router.post("/event", status_code=204)

@@ -1,0 +1,21 @@
+# Parque de tótems declarado (TT-601, EPIC 6).
+#
+# Datos OPERATIVOS del dispositivo, NO personales (PRD §9.2, clasificación A0):
+# identificador, municipio y ubicación. Aquí no hay nada de la ciudadanía.
+#
+# Este fichero es OPCIONAL. Sirve para que el panel muestre el parque esperado y
+# marque como «offline» los tótems que aún no reportan. La salud real llega por
+# latido (POST /api/totems/{id}/heartbeat). Un tótem que reporta sin estar aquí
+# se da de alta solo (auto_registered).
+#
+# Piloto Castilla y León (ejemplo). Ajustar a los tótems reales del despliegue.
+totems:
+  - id: cyl-valladolid-01
+    label: "Valladolid — Oficina de Atención al Ciudadano"
+    municipality: "Valladolid"
+  - id: cyl-burgos-01
+    label: "Burgos — Servicios Sociales"
+    municipality: "Burgos"
+  - id: cyl-leon-01
+    label: "León — Registro General"
+    municipality: "León"

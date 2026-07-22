@@ -243,6 +243,56 @@ export const metrics = {
   feedback: (rating: number) => fireAndForget("/api/metrics/feedback", { rating }),
 };
 
+// Latido del tótem (TT-601). Este kiosco ES un tótem del parque: reporta su
+// versión y la salud de sus periféricos (leída del device-agent, si está) para
+// que el panel institucional muestre el estado del dispositivo. Son datos del
+// DISPOSITIVO, no de la persona. Va a fuego y olvido, como las métricas.
+const TOTEM_ID = import.meta.env.VITE_TOTEM_ID || "totem-dev";
+const APP_VERSION = import.meta.env.VITE_APP_VERSION || "dev";
+
+type PeripheralState = "ok" | "down" | "unknown";
+type Peripherals = {
+  camera: PeripheralState;
+  scanner: PeripheralState;
+  printer: PeripheralState;
+  paper_level: number;
+};
+
+async function readPeripherals(): Promise<Peripherals> {
+  const unknown: Peripherals = {
+    camera: "unknown",
+    scanner: "unknown",
+    printer: "unknown",
+    paper_level: 100,
+  };
+  try {
+    const res = await fetch("/device/health");
+    if (!res.ok) return unknown;
+    const h = await res.json();
+    // El device-agent simulador informa "simulated"; se trata como operativo.
+    const map = (v: unknown): PeripheralState =>
+      v === "ok" || v === "simulated" ? "ok" : v ? "down" : "unknown";
+    return {
+      camera: map(h.camera),
+      scanner: map(h.scanner),
+      printer: map(h.printer),
+      paper_level: typeof h.paper_level === "number" ? h.paper_level : 100,
+    };
+  } catch {
+    return unknown;
+  }
+}
+
+export const telemetry = {
+  async heartbeat(): Promise<void> {
+    const peripherals = await readPeripherals();
+    fireAndForget(`/api/totems/${encodeURIComponent(TOTEM_ID)}/heartbeat`, {
+      version: APP_VERSION,
+      peripherals,
+    });
+  },
+};
+
 // Cada llamada intenta el backend real; si no hay red o no existe backend
 // (preview estática), pasa al modo demostración y lo señala en la interfaz.
 function withDemoFallback<A extends unknown[], R>(

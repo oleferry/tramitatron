@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse
 
 from .catalog import router as catalog_router_module
 from .catalog.loader import load_catalog
-from .config import Settings
+from .config import APP_VERSION, Settings
 from .connectors import router as connectors_router_module
 from .connectors.mock import MockConnector
 from .connectors.worker import WorkerConnector
@@ -27,6 +27,9 @@ from .metrics import router as metrics_router_module
 from .ratelimit import RateLimiter, client_key
 from .sessions import router as sessions_router_module
 from .sessions.memory import MemorySessionStore
+from .totems import TotemRegistry
+from .totems import router as totems_router_module
+from .totems.loader import load_totems
 from .voice import router as voice_router_module
 
 access_logger = logging.getLogger("tramitatron.access")
@@ -59,13 +62,18 @@ def _build_gateway(settings: Settings, catalog):
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings()
 
-    app = FastAPI(title="Tramitatrón API", version="0.1.0")
+    app = FastAPI(title="Tramitatrón API", version=APP_VERSION)
     app.state.settings = settings
     app.state.catalog = load_catalog(settings.catalog_path)
     app.state.knowledge = KnowledgeStore(settings.knowledge_path)
     app.state.gateway = _build_gateway(settings, app.state.catalog)
     # Métricas agregadas del piloto (TT-602). Solo contadores; sin identidad.
     app.state.metrics = MetricsRegistry()
+    # Registro de tótems (TT-601): parque declarado + salud en vivo por latido.
+    app.state.totems = TotemRegistry(
+        load_totems(settings.totems_path),
+        offline_after_seconds=settings.totem_offline_after_seconds,
+    )
     app.state.connectors = {
         "demo.mock": MockConnector(),
         # Trámite de demostración por navegación asistida (worker Playwright).
@@ -118,7 +126,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/health", tags=["ops"])
     def health() -> dict[str, str]:
-        return {"status": "ok", "service": "tramitatron-api", "version": "0.1.0"}
+        return {"status": "ok", "service": "tramitatron-api", "version": APP_VERSION}
 
     app.include_router(sessions_router_module.router)
     app.include_router(documents_router_module.router)
@@ -129,6 +137,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(knowledge_router_module.router)
     app.include_router(connectors_router_module.router)
     app.include_router(metrics_router_module.router)
+    app.include_router(totems_router_module.router)
     return app
 
 
