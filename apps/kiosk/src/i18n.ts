@@ -114,6 +114,9 @@ type Strings = {
   qrTitle: string;
   qrInstruction: string;
   qrLabel: string;
+  printHandoff: string;
+  handoffNoPhone: string;
+  qrNoData: string;
 };
 
 const es: Strings = {
@@ -254,6 +257,9 @@ const es: Strings = {
   qrInstruction:
     "Escanea este código con la cámara de tu móvil para terminar con tu identificación (Cl@ve o certificado) y confirmar.",
   qrLabel: "Código QR para continuar el trámite en tu móvil",
+  printHandoff: "Imprimir para llevar",
+  handoffNoPhone: "¿No llevas móvil? Imprime el enlace y los pasos para terminarlo en casa.",
+  qrNoData: "El código y el enlace no contienen tus datos personales, solo lo que has elegido.",
 };
 
 const va: Strings = {
@@ -394,6 +400,9 @@ const va: Strings = {
   qrInstruction:
     "Escaneja este codi amb la càmera del teu mòbil per acabar amb la teua identificació (Cl@ve o certificat) i confirmar.",
   qrLabel: "Codi QR per continuar el tràmit al teu mòbil",
+  printHandoff: "Imprimir per emportar",
+  handoffNoPhone: "No portes mòbil? Imprimix l'enllaç i els passos per acabar-ho a casa.",
+  qrNoData: "El codi i l'enllaç no contenen les teues dades personals, només el que has triat.",
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

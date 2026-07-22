@@ -996,6 +996,17 @@ button:focus-visible {
   margin: 0 0 0.4rem;
 }
 
+.handoff-privacy {
+  font-size: 0.85em;
+  color: var(--color-accent);
+}
+
+.handoff-print {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-line, #dbe2ea);
+}
+
 /* Código de incidencia anónimo en la pantalla de fallo (TT-603). */
 .incident-code {
   margin-top: 0.5rem;

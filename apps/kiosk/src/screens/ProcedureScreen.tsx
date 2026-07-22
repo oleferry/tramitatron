@@ -26,6 +26,7 @@ export function ProcedureScreen({
   const [procedure, setProcedure] = useState<Procedure | null>(null);
   const [result, setResult] = useState<ExecutionResult | null>(null);
   const [printed, setPrinted] = useState(false);
+  const [handoffPrinted, setHandoffPrinted] = useState(false);
   const [failed, setFailed] = useState(false);
   const [documentConfirmed, setDocumentConfirmed] = useState(false);
   const [intakeDone, setIntakeDone] = useState(false);
@@ -62,6 +63,31 @@ export function ProcedureScreen({
       // La impresora simulada puede no estar arrancada; no es un error de sesión.
       setPrinted(false);
       setFailed(true);
+    }
+  };
+
+  // Respaldo en papel de la cesión (TT-502): quien no lleve móvil se lleva el
+  // enlace oficial y los pasos pendientes para terminarlo en casa. Nunca se
+  // imprimen datos personales: la URL solo lleva las selecciones del trámite.
+  const printHandoff = async () => {
+    if (!result?.receipt) return;
+    const pending = (result.receipt.pending ?? "")
+      .split(", ")
+      .filter(Boolean)
+      .map((step) => `- ${strings.pendingLabels[step] ?? step}`);
+    try {
+      await api.printReceipt([
+        strings.appName,
+        procedure.name[lang],
+        strings.handoffContinue,
+        result.receipt.url ?? "",
+        "",
+        strings.handoffPending,
+        ...pending,
+      ]);
+      setHandoffPrinted(true);
+    } catch {
+      setHandoffPrinted(false);
     }
   };
 
@@ -196,6 +222,7 @@ export function ProcedureScreen({
                 <p className="handoff-url">
                   {strings.handoffContinue} <span>{result.receipt.url}</span>
                 </p>
+                <p className="handoff-privacy">🔒 {strings.qrNoData}</p>
               </div>
             </div>
           )}
@@ -208,6 +235,18 @@ export function ProcedureScreen({
                 ))}
               </ul>
             </>
+          )}
+          {result.receipt.url && (
+            <div className="handoff-print">
+              <p className="subtitle">{strings.handoffNoPhone}</p>
+              {!handoffPrinted ? (
+                <button className="btn-secondary" onClick={() => void printHandoff()}>
+                  🖨️ {strings.printHandoff}
+                </button>
+              ) : (
+                <p style={{ margin: 0 }}>{strings.printed}</p>
+              )}
+            </div>
           )}
           {voiceEnabled && (
             <ReadAloudButton
