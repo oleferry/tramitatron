@@ -13,10 +13,21 @@ export type CatalogItem = {
   execution_mode: "information" | "assisted" | "integrated" | "referral";
 };
 
+export type IntakeOption = { value: string; label: LocalizedText };
+export type IntakeField = {
+  key: string;
+  label: LocalizedText;
+  type: "select" | "text";
+  options: IntakeOption[];
+};
+
 export type Procedure = CatalogItem & {
   official_sources: string[];
   requirements: LocalizedText[];
   required_fields: string[];
+  // Datos NO sensibles que el kiosco pide antes de ejecutar (para el prefill
+  // del worker). Vacío u omitido en la mayoría de trámites.
+  intake?: IntakeField[];
   confirmation_required: boolean;
 };
 
@@ -150,6 +161,13 @@ const realApi = {
     request<SessionInfo>(`/api/session/${sessionId}/extend`, { method: "POST" }),
   endSession: (sessionId: string) =>
     request<void>(`/api/session/${sessionId}`, { method: "DELETE" }),
+  // Guarda un dato NO sensible de la sesión (intake: servicio, oficina, fecha…).
+  // Los valores nunca vuelven en listados ni se registran en logs (servidor).
+  setSessionData: (sessionId: string, key: string, value: string) =>
+    request<void>(`/api/session/${sessionId}/data`, {
+      method: "PUT",
+      body: JSON.stringify({ key, value }),
+    }),
   getCatalog: () => request<CatalogItem[]>("/api/catalog"),
   getProcedure: (id: string) => request<Procedure>(`/api/catalog/${id}`),
   classifyIntent: (text: string, language: Lang) =>
@@ -319,6 +337,7 @@ export const api: typeof realApi = {
   createSession: withDemoFallback(realApi.createSession, demoApi.createSession),
   extendSession: withDemoFallback(realApi.extendSession, demoApi.extendSession),
   endSession: withDemoFallback(realApi.endSession, demoApi.endSession),
+  setSessionData: withDemoFallback(realApi.setSessionData, demoApi.setSessionData),
   getCatalog: withDemoFallback(realApi.getCatalog, demoApi.getCatalog),
   getProcedure: withDemoFallback(realApi.getProcedure, demoApi.getProcedure),
   classifyIntent: withDemoFallback(realApi.classifyIntent, demoApi.classifyIntent),

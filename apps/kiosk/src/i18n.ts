@@ -109,6 +109,11 @@ type Strings = {
   feedbackThanks: string;
   feedbackStarLabel: string;
   incidentCode: string;
+  intakeProgress: string;
+  intakeNext: string;
+  qrTitle: string;
+  qrInstruction: string;
+  qrLabel: string;
 };
 
 const es: Strings = {
@@ -243,6 +248,12 @@ const es: Strings = {
   feedbackThanks: "¡Gracias por tu valoración!",
   feedbackStarLabel: "Puntuar con {n} de 5",
   incidentCode: "Código de incidencia",
+  intakeProgress: "Paso {n} de {total}",
+  intakeNext: "Siguiente",
+  qrTitle: "Termina en tu móvil",
+  qrInstruction:
+    "Escanea este código con la cámara de tu móvil para terminar con tu identificación (Cl@ve o certificado) y confirmar.",
+  qrLabel: "Código QR para continuar el trámite en tu móvil",
 };
 
 const va: Strings = {
@@ -377,6 +388,12 @@ const va: Strings = {
   feedbackThanks: "Gràcies per la teua valoració!",
   feedbackStarLabel: "Puntuar amb {n} de 5",
   incidentCode: "Codi d'incidència",
+  intakeProgress: "Pas {n} de {total}",
+  intakeNext: "Següent",
+  qrTitle: "Acaba al teu mòbil",
+  qrInstruction:
+    "Escaneja este codi amb la càmera del teu mòbil per acabar amb la teua identificació (Cl@ve o certificat) i confirmar.",
+  qrLabel: "Codi QR per continuar el tràmit al teu mòbil",
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

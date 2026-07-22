@@ -80,6 +80,53 @@ const PROCEDURES: Procedure[] = [
       },
     ],
     required_fields: [],
+    intake: [
+      {
+        key: "service",
+        type: "select",
+        label: { es: "¿Qué necesitas hacer?", "ca-valencia": "Què necessites fer?" },
+        options: [
+          { value: "renovacion-dni", label: { es: "Renovar el DNI", "ca-valencia": "Renovar el DNI" } },
+          {
+            value: "primera-inscripcion",
+            label: { es: "Primera inscripción", "ca-valencia": "Primera inscripció" },
+          },
+        ],
+      },
+      {
+        key: "office",
+        type: "select",
+        label: { es: "¿En qué oficina?", "ca-valencia": "En quina oficina?" },
+        options: [
+          {
+            value: "valladolid-centro",
+            label: { es: "Valladolid — Centro", "ca-valencia": "Valladolid — Centre" },
+          },
+          {
+            value: "burgos-gamonal",
+            label: { es: "Burgos — Gamonal", "ca-valencia": "Burgos — Gamonal" },
+          },
+        ],
+      },
+      {
+        key: "date",
+        type: "select",
+        label: { es: "¿Qué día?", "ca-valencia": "Quin dia?" },
+        options: [
+          { value: "2026-09-01", label: { es: "1 de septiembre", "ca-valencia": "1 de setembre" } },
+          { value: "2026-09-02", label: { es: "2 de septiembre", "ca-valencia": "2 de setembre" } },
+        ],
+      },
+      {
+        key: "time",
+        type: "select",
+        label: { es: "¿A qué hora?", "ca-valencia": "A quina hora?" },
+        options: [
+          { value: "09:00", label: { es: "09:00", "ca-valencia": "09:00" } },
+          { value: "10:30", label: { es: "10:30", "ca-valencia": "10:30" } },
+        ],
+      },
+    ],
     confirmation_required: true,
   },
   {
@@ -589,6 +636,10 @@ export const demoApi = {
   }),
 
   endSession: async (): Promise<void> => undefined,
+
+  // En modo demo no hay servidor: guardar un dato de sesión no hace nada
+  // (el handoff simulado no depende de ellos).
+  setSessionData: async (): Promise<void> => undefined,
 
   getCatalog: async (): Promise<CatalogItem[]> =>
     PROCEDURES.map(({ id, name, description, status, execution_mode }) => ({

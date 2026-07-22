@@ -7,6 +7,8 @@ import { t } from "../i18n";
 import { procedureIcon } from "../icons";
 import { AskPanel } from "./AskPanel";
 import { DocumentStep } from "./DocumentStep";
+import { IntakeStep } from "./IntakeStep";
+import { QrCode } from "./QrCode";
 import { ReadAloudButton } from "./ReadAloudButton";
 
 export function ProcedureScreen({
@@ -26,6 +28,7 @@ export function ProcedureScreen({
   const [printed, setPrinted] = useState(false);
   const [failed, setFailed] = useState(false);
   const [documentConfirmed, setDocumentConfirmed] = useState(false);
+  const [intakeDone, setIntakeDone] = useState(false);
 
   useEffect(() => {
     api
@@ -122,26 +125,42 @@ export function ProcedureScreen({
         <p className="subtitle">{strings.informationModeNote}</p>
       )}
 
-      {procedure.status === "available" &&
-        procedure.execution_mode !== "information" &&
-        procedure.required_fields.length > 0 &&
-        !result && (
-        <DocumentStep
-          lang={lang}
-          sessionId={sessionId}
-          documentClass={procedure.required_fields.includes("sip_number") ? "sip_card" : "dni"}
-          onConfirmed={() => setDocumentConfirmed(true)}
-        />
-      )}
+      {(() => {
+        const intake = procedure.intake ?? [];
+        const runnable = procedure.status === "available" && procedure.execution_mode !== "information";
+        if (!runnable || result) return null;
 
-      {procedure.status === "available" &&
-        procedure.execution_mode !== "information" &&
-        !result &&
-        (procedure.required_fields.length === 0 || documentConfirmed) && (
+        // 1) Datos NO sensibles (servicio, oficina, fecha…) para el prefill.
+        if (intake.length > 0 && !intakeDone) {
+          return (
+            <IntakeStep
+              lang={lang}
+              sessionId={sessionId}
+              fields={intake}
+              onComplete={() => setIntakeDone(true)}
+            />
+          );
+        }
+        // 2) Documento (DNI/SIP) con revisión y confirmación, si hace falta.
+        if (procedure.required_fields.length > 0 && !documentConfirmed) {
+          return (
+            <DocumentStep
+              lang={lang}
+              sessionId={sessionId}
+              documentClass={
+                procedure.required_fields.includes("sip_number") ? "sip_card" : "dni"
+              }
+              onConfirmed={() => setDocumentConfirmed(true)}
+            />
+          );
+        }
+        // 3) Todo recogido: lanzar el conector.
+        return (
           <button className="btn-primary btn-xl" onClick={() => void execute()}>
             {strings.confirmAndRun}
           </button>
-        )}
+        );
+      })()}
 
       {result?.status === "completed" && result.receipt && (
         <div className="banner banner-success">
@@ -167,9 +186,18 @@ export function ProcedureScreen({
             <strong>{strings.handoffTitle}</strong>
           </p>
           {result.receipt.url && (
-            <p className="handoff-url">
-              {strings.handoffContinue} <span>{result.receipt.url}</span>
-            </p>
+            <div className="handoff-qr">
+              <QrCode value={result.receipt.url} label={strings.qrLabel} />
+              <div className="handoff-qr-text">
+                <p>
+                  <strong>{strings.qrTitle}</strong>
+                </p>
+                <p>{strings.qrInstruction}</p>
+                <p className="handoff-url">
+                  {strings.handoffContinue} <span>{result.receipt.url}</span>
+                </p>
+              </div>
+            </div>
           )}
           {result.receipt.pending && (
             <>
@@ -186,11 +214,14 @@ export function ProcedureScreen({
               lang={lang}
               text={[
                 strings.handoffTitle,
+                result.receipt.url ? strings.qrInstruction : "",
                 strings.handoffPending,
                 ...(result.receipt.pending ?? "")
                   .split(", ")
                   .map((step) => strings.pendingLabels[step] ?? step),
-              ].join(". ")}
+              ]
+                .filter(Boolean)
+                .join(". ")}
             />
           )}
         </div>

@@ -57,6 +57,26 @@ def test_automated_connectors_stay_coming_soon(client):
         assert body["captcha_policy"] == "user_only", pid
 
 
+def test_worker_procedure_exposes_intake_fields(client):
+    """El trámite del worker declara los datos NO sensibles que pide el kiosco
+    para el prefill (servicio, oficina, fecha, hora), con opciones bilingües."""
+    body = client.get("/api/catalog/demo.worker.appointment").json()
+    keys = [f["key"] for f in body["intake"]]
+    assert keys == ["service", "office", "date", "time"]
+    service = body["intake"][0]
+    assert service["type"] == "select"
+    assert service["label"]["es"]
+    assert service["label"]["ca-valencia"]
+    assert {o["value"] for o in service["options"]} == {"renovacion-dni", "primera-inscripcion"}
+    # Datos sensibles NO van en intake.
+    assert all(f["key"] not in {"dni_number", "sip_number"} for f in body["intake"])
+
+
+def test_most_procedures_have_no_intake(client):
+    body = client.get("/api/catalog/mjusticia.antecedentes-penales").json()
+    assert body["intake"] == []
+
+
 def test_unknown_procedure_404(client):
     assert client.get("/api/catalog/no.existe").status_code == 404
 
