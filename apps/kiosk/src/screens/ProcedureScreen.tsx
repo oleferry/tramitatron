@@ -197,7 +197,14 @@ export function ProcedureScreen({
       )}
 
       {result?.status === "failed" && (
-        <div className="banner banner-info">{result.message ?? strings.handoffFailed}</div>
+        <div className="banner banner-info">
+          {result.message ?? strings.handoffFailed}
+          {result.incident_code && (
+            <div className="incident-code">
+              {strings.incidentCode}: <strong>{result.incident_code}</strong>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

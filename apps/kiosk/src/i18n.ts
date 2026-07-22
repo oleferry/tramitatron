@@ -108,6 +108,7 @@ type Strings = {
   feedbackQuestion: string;
   feedbackThanks: string;
   feedbackStarLabel: string;
+  incidentCode: string;
 };
 
 const es: Strings = {
@@ -241,6 +242,7 @@ const es: Strings = {
   feedbackQuestion: "¿Cómo de fácil te ha resultado? (opcional)",
   feedbackThanks: "¡Gracias por tu valoración!",
   feedbackStarLabel: "Puntuar con {n} de 5",
+  incidentCode: "Código de incidencia",
 };
 
 const va: Strings = {
@@ -374,6 +376,7 @@ const va: Strings = {
   feedbackQuestion: "Com de fàcil t'ha resultat? (opcional)",
   feedbackThanks: "Gràcies per la teua valoració!",
   feedbackStarLabel: "Puntuar amb {n} de 5",
+  incidentCode: "Codi d'incidència",
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

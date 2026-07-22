@@ -13,6 +13,10 @@ class ExecutionResult(BaseModel):
     status: Literal["completed", "failed", "user_handoff"]
     receipt: dict[str, str] | None = None
     message: str | None = None
+    # Código de incidencia anónimo (TT-603, PRD §5): al fallar un trámite, el
+    # servidor abre una incidencia y devuelve su código para que el kiosco lo
+    # muestre y el ciudadano pueda citarlo en soporte.
+    incident_code: str | None = None
 
 
 class HealthcheckResult(BaseModel):

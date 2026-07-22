@@ -66,4 +66,16 @@ async def execute_procedure(
     if event:
         request.app.state.metrics.record_procedure(procedure_id, event)
 
+    # Un trámite que falla es una incidencia S3 (PRD §19.2: «un trámite no
+    # funciona → desactivar conector y derivar»). Se abre una y se devuelve su
+    # código anónimo para que el kiosco lo muestre. El mensaje se redacta.
+    if result.status == "failed":
+        incident = request.app.state.incidents.open(
+            component="connector",
+            connector=procedure.connector.package,
+            severity="S3",
+            technical_error=result.message or f"Fallo del conector en {procedure_id}",
+        )
+        result = result.model_copy(update={"incident_code": incident.code})
+
     return result

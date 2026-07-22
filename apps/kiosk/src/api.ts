@@ -39,6 +39,9 @@ export type ExecutionResult = {
   status: "completed" | "failed" | "user_handoff";
   receipt: Record<string, string> | null;
   message: string | null;
+  // Código de incidencia anónimo (TT-603): presente cuando el trámite falla,
+  // para que el ciudadano pueda citarlo en soporte.
+  incident_code?: string | null;
 };
 
 export type DocumentClass = "dni" | "sip_card";

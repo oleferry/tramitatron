@@ -120,6 +120,17 @@
     .peri b { font-weight: 700; }
     .peri .down { color: #b3261e; }
 
+    .sev-S1 { background: #fbe3e1; color: #b3261e; }
+    .sev-S2 { background: #fde7d8; color: #9a4a00; }
+    .sev-S3 { background: #fdf3d8; color: #8a6100; }
+    .sev-S4 { background: #eceff3; color: #566878; }
+    .st-open { background: #fbe3e1; color: #b3261e; }
+    .st-acknowledged { background: #fdf3d8; color: #8a6100; }
+    .st-resolved { background: #e3f4ea; color: #1f6f43; }
+    .err-text { font-size: .78rem; color: var(--ink); max-width: 28ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .btn-resolve { font-size: .74rem; padding: .3rem .6rem; background: var(--white); color: var(--green); border-color: #cfe3d6; }
+    .btn-resolve:hover { background: #eef4ef; }
+
     .privacy {
       margin-top: 1.5rem; font-size: .8rem; color: var(--muted);
       background: #eef4ef; border: 1px solid #cfe3d6; border-radius: var(--r-s);
@@ -205,6 +216,15 @@
         <p class="empty" style="margin-top:.6rem">
           Datos operativos del dispositivo (no personales). El estado se deriva del último latido:
           «offline» si no llega en la ventana configurada; «degradado» si un periférico falla o el papel está bajo.
+        </p>
+      </div>
+
+      <div class="panel">
+        <h2>Incidencias <span id="incPills" class="fleet-pills"></span></h2>
+        <div id="incTable"></div>
+        <p class="empty" style="margin-top:.6rem">
+          El error técnico se guarda REDACTADO: sin datos personales (PRD §13.4). El código es anónimo;
+          es el mismo que se le muestra al ciudadano para citar en soporte.
         </p>
       </div>
 
@@ -325,6 +345,54 @@
         </table>`;
     }
 
+    const SEV_ORDER = ["S1", "S2", "S3", "S4"];
+    const ST_LABELS = { open: "Abierta", acknowledged: "En curso", resolved: "Resuelta" };
+
+    function renderIncidents(d) {
+      const s = d.summary;
+      $("incPills").innerHTML =
+        `<span class="pill ${s.open ? "st-open" : "st-resolved"}">${s.open} abiertas</span>` +
+        SEV_ORDER.filter((sv) => s.by_severity[sv] > 0)
+          .map((sv) => `<span class="pill sev-${sv}">${s.by_severity[sv]} ${sv}</span>`).join("");
+
+      if (!d.incidents.length) {
+        $("incTable").innerHTML = '<p class="empty">Sin incidencias registradas.</p>';
+        return;
+      }
+      $("incTable").innerHTML = `
+        <table>
+          <thead><tr><th>Código</th><th>Componente</th><th>Sev.</th><th>Error (redactado)</th><th>Tótem</th><th>Estado</th><th></th></tr></thead>
+          <tbody>${d.incidents.map((i) => `
+            <tr>
+              <td class="pid">${esc(i.code)}</td>
+              <td>${esc(i.component)}${i.connector ? ' <span class="peri">' + esc(i.connector) + "</span>" : ""}</td>
+              <td><span class="badge sev-${i.severity}">${i.severity}</span></td>
+              <td class="err-text" title="${esc(i.technical_error)}">${esc(i.technical_error)}</td>
+              <td>${esc(i.totem_id || "—")}</td>
+              <td><span class="badge st-${i.status}">${ST_LABELS[i.status] || i.status}</span></td>
+              <td>${i.status === "resolved" ? "" : `<button class="btn-resolve" data-code="${esc(i.code)}">Resolver</button>`}</td>
+            </tr>`).join("")}
+          </tbody>
+        </table>`;
+      $("incTable").querySelectorAll(".btn-resolve").forEach((b) =>
+        b.addEventListener("click", () => resolveIncident(b.getAttribute("data-code"))));
+    }
+
+    async function resolveIncident(code) {
+      try {
+        const res = await fetch(apiBase() + "/api/incidents/" + encodeURIComponent(code) + "/resolve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify({ note: "" }),
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        load();
+      } catch (e) {
+        $("status").className = "status err";
+        $("status").textContent = "No se pudo resolver la incidencia: " + e.message;
+      }
+    }
+
     async function load() {
       const base = apiBase();
       localStorage.setItem("tt_api", $("api").value.trim());
@@ -338,6 +406,8 @@
         render(await res.json());
         const fleetRes = await fetch(base + "/api/totems", { headers: authHeaders() });
         if (fleetRes.ok) renderTotems(await fleetRes.json());
+        const incRes = await fetch(base + "/api/incidents", { headers: authHeaders() });
+        if (incRes.ok) renderIncidents(await incRes.json());
       } catch (e) {
         $("status").className = "status err";
         const hint = e instanceof TypeError

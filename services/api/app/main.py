@@ -19,6 +19,8 @@ from .connectors.worker import WorkerConnector
 from .documents import router as documents_router_module
 from .gateway import router as gateway_router_module
 from .gateway.mock import MockModelGateway
+from .incidents import IncidentRegistry
+from .incidents import router as incidents_router_module
 from .knowledge import router as knowledge_router_module
 from .knowledge.store import KnowledgeStore
 from .letters import router as letters_router_module
@@ -74,6 +76,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         load_totems(settings.totems_path),
         offline_after_seconds=settings.totem_offline_after_seconds,
     )
+    # Incidencias y soporte (TT-603): error técnico redactado, sin PII.
+    app.state.incidents = IncidentRegistry()
     app.state.connectors = {
         "demo.mock": MockConnector(),
         # Trámite de demostración por navegación asistida (worker Playwright).
@@ -138,6 +142,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(connectors_router_module.router)
     app.include_router(metrics_router_module.router)
     app.include_router(totems_router_module.router)
+    app.include_router(incidents_router_module.router)
     return app
 
 
