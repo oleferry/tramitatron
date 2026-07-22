@@ -1,0 +1,28 @@
+id: jcyl.itv.info
+name:
+  es: Cita para la ITV
+  ca-valencia: Cita per a la ITV
+description:
+  es: Cómo reservar cita para la inspección técnica del vehículo en Castilla y León.
+  ca-valencia: Com reservar cita per a la inspecció tècnica del vehicle a Castella i Lleó.
+territory: ES-CL
+execution_mode: information
+risk_class: A0
+status: available
+official_sources:
+  - https://economia.jcyl.es/web/es/industria/inspeccion-tecnica-vehiculos.html
+required_fields: []
+requirements:
+  - es: En Castilla y León la ITV la gestionan estaciones concesionarias (ITEVELESA, TÜV SÜD…).
+    ca-valencia: A Castella i Lleó la ITV la gestionen estacions concessionàries (ITEVELESA, TÜV SÜD…).
+  - es: La cita se pide en la web de tu estación; ten a mano la matrícula y el permiso de circulación.
+    ca-valencia: La cita es demana en la web de la teua estació; tin a mà la matrícula i el permís de circulació.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.jcyl_itv
+healthcheck:
+  cadence: weekly
+  synthetic_data_only: true

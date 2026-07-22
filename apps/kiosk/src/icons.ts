@@ -1,9 +1,9 @@
 // Icono por trámite (por prefijo del id). Icono + texto siempre (PRD §14.2).
 
 const ICONS: [string, string][] = [
-  ["gva.health.sip", "💳"],
-  ["gva.health", "🩺"],
-  ["sitval", "🚗"],
+  ["sacyl.health.card", "💳"],
+  ["sacyl.health", "🩺"],
+  ["jcyl.itv", "🚗"],
   ["mir.dni", "🪪"],
   ["mir.extranjeria", "🌍"],
   ["aeat", "🧾"],
@@ -11,7 +11,7 @@ const ICONS: [string, string][] = [
   ["seg-social", "🧓"],
   ["sepe", "💼"],
   ["dgt", "🚦"],
-  ["castello.padron", "🏠"],
+  ["padron", "🏠"],
   ["mjusticia", "⚖️"],
   ["demo.worker", "🧭"],
   ["demo", "✨"],

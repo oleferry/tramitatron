@@ -42,22 +42,22 @@ _RULES: list[tuple[str, str, str]] = [
     (
         r"\b(empadronamiento|empadronament|padron|padro|volante|volant)\b",
         "REQUEST_CENSUS_CERTIFICATE",
-        "castello.padron.certificado",
+        "padron.certificado",
     ),
     (
         r"\b(tarjeta sanitaria|targeta sanitaria|sip)\b",
         "RENEW_HEALTH_CARD",
-        "gva.health.sip-renewal",
+        "sacyl.health.card",
     ),
     (
         r"\b(medic\w*|metge\w*|salud|salut|doctor\w*|ambulatori\w*|centro de salud)\b",
         "BOOK_HEALTH_APPOINTMENT",
-        "gva.health.primary-care.appointment",
+        "sacyl.health.primary-care",
     ),
     (
         r"\b(itv|inspeccion tecnica|inspeccio tecnica)\b",
         "BOOK_ITV_APPOINTMENT",
-        "sitval.itv.appointment",
+        "jcyl.itv.info",
     ),
     (
         r"\b(carne\w? de conducir|carnet de conduir|permiso de conducir|permis de conduir"
@@ -68,7 +68,7 @@ _RULES: list[tuple[str, str, str]] = [
     (
         r"\b(coche|cotxe|moto|vehicul\w*|vehicle)\b",
         "BOOK_ITV_APPOINTMENT",
-        "sitval.itv.appointment",
+        "jcyl.itv.info",
     ),
     (
         r"\b(extranjeria|estrangeria|nie|tie|huellas|empremtes|residencia)\b",

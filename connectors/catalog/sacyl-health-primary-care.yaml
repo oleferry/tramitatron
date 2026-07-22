@@ -1,0 +1,31 @@
+id: sacyl.health.primary-care
+name:
+  es: Cita de atención primaria
+  ca-valencia: Cita d'atenció primària
+description:
+  es: Pedir cita con tu médico o enfermera del centro de salud (Sacyl, Castilla y León).
+  ca-valencia: Demanar cita amb el teu metge o infermera del centre de salut (Sacyl, Castella i Lleó).
+territory: ES-CL
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://www.saludcastillayleon.es/es/citaprevia
+  - https://cita.saludcastillayleon.es/
+required_fields:
+  - health_card_number
+  - birth_date
+requirements:
+  - es: Número de tu tarjeta sanitaria de Castilla y León.
+    ca-valencia: Número de la teua targeta sanitària de Castella i Lleó.
+  - es: Fecha de nacimiento.
+    ca-valencia: Data de naixement.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.sacyl_health
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

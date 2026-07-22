@@ -1,0 +1,31 @@
+id: sacyl.health.card
+name:
+  es: Renovar o duplicar la tarjeta sanitaria
+  ca-valencia: Renovar o duplicar la targeta sanitària
+description:
+  es: Pedir una tarjeta sanitaria nueva por pérdida o deterioro (Sacyl, Castilla y León).
+  ca-valencia: Demanar una targeta sanitària nova per pèrdua o deteriorament (Sacyl, Castella i Lleó).
+territory: ES-CL
+execution_mode: assisted
+risk_class: A2
+status: coming_soon
+official_sources:
+  - https://www.saludcastillayleon.es/es/serviciosonline/tarjeta-sanitaria
+  - https://fota.saludcastillayleon.es/FOTA/perdida-rotura
+required_fields:
+  - health_card_number
+  - birth_date
+requirements:
+  - es: Número de tarjeta sanitaria, o bien DNI y fecha de nacimiento.
+    ca-valencia: Número de targeta sanitària, o bé DNI i data de naixement.
+  - es: Si la tarjeta se ha perdido o roto, se solicita una nueva por internet.
+    ca-valencia: Si la targeta s'ha perdut o trencat, se'n sol·licita una de nova per internet.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.sacyl_health
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

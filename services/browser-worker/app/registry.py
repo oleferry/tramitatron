@@ -45,21 +45,14 @@ def build_registry(portal_authority: str) -> dict[str, PortalSpec]:
         handoff_signals=("captcha", "name=\"enviar\""),
         enabled=True,
     )
-    # Portales reales: declarados y DESACTIVADOS (ver docstring).
-    sitval = PortalSpec(
-        connector="sitval.itv.appointment",
-        hosts=("sitval.com", "www.sitval.com"),
-        start_url="https://sitval.com/",
-        field_map={"license_plate": "matricula", "vehicle_type": "tipo"},
-        handoff_signals=("captcha",),
-        enabled=False,
-    )
-    gva = PortalSpec(
-        connector="gva.health.primary-care.appointment",
-        hosts=("www.san.gva.es", "sede.gva.es"),
-        start_url="https://www.san.gva.es/es/web/portal-del-paciente",
-        field_map={"sip_number": "sip", "birth_date": "fnac"},
+    # Portal real: declarado y DESACTIVADO (ver docstring). Sacyl (cita de
+    # atención primaria en Castilla y León); se habilitará tras la EIPD.
+    sacyl = PortalSpec(
+        connector="sacyl.health.primary-care",
+        hosts=("www.saludcastillayleon.es", "cita.saludcastillayleon.es"),
+        start_url="https://cita.saludcastillayleon.es/",
+        field_map={"health_card_number": "tarjeta", "birth_date": "fnac"},
         handoff_signals=("captcha", "cl@ve", "clave"),
         enabled=False,
     )
-    return {s.connector: s for s in (demo, sitval, gva)}
+    return {s.connector: s for s in (demo, sacyl)}

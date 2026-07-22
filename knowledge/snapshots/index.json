@@ -1,39 +1,23 @@
 [
   {
-    "source_id": "gva-portal-paciente",
-    "fetched_at": "2026-07-17T14:39:48+00:00",
-    "sha256": "ee39cec89fbd2ee9fd99e164a726d826e6997660e694ae45ed92619b930c936a",
+    "source_id": "sacyl-cita-previa",
+    "fetched_at": "2026-07-22T06:21:28+00:00",
+    "sha256": "09393a5b37a765ebb6f96a29839cf1159149b1266cea3bf8c86aa77875d2b673",
     "status": "ok",
-    "text_file": "gva-portal-paciente-ee39cec8.txt",
+    "text_file": "sacyl-cita-previa-09393a5b.txt",
     "error": null
   },
   {
-    "source_id": "gva-cita-previa",
-    "fetched_at": "2026-07-17T14:39:48+00:00",
-    "sha256": "32c87157f52e323e20d4ccc5ac6b42047a37c5b8c86ca75ce83061e92218578a",
+    "source_id": "jcyl-sede",
+    "fetched_at": "2026-07-22T06:21:28+00:00",
+    "sha256": "73a4b920c9e58817b480a8b9a94c36e4a82903577398d7538e98093d8a72cc7e",
     "status": "ok",
-    "text_file": "gva-cita-previa-32c87157.txt",
-    "error": null
-  },
-  {
-    "source_id": "sitval-itv",
-    "fetched_at": "2026-07-17T14:34:16+00:00",
-    "sha256": "276bcb6b3bb856b24c9817630b21c93587ff16773443eab08850aefccf0e995c",
-    "status": "ok",
-    "text_file": "sitval-itv-276bcb6b.txt",
-    "error": null
-  },
-  {
-    "source_id": "dipcas-admin-electronica",
-    "fetched_at": "2026-07-17T14:39:48+00:00",
-    "sha256": "a3a496dac3ccaf58b9a4ff193362f6abb1adfbc318d98e7dff5ec39f5bda3108",
-    "status": "ok",
-    "text_file": "dipcas-admin-electronica-a3a496da.txt",
+    "text_file": "jcyl-sede-73a4b920.txt",
     "error": null
   },
   {
     "source_id": "interior-dni-cita-previa",
-    "fetched_at": "2026-07-18T15:34:10+00:00",
+    "fetched_at": "2026-07-22T06:25:09+00:00",
     "sha256": "94a373d1404c9e20d5c8fe2f1b7f9f2c4a7edad02d7b882d52dcd36acdd8e6a7",
     "status": "ok",
     "text_file": "interior-dni-cita-previa-94a373d1.txt",
@@ -72,11 +56,11 @@
     "error": null
   },
   {
-    "source_id": "san-gva-tarjeta-sip",
-    "fetched_at": "2026-07-18T15:34:10+00:00",
-    "sha256": "3105fcd77d865df9e528369c3ee55d047512dbcdc3f6f3975d64696a2b513a53",
+    "source_id": "sacyl-tarjeta-sanitaria",
+    "fetched_at": "2026-07-22T06:21:28+00:00",
+    "sha256": "da128c5e71ca9a06bcc300587cffddf171aec4a9c66d8b445c8b6a4075b1914b",
     "status": "ok",
-    "text_file": "san-gva-tarjeta-sip-3105fcd7.txt",
+    "text_file": "sacyl-tarjeta-sanitaria-da128c5e.txt",
     "error": null
   },
   {
@@ -96,16 +80,8 @@
     "error": null
   },
   {
-    "source_id": "castello-padron",
-    "fetched_at": "2026-07-18T15:34:10+00:00",
-    "sha256": "2be8506ccbdcf1181f927f0aa947b82050304c46cb70913f6d753a1a75e60993",
-    "status": "ok",
-    "text_file": "castello-padron-2be8506c.txt",
-    "error": null
-  },
-  {
     "source_id": "mjusticia-antecedentes",
-    "fetched_at": "2026-07-18T15:34:10+00:00",
+    "fetched_at": "2026-07-22T06:23:50+00:00",
     "sha256": "655b536cf8599f55078a94b4c78d15e9398cd475476cf67e6b4a0747057560d7",
     "status": "ok",
     "text_file": "mjusticia-antecedentes-655b536c.txt",

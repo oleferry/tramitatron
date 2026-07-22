@@ -7,18 +7,18 @@ def _intent(client, text, language="es"):
 def test_health_intent_spanish(client):
     result = _intent(client, "Quiero pedir cita para el médico")
     assert result["intent"] == "BOOK_HEALTH_APPOINTMENT"
-    assert result["procedure_id"] == "gva.health.primary-care.appointment"
+    assert result["procedure_id"] == "sacyl.health.primary-care"
     assert result["next_action"] == "SHOW_PROCEDURE"
 
 
 def test_health_intent_valencian(client):
     result = _intent(client, "Vull demanar cita amb el metge", language="ca-valencia")
-    assert result["procedure_id"] == "gva.health.primary-care.appointment"
+    assert result["procedure_id"] == "sacyl.health.primary-care"
 
 
 def test_itv_intent(client):
     result = _intent(client, "necesito pasar la ITV del coche")
-    assert result["procedure_id"] == "sitval.itv.appointment"
+    assert result["procedure_id"] == "jcyl.itv.info"
 
 
 def test_expanded_intents_route_to_new_procedures(client):
@@ -28,11 +28,11 @@ def test_expanded_intents_route_to_new_procedures(client):
         ("cita con hacienda para la renta", "aeat.cita-previa"),
         ("necesito mi informe de vida laboral", "seg-social.tgss.vida-laboral"),
         ("cita para la pensión de jubilación", "seg-social.inss.cita-previa"),
-        ("he perdido la tarjeta sanitaria", "gva.health.sip-renewal"),
+        ("he perdido la tarjeta sanitaria", "sacyl.health.card"),
         ("estoy en el paro y necesito cita", "sepe.cita-previa"),
         ("renovar el carné de conducir", "dgt.cita-previa"),
         ("cita de extranjería para huellas", "mir.extranjeria.cita-previa"),
-        ("certificado de empadronamiento", "castello.padron.certificado"),
+        ("certificado de empadronamiento", "padron.certificado"),
         ("certificado de nacimiento", "mjusticia.certificado-nacimiento"),
         ("antecedentes penales", "mjusticia.antecedentes-penales"),
     ]
@@ -47,7 +47,7 @@ def test_expanded_intents_in_valencian(client):
         ("vull renovar el dni", "mir.dni.renewal-appointment"),
         ("cita amb hisenda per a la renda", "aeat.cita-previa"),
         ("estic a l'atur", "sepe.cita-previa"),
-        ("certificat d'empadronament", "castello.padron.certificado"),
+        ("certificat d'empadronament", "padron.certificado"),
     ]
     for text, expected in cases:
         result = _intent(client, text, language="ca-valencia")
@@ -60,7 +60,7 @@ def test_specific_rules_win_over_generic(client):
     assert result["procedure_id"] == "seg-social.tgss.vida-laboral"
     # Y la tarjeta sanitaria no debe caer en la cita médica.
     result = _intent(client, "renovar la tarjeta sanitaria")
-    assert result["procedure_id"] == "gva.health.sip-renewal"
+    assert result["procedure_id"] == "sacyl.health.card"
 
 
 def test_unknown_intent_asks_clarification(client):

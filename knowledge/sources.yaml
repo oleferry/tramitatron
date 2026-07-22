@@ -2,38 +2,20 @@
 # ingerirse; la IA nunca consulta URLs arbitrarias (regla 7 del PRD §30).
 
 sources:
-  - id: gva-portal-paciente
-    url: https://www.san.gva.es/es/web/portal-del-paciente
-    organismo: Conselleria de Sanidad (GVA)
-    title: Portal del Paciente
-    territory: ES-VC
+  - id: sacyl-cita-previa
+    url: https://www.saludcastillayleon.es/es/citaprevia
+    organismo: Sanidad de Castilla y León (Sacyl)
+    title: Cita previa con su centro de salud
+    territory: ES-CL
     procedure_ids:
-      - gva.health.primary-care.appointment
+      - sacyl.health.primary-care
     review_cadence: daily
 
-  - id: gva-cita-previa
-    url: https://sede.gva.es/es/cita-previa
-    organismo: Generalitat Valenciana
-    title: Cita previa de la Generalitat
-    territory: ES-VC
-    procedure_ids:
-      - gva.health.primary-care.appointment
-    review_cadence: weekly
-
-  - id: sitval-itv
-    url: https://sitval.com/
-    organismo: SITVAL
-    title: Cita previa ITV en la Comunitat Valenciana
-    territory: ES-VC
-    procedure_ids:
-      - sitval.itv.appointment
-    review_cadence: weekly
-
-  - id: dipcas-admin-electronica
-    url: https://www.dipcas.es/es/administracionelectronica.html
-    organismo: Diputación de Castellón
-    title: Administración electrónica
-    territory: ES-VC-CS
+  - id: jcyl-sede
+    url: https://www.tramitacastillayleon.jcyl.es/web/es/tramites-servicios.html
+    organismo: Junta de Castilla y León
+    title: Sede electrónica y trámites
+    territory: ES-CL
     procedure_ids: []
     review_cadence: monthly
 
@@ -82,13 +64,13 @@ sources:
       - sepe.cita-previa
     review_cadence: weekly
 
-  - id: san-gva-tarjeta-sip
-    url: https://www.san.gva.es/es/web/tarjeta-sanitaria/tramites-tarjeta-sip
-    organismo: Conselleria de Sanidad (GVA)
-    title: Trámites de la tarjeta SIP
-    territory: ES-VC
+  - id: sacyl-tarjeta-sanitaria
+    url: https://www.saludcastillayleon.es/es/serviciosonline/tarjeta-sanitaria
+    organismo: Sanidad de Castilla y León (Sacyl)
+    title: Tarjeta sanitaria
+    territory: ES-CL
     procedure_ids:
-      - gva.health.sip-renewal
+      - sacyl.health.card
     review_cadence: weekly
 
   - id: dgt-cita-previa
@@ -108,15 +90,6 @@ sources:
     procedure_ids:
       - mir.extranjeria.cita-previa
     review_cadence: weekly
-
-  - id: castello-padron
-    url: https://www.castello.es/es/w/padron-habitantes
-    organismo: Ayuntamiento de Castelló de la Plana
-    title: Padrón de habitantes
-    territory: ES-VC-CS
-    procedure_ids:
-      - castello.padron.certificado
-    review_cadence: monthly
 
   - id: mjusticia-antecedentes
     url: https://www.mjusticia.gob.es/es/ciudadania/tramites/certificado-antecedentes

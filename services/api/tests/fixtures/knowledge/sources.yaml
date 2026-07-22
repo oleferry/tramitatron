@@ -1,26 +1,26 @@
 sources:
   - id: test-salud
-    url: https://ejemplo-oficial.gva.es/salud
-    organismo: Conselleria de Prueba
+    url: https://ejemplo-oficial.sacyl.es/salud
+    organismo: Sanidad de Prueba
     title: Cita sanitaria de prueba
-    territory: ES-VC
+    territory: ES-CL
     procedure_ids:
-      - gva.health.primary-care.appointment
+      - sacyl.health.primary-care
     review_cadence: daily
 
   - id: test-itv
-    url: https://ejemplo-oficial.sitval.es/
-    organismo: SITVAL de Prueba
+    url: https://ejemplo-oficial.itv.es/
+    organismo: ITV de Prueba
     title: ITV de prueba
-    territory: ES-VC
+    territory: ES-CL
     procedure_ids:
-      - sitval.itv.appointment
+      - jcyl.itv.info
     review_cadence: weekly
 
   - id: test-sin-snapshot
-    url: https://ejemplo-oficial.dipcas.es/
-    organismo: Diputación de Prueba
+    url: https://ejemplo-oficial.jcyl.es/
+    organismo: Junta de Prueba
     title: Fuente aún no ingerida
-    territory: ES-VC-CS
+    territory: ES-CL
     procedure_ids: []
     review_cadence: monthly

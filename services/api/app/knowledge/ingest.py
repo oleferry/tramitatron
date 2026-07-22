@@ -129,17 +129,25 @@ def ingest(knowledge_path: Path) -> int:
             marker = "~ CAMBIO DETECTADO" if old else "+"
             print(f"  {marker} {source.id}: {len(text)} caracteres ({digest[:8]})")
         except Exception as exc:  # noqa: BLE001 - una fuente caída no detiene la ingesta
-            failures += 1
-            print(f"  ! {source.id}: ERROR {exc}")
-            results.append(
-                SnapshotMeta(
-                    source_id=source.id,
-                    fetched_at=now,
-                    sha256="",
-                    status="error",
-                    error=str(exc)[:200],
+            previous_ok = previous.get(source.id)
+            if previous_ok and previous_ok.status == "ok":
+                # Fallo transitorio (403, timeout, WAF): se CONSERVA el snapshot
+                # bueno anterior en vez de dejar al asistente sin esa fuente. Un
+                # corte de red no debe borrar conocimiento ya validado.
+                print(f"  ~ {source.id}: fallo transitorio ({exc}); se conserva el anterior")
+                results.append(previous_ok)
+            else:
+                failures += 1
+                print(f"  ! {source.id}: ERROR {exc}")
+                results.append(
+                    SnapshotMeta(
+                        source_id=source.id,
+                        fetched_at=now,
+                        sha256="",
+                        status="error",
+                        error=str(exc)[:200],
+                    )
                 )
-            )
 
     index_file.write_text(
         json.dumps([m.model_dump() for m in results], indent=2, ensure_ascii=False),

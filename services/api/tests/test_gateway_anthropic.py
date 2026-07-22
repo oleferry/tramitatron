@@ -142,14 +142,14 @@ def test_intent_falls_back_to_keywords_on_error(catalog):
 
     gw = _gw(catalog, boom)
     result = asyncio.run(gw.classify_intent(IntentRequest(text="quiero pedir cita para el médico")))
-    assert result.procedure_id == "gva.health.primary-care.appointment"
+    assert result.procedure_id == "sacyl.health.primary-care"
 
 
 def test_intent_refusal_falls_back(catalog):
     gw = _gw(catalog, lambda kw: _json_resp({"procedure_id": None, "confidence": 0}, "refusal"))
     result = asyncio.run(gw.classify_intent(IntentRequest(text="itv del coche")))
     # El fallback por palabras clave reconoce la ITV.
-    assert result.procedure_id == "sitval.itv.appointment"
+    assert result.procedure_id == "jcyl.itv.info"
 
 
 # --- Documentos (dato A2) --------------------------------------------------

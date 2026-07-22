@@ -7,12 +7,12 @@ def test_catalog_lists_procedures(client):
     body = client.get("/api/catalog").json()
     ids = {item["id"] for item in body}
     assert "demo.mock.appointment" in ids
-    assert "gva.health.primary-care.appointment" in ids
-    assert "sitval.itv.appointment" in ids
+    assert "sacyl.health.primary-care" in ids
+    assert "jcyl.itv.info" in ids
 
 
 def test_procedure_detail_is_bilingual(client):
-    body = client.get("/api/catalog/gva.health.primary-care.appointment").json()
+    body = client.get("/api/catalog/sacyl.health.primary-care").json()
     assert body["name"]["es"] == "Cita de atención primaria"
     assert body["name"]["ca-valencia"] == "Cita d'atenció primària"
     assert body["status"] == "coming_soon"
@@ -29,11 +29,11 @@ def test_catalog_includes_expanded_procedures(client):
         "aeat.cita-previa",
         "seg-social.inss.cita-previa",
         "seg-social.tgss.vida-laboral",
-        "gva.health.sip-renewal",
+        "sacyl.health.card",
         "sepe.cita-previa",
         "dgt.cita-previa",
         "mir.extranjeria.cita-previa",
-        "castello.padron.certificado",
+        "padron.certificado",
         "mjusticia.certificado-nacimiento",
         "mjusticia.antecedentes-penales",
     }

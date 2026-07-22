@@ -35,7 +35,7 @@ def test_execute_mock_procedure(client):
 def test_coming_soon_procedure_cannot_execute(client):
     session_id = _session(client)
     response = client.post(
-        "/api/procedures/sitval.itv.appointment/execute",
+        "/api/procedures/sacyl.health.primary-care/execute",
         json={"session_id": session_id, "confirmed": True},
     )
     assert response.status_code == 409

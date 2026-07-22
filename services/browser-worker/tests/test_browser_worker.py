@@ -77,7 +77,7 @@ def test_real_portals_are_disabled(client):
     """Dirigir la automatización a un portal real está gated (privacidad/EIPD)."""
     body = client.post(
         "/worker/prepare",
-        json={"connector": "sitval.itv.appointment", "fields": {"license_plate": "1234ABC"}},
+        json={"connector": "sacyl.health.primary-care", "fields": {"health_card_number": "123"}},
     ).json()
     assert body["status"] == "unavailable"
     assert body["url"] is None
@@ -95,7 +95,7 @@ def test_healthcheck_synthetic_ok(client):
 
 
 def test_healthcheck_disabled_connector(client):
-    body = client.post("/worker/healthcheck/sitval.itv.appointment").json()
+    body = client.post("/worker/healthcheck/sacyl.health.primary-care").json()
     assert body["healthy"] is False
     assert body["detail"] == "desactivado"
 

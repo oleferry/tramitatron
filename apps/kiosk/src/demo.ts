@@ -83,42 +83,52 @@ const PROCEDURES: Procedure[] = [
     confirmation_required: true,
   },
   {
-    id: "gva.health.primary-care.appointment",
+    id: "sacyl.health.primary-care",
     name: { es: "Cita de atención primaria", "ca-valencia": "Cita d'atenció primària" },
     description: {
-      es: "Pedir cita con tu médico o enfermera del centro de salud (Conselleria de Sanidad).",
+      es: "Pedir cita con tu médico o enfermera del centro de salud (Sacyl, Castilla y León).",
       "ca-valencia":
-        "Demanar cita amb el teu metge o infermera del centre de salut (Conselleria de Sanitat).",
+        "Demanar cita amb el teu metge o infermera del centre de salut (Sacyl, Castella i Lleó).",
     },
     status: "coming_soon",
     execution_mode: "assisted",
-    official_sources: ["https://www.san.gva.es/es/web/portal-del-paciente"],
+    official_sources: ["https://www.saludcastillayleon.es/es/citaprevia"],
     requirements: [
-      { es: "Tarjeta SIP (o su número).", "ca-valencia": "Targeta SIP (o el seu número)." },
+      {
+        es: "Número de tu tarjeta sanitaria de Castilla y León.",
+        "ca-valencia": "Número de la teua targeta sanitària de Castella i Lleó.",
+      },
       { es: "Fecha de nacimiento.", "ca-valencia": "Data de naixement." },
     ],
-    required_fields: ["sip_number", "birth_date"],
+    required_fields: ["health_card_number", "birth_date"],
     confirmation_required: true,
   },
   {
-    id: "sitval.itv.appointment",
-    name: { es: "Cita previa ITV", "ca-valencia": "Cita prèvia ITV" },
+    id: "jcyl.itv.info",
+    name: { es: "Cita para la ITV", "ca-valencia": "Cita per a la ITV" },
     description: {
-      es: "Reservar cita para la inspección técnica del vehículo en centros SITVAL de Castellón.",
+      es: "Cómo reservar cita para la inspección técnica del vehículo en Castilla y León.",
       "ca-valencia":
-        "Reservar cita per a la inspecció tècnica del vehicle en centres SITVAL de Castelló.",
+        "Com reservar cita per a la inspecció tècnica del vehicle a Castella i Lleó.",
     },
-    status: "coming_soon",
-    execution_mode: "assisted",
-    official_sources: ["https://sitval.com/"],
+    status: "available",
+    execution_mode: "information",
+    official_sources: [
+      "https://economia.jcyl.es/web/es/industria/inspeccion-tecnica-vehiculos.html",
+    ],
     requirements: [
-      { es: "Matrícula del vehículo.", "ca-valencia": "Matrícula del vehicle." },
       {
-        es: "Tipo de vehículo (coche, moto, furgoneta…).",
-        "ca-valencia": "Tipus de vehicle (cotxe, moto, furgoneta…).",
+        es: "En Castilla y León la ITV la gestionan estaciones concesionarias (ITEVELESA, TÜV SÜD…).",
+        "ca-valencia":
+          "A Castella i Lleó la ITV la gestionen estacions concessionàries (ITEVELESA, TÜV SÜD…).",
+      },
+      {
+        es: "La cita se pide en la web de tu estación; ten a mano la matrícula y el permiso de circulación.",
+        "ca-valencia":
+          "La cita es demana en la web de la teua estació; tin a mà la matrícula i el permís de circulació.",
       },
     ],
-    required_fields: ["license_plate", "vehicle_type"],
+    required_fields: [],
     confirmation_required: true,
   },
   {
@@ -225,30 +235,30 @@ const PROCEDURES: Procedure[] = [
     confirmation_required: true,
   },
   {
-    id: "gva.health.sip-renewal",
+    id: "sacyl.health.card",
     name: {
-      es: "Renovar o duplicar la tarjeta sanitaria SIP",
-      "ca-valencia": "Renovar o duplicar la targeta sanitària SIP",
+      es: "Renovar o duplicar la tarjeta sanitaria",
+      "ca-valencia": "Renovar o duplicar la targeta sanitària",
     },
     description: {
-      es: "Pedir una tarjeta SIP nueva por pérdida o deterioro, con recogida en tu centro de salud.",
+      es: "Pedir una tarjeta sanitaria nueva por pérdida o deterioro (Sacyl, Castilla y León).",
       "ca-valencia":
-        "Demanar una targeta SIP nova per pèrdua o deteriorament, amb recollida al teu centre de salut.",
+        "Demanar una targeta sanitària nova per pèrdua o deteriorament (Sacyl, Castella i Lleó).",
     },
     status: "coming_soon",
     execution_mode: "assisted",
-    official_sources: ["https://www.san.gva.es/es/web/tarjeta-sanitaria/tramites-tarjeta-sip"],
+    official_sources: ["https://www.saludcastillayleon.es/es/serviciosonline/tarjeta-sanitaria"],
     requirements: [
       {
-        es: "Número SIP, o bien DNI y fecha de nacimiento.",
-        "ca-valencia": "Número SIP, o bé DNI i data de naixement.",
+        es: "Número de tarjeta sanitaria, o bien DNI y fecha de nacimiento.",
+        "ca-valencia": "Número de targeta sanitària, o bé DNI i data de naixement.",
       },
       {
-        es: "Si la tarjeta se ha perdido, hay que pagar una tasa (3,15 €).",
-        "ca-valencia": "Si la targeta s'ha perdut, cal pagar una taxa (3,15 €).",
+        es: "Si la tarjeta se ha perdido o roto, se solicita una nueva por internet.",
+        "ca-valencia": "Si la targeta s'ha perdut o trencat, se'n sol·licita una de nova per internet.",
       },
     ],
-    required_fields: ["sip_number", "birth_date"],
+    required_fields: ["health_card_number", "birth_date"],
     confirmation_required: true,
   },
   {
@@ -323,32 +333,28 @@ const PROCEDURES: Procedure[] = [
     confirmation_required: true,
   },
   {
-    id: "castello.padron.certificado",
+    id: "padron.certificado",
     name: {
-      es: "Certificado o volante de empadronamiento (Castelló)",
-      "ca-valencia": "Certificat o volant d'empadronament (Castelló)",
+      es: "Certificado o volante de empadronamiento",
+      "ca-valencia": "Certificat o volant d'empadronament",
     },
     description: {
-      es: "Cómo obtener el certificado o volante de empadronamiento del Ayuntamiento de Castelló de la Plana.",
-      "ca-valencia":
-        "Com obtindre el certificat o volant d'empadronament de l'Ajuntament de Castelló de la Plana.",
+      es: "Cómo obtener el certificado o volante de empadronamiento en tu ayuntamiento.",
+      "ca-valencia": "Com obtindre el certificat o volant d'empadronament al teu ajuntament.",
     },
     status: "available",
     execution_mode: "information",
-    official_sources: [
-      "https://www.castello.es/es/w/padron-habitantes",
-      "https://www.castello.es/es/solicitud-cita-previa",
-    ],
+    official_sources: [],
     requirements: [
       {
-        es: "En la sede electrónica necesitarás identificarte con Cl@ve o certificado digital.",
+        es: "El empadronamiento lo gestiona tu ayuntamiento, en su sede electrónica o de forma presencial.",
         "ca-valencia":
-          "En la seu electrònica necessitaràs identificar-te amb Cl@ve o certificat digital.",
+          "L'empadronament el gestiona el teu ajuntament, en la seua seu electrònica o presencialment.",
       },
       {
-        es: "También puedes pedir cita previa y recogerlo presencialmente en el Ayuntamiento.",
+        es: "Para hacerlo por internet suele hacer falta identificarte con Cl@ve o certificado digital.",
         "ca-valencia":
-          "També pots demanar cita prèvia i arreplegar-lo presencialment a l'Ajuntament.",
+          "Per a fer-ho per internet sol caldre identificar-te amb Cl@ve o certificat digital.",
       },
     ],
     required_fields: [],
@@ -436,12 +442,12 @@ const ASK_ANSWERS: { pattern: RegExp; answer: string; source: AskResponse["sourc
   {
     pattern: /\b(itv|vehicul|vehicle|coche|cotxe|moto|matricul)/,
     answer:
-      "SITVAL es la página oficial para solicitar cita previa en todas las estaciones ITV de la Comunidad Valenciana. Reserva fácilmente tu cita en Alicante, Valencia y Castellón y asegúrate de cumplir con la inspección técnica de vehículos con total confianza.",
+      "En Castilla y León la ITV la gestionan estaciones concesionarias (ITEVELESA, TÜV SÜD y otras). La cita se pide en la web de tu estación; ten a mano la matrícula y el permiso de circulación. En la web de la Junta encuentras el listado de estaciones por provincia.",
     source: {
-      organismo: "SITVAL",
-      title: "Cita previa ITV en la Comunitat Valenciana",
-      url: "https://sitval.com/",
-      fetched_at: "2026-07-17",
+      organismo: "Junta de Castilla y León",
+      title: "Inspección técnica de vehículos (ITV)",
+      url: "https://economia.jcyl.es/web/es/industria/inspeccion-tecnica-vehiculos.html",
+      fetched_at: "2026-07-22",
     },
   },
   {
@@ -502,12 +508,12 @@ const ASK_ANSWERS: { pattern: RegExp; answer: string; source: AskResponse["sourc
   {
     pattern: /\b(tarjeta sanitaria|targeta sanitaria|sip)\b/,
     answer:
-      "Si tu tarjeta SIP se ha perdido o deteriorado, puedes pedir una nueva por internet con recogida en tu centro de salud. Solo necesitas el número SIP, o el DNI y la fecha de nacimiento. En caso de pérdida hay una tasa de 3,15 € (modelo 046-9679).",
+      "Si tu tarjeta sanitaria de Castilla y León se ha perdido o roto, puedes solicitar una nueva por internet en la web de Sacyl. Necesitas el número de tarjeta sanitaria, o bien el DNI y la fecha de nacimiento. La nueva tarjeta se recibe en el plazo indicado por Sacyl.",
     source: {
-      organismo: "Conselleria de Sanidad (GVA)",
-      title: "Trámites de la tarjeta SIP",
-      url: "https://www.san.gva.es/es/web/tarjeta-sanitaria/tramites-tarjeta-sip",
-      fetched_at: "2026-07-18",
+      organismo: "Sanidad de Castilla y León (Sacyl)",
+      title: "Tarjeta sanitaria",
+      url: "https://www.saludcastillayleon.es/es/serviciosonline/tarjeta-sanitaria",
+      fetched_at: "2026-07-22",
     },
   },
   {
@@ -535,12 +541,12 @@ const ASK_ANSWERS: { pattern: RegExp; answer: string; source: AskResponse["sourc
   {
     pattern: /\b(empadronamiento|empadronament|padron|padro\b|volante|volant)/,
     answer:
-      "El Ayuntamiento de Castelló expide certificados y volantes de empadronamiento por su sede electrónica (con Cl@ve o certificado digital, el volante llega al momento) o presencialmente con cita previa en la Plaza Mayor, 1 (teléfono 964 226 010).",
+      "El certificado o volante de empadronamiento lo expide tu ayuntamiento. Muchos lo ofrecen por su sede electrónica identificándote con Cl@ve o certificado digital, y también puedes pedirlo presencialmente. Consulta la web de tu ayuntamiento para ver cómo hacerlo.",
     source: {
-      organismo: "Ayuntamiento de Castelló de la Plana",
-      title: "Padrón de habitantes",
-      url: "https://www.castello.es/es/w/padron-habitantes",
-      fetched_at: "2026-07-18",
+      organismo: "Junta de Castilla y León",
+      title: "Sede electrónica y trámites",
+      url: "https://www.tramitacastillayleon.jcyl.es/web/es/tramites-servicios.html",
+      fetched_at: "2026-07-22",
     },
   },
   {
@@ -557,12 +563,12 @@ const ASK_ANSWERS: { pattern: RegExp; answer: string; source: AskResponse["sourc
   {
     pattern: /\b(medic|metge|salud|salut|cita|telefono|telefon)/,
     answer:
-      "Cita previa — Sede electrónica de la Generalitat Valenciana.\nAtención telefónica 012.\nOficinas de atención presencial PROP.\nOficinas de registro.\nOficina Virtual de Atención a la Ciudadanía.",
+      "Puedes pedir cita con tu médico o enfermera de atención primaria en la web de Sacyl (cita.saludcastillayleon.es), en la app Sacyl Conecta, por teléfono o en el mostrador de tu centro de salud. Ten a mano tu tarjeta sanitaria de Castilla y León.",
     source: {
-      organismo: "Generalitat Valenciana",
-      title: "Cita previa de la Generalitat",
-      url: "https://sede.gva.es/es/cita-previa",
-      fetched_at: "2026-07-17",
+      organismo: "Sanidad de Castilla y León (Sacyl)",
+      title: "Cita previa con su centro de salud",
+      url: "https://www.saludcastillayleon.es/es/citaprevia",
+      fetched_at: "2026-07-22",
     },
   },
 ];
@@ -607,12 +613,12 @@ export const demoApi = {
       [/\b(vida laboral|informe laboral|cotizacion|cotitzacio)/, "REQUEST_WORK_HISTORY", "seg-social.tgss.vida-laboral"],
       [/\b(antecedentes|antecedents|penales|penals)/, "REQUEST_CRIMINAL_RECORD", "mjusticia.antecedentes-penales"],
       [/\b(nacimiento|naixement|registro civil|registre civil)/, "REQUEST_BIRTH_CERTIFICATE", "mjusticia.certificado-nacimiento"],
-      [/\b(empadronamiento|empadronament|padron|padro\b|volante|volant)/, "REQUEST_CENSUS_CERTIFICATE", "castello.padron.certificado"],
-      [/\b(tarjeta sanitaria|targeta sanitaria|sip)\b/, "RENEW_HEALTH_CARD", "gva.health.sip-renewal"],
-      [/\b(medic|metge|salud|salut|doctor|ambulatori|centro de salud)/, "BOOK_HEALTH_APPOINTMENT", "gva.health.primary-care.appointment"],
-      [/\b(itv|inspeccion tecnica|inspeccio tecnica)/, "BOOK_ITV_APPOINTMENT", "sitval.itv.appointment"],
+      [/\b(empadronamiento|empadronament|padron|padro\b|volante|volant)/, "REQUEST_CENSUS_CERTIFICATE", "padron.certificado"],
+      [/\b(tarjeta sanitaria|targeta sanitaria|sip)\b/, "RENEW_HEALTH_CARD", "sacyl.health.card"],
+      [/\b(medic|metge|salud|salut|doctor|ambulatori|centro de salud)/, "BOOK_HEALTH_APPOINTMENT", "sacyl.health.primary-care"],
+      [/\b(itv|inspeccion tecnica|inspeccio tecnica)/, "BOOK_ITV_APPOINTMENT", "jcyl.itv.info"],
       [/\b(carne\w? de conducir|carnet de conduir|permiso de conducir|permis de conduir|trafico|transit|dgt|canje|bescanvi)/, "BOOK_DGT_APPOINTMENT", "dgt.cita-previa"],
-      [/\b(coche|cotxe|moto|vehicul|vehicle)/, "BOOK_ITV_APPOINTMENT", "sitval.itv.appointment"],
+      [/\b(coche|cotxe|moto|vehicul|vehicle)/, "BOOK_ITV_APPOINTMENT", "jcyl.itv.info"],
       [/\b(extranjeria|estrangeria|nie|tie|huellas|empremtes|residencia)\b/, "BOOK_IMMIGRATION_APPOINTMENT", "mir.extranjeria.cita-previa"],
       [/\b(dni|documento nacional|pasaporte|passaport)\b/, "BOOK_DNI_APPOINTMENT", "mir.dni.renewal-appointment"],
       [/\b(hacienda|hisenda|renta|renda|irpf|declaracion|declaracio|impuesto|impost|tributari)/, "BOOK_TAX_APPOINTMENT", "aeat.cita-previa"],
@@ -763,16 +769,16 @@ export const demoApi = {
       letter_id: `demo-letter-${Math.random().toString(36).slice(2, 8)}`,
       transcription_confidence: 0.91,
       facts: {
-        organismo: "CONSELLERIA DE SANIDAD UNIVERSAL Y SALUD PÚBLICA",
+        organismo: "GERENCIA REGIONAL DE SALUD DE CASTILLA Y LEÓN (SACYL)",
         deadlines: ["30/09/2026"],
         sensitive_data: ["telefono"],
         excerpt:
-          "CONSELLERIA DE SANIDAD UNIVERSAL Y SALUD PÚBLICA. Le informamos de que su cita de revisión ha quedado asignada en el Centro de Salud Gran Vía. Debe presentarse hasta el 30/09/2026 aportando su tarjeta SIP.",
+          "GERENCIA REGIONAL DE SALUD DE CASTILLA Y LEÓN. Le informamos de que su cita de revisión ha quedado asignada en su centro de salud. Debe presentarse hasta el 30/09/2026 aportando su tarjeta sanitaria.",
       },
       explanation: {
         summary: es
-          ? "Esta carta la envía CONSELLERIA DE SANIDAD UNIVERSAL Y SALUD PÚBLICA. Aparece un plazo: 30/09/2026. El documento contiene datos personales (un teléfono): no lo dejes olvidado aquí."
-          : "Esta carta l'envia CONSELLERIA DE SANIDAD UNIVERSAL Y SALUD PÚBLICA. Apareix un termini: 30/09/2026. El document conté dades personals (un telèfon): no el deixes oblidat ací.",
+          ? "Esta carta la envía la GERENCIA REGIONAL DE SALUD DE CASTILLA Y LEÓN. Aparece un plazo: 30/09/2026. El documento contiene datos personales (un teléfono): no lo dejes olvidado aquí."
+          : "Esta carta l'envia la GERENCIA REGIONAL DE SALUD DE CASTILLA Y LEÓN. Apareix un termini: 30/09/2026. El document conté dades personals (un telèfon): no el deixes oblidat ací.",
         risk_level: "normal",
         risk_terms: [],
         ambiguous_deadline: false,

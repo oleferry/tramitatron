@@ -1,0 +1,26 @@
+id: padron.certificado
+name:
+  es: Certificado o volante de empadronamiento
+  ca-valencia: Certificat o volant d'empadronament
+description:
+  es: Cómo obtener el certificado o volante de empadronamiento en tu ayuntamiento.
+  ca-valencia: Com obtindre el certificat o volant d'empadronament al teu ajuntament.
+territory: ES
+execution_mode: information
+risk_class: A0
+status: available
+official_sources: []
+requirements:
+  - es: El empadronamiento lo gestiona tu ayuntamiento, en su sede electrónica o de forma presencial.
+    ca-valencia: L'empadronament el gestiona el teu ajuntament, en la seua seu electrònica o presencialment.
+  - es: Para hacerlo por internet suele hacer falta identificarte con Cl@ve o certificado digital.
+    ca-valencia: Per a fer-ho per internet sol caldre identificar-te amb Cl@ve o certificat digital.
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.padron
+healthcheck:
+  cadence: weekly
+  synthetic_data_only: true
