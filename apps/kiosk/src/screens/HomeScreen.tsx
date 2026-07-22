@@ -43,6 +43,17 @@ export function HomeScreen({
       .catch(() => setFailed(true));
   }, []);
 
+  // Coincidencias por palabra clave (sin IA): cada palabra del texto debe
+  // aparecer en el nombre o la descripción del trámite (AND), sin acentos.
+  const keywordMatches = (text: string): CatalogItem[] => {
+    const q = normalize(text.trim());
+    if (!q || !catalog) return [];
+    return catalog.filter((item) => {
+      const haystack = normalize(item.name[lang] + " " + (item.description?.[lang] ?? ""));
+      return q.split(/\s+/).every((word) => haystack.includes(word));
+    });
+  };
+
   // Acepta el texto por parámetro: al confirmar una transcripción hay que
   // buscar con ella, no con el valor que tuviera el input en ese render.
   const search = async (spoken?: string) => {
@@ -50,6 +61,14 @@ export function HomeScreen({
     if (!text) return;
     setClarification(null);
     setHighlighted(null);
+    // Atajo: si las palabras clave dejan un único trámite, se abre directo, sin
+    // IA (instantáneo y funciona sin red). Solo se consulta a la IA si hay
+    // ambigüedad (varias o ninguna coincidencia literal).
+    const matches = keywordMatches(text);
+    if (matches.length === 1) {
+      onOpenProcedure(matches[0].id);
+      return;
+    }
     try {
       const result = await api.classifyIntent(text, lang);
       if (result.next_action === "SHOW_PROCEDURE" && result.procedure_id) {
@@ -118,17 +137,10 @@ export function HomeScreen({
           // Filtro EN VIVO por palabras clave (sin IA, instantáneo): estrecha
           // las tarjetas visibles mientras se escribe. El botón «Buscar» sigue
           // usando la IA para frases en lenguaje natural.
-          const q = normalize(query.trim());
-          const filtered = q
-            ? catalog.filter((item) => {
-                const haystack = normalize(
-                  item.name[lang] + " " + (item.description?.[lang] ?? ""),
-                );
-                return q.split(/\s+/).every((word) => haystack.includes(word));
-              })
-            : catalog;
+          const trimmed = query.trim();
+          const filtered = trimmed ? keywordMatches(trimmed) : catalog;
 
-          if (q && filtered.length === 0) {
+          if (trimmed && filtered.length === 0) {
             return <p className="subtitle">{strings.searchNoMatch}</p>;
           }
 
