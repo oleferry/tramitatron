@@ -151,6 +151,13 @@ body {
   align-items: center;
 }
 
+/* La región principal recibe el foco al cambiar de pantalla solo para
+   reorientar (no es un control): sin contorno visible; el contenido interactivo
+   dentro conserva su propio foco. */
+.kiosk-main:focus {
+  outline: none;
+}
+
 .kiosk-footer {
   display: flex;
   gap: 1rem;

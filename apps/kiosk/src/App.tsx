@@ -55,8 +55,17 @@ export function App() {
 
   const warnTimer = useRef<number | undefined>(undefined);
   const endTimer = useRef<number | undefined>(undefined);
+  const mainRef = useRef<HTMLElement>(null);
   const sessionRef = useRef<string | null>(null);
   sessionRef.current = sessionId;
+
+  // Al cambiar de pantalla (SPA), el botón que la disparó se desmonta y el foco
+  // quedaría huérfano en <body> (el teclado se va arriba del todo). Se lleva el
+  // foco a la región principal para reorientar a quien usa teclado o lector de
+  // pantalla (WCAG 2.4.3). preventScroll evita saltos visuales.
+  useEffect(() => {
+    mainRef.current?.focus({ preventScroll: true });
+  }, [screen.kind]);
   // Pantalla actual, para saber si alguien cierra la sesión dentro de un
   // trámite (abandono real) frente a hacerlo desde el inicio.
   const screenRef = useRef<Screen>(screen);
@@ -203,7 +212,7 @@ export function App() {
         </div>
       </header>
 
-      <main className="kiosk-main">
+      <main className="kiosk-main" ref={mainRef} tabIndex={-1}>
         {error && <div className="banner banner-info">{strings.apiError}</div>}
 
         {screen.kind === "language" &&
