@@ -394,6 +394,19 @@ button:focus-visible {
   border-radius: 999px;
 }
 
+/* Solo para lectores de pantalla: fuera de la vista pero anunciable. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .clarification {
   background: var(--color-primary-soft);
   border: 2px solid var(--color-primary);

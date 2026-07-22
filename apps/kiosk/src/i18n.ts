@@ -14,6 +14,8 @@ type Strings = {
   searchButton: string;
   searchHint: string;
   searchNoMatch: string;
+  searchResultsOne: string;
+  searchResultsMany: string;
   statusAvailable: string;
   statusComingSoon: string;
   back: string;
@@ -132,6 +134,8 @@ const es: Strings = {
   searchHint: "También puedes tocar directamente uno de los trámites de abajo.",
   searchNoMatch:
     "Ningún trámite coincide con esas palabras. Pulsa «Buscar» para que te ayude, o descríbelo de otra forma.",
+  searchResultsOne: "1 trámite coincide con tu búsqueda.",
+  searchResultsMany: "{n} trámites coinciden con tu búsqueda.",
   statusAvailable: "Disponible",
   statusComingSoon: "Próximamente",
   back: "Atrás",
@@ -277,6 +281,8 @@ const va: Strings = {
   searchHint: "També pots tocar directament un dels tràmits de baix.",
   searchNoMatch:
     "Cap tràmit coincidix amb eixes paraules. Prem «Buscar» perquè t'ajude, o descriu-ho d'una altra manera.",
+  searchResultsOne: "1 tràmit coincidix amb la teua busca.",
+  searchResultsMany: "{n} tràmits coincidixen amb la teua busca.",
   statusAvailable: "Disponible",
   statusComingSoon: "Pròximament",
   back: "Arrere",

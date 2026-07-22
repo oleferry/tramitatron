@@ -82,6 +82,24 @@ export function HomeScreen({
     }
   };
 
+  // Filtro EN VIVO por palabras clave (sin IA, instantáneo): estrecha las
+  // tarjetas visibles mientras se escribe. El botón «Buscar» sigue usando la IA
+  // para frases en lenguaje natural.
+  const trimmed = query.trim();
+  const filtered = catalog ? (trimmed ? keywordMatches(trimmed) : catalog) : [];
+
+  // Mensaje para lector de pantalla: cuántos trámites quedan al filtrar. Solo
+  // cuando hay búsqueda escrita (anunciar el catálogo entero al cargar sería
+  // ruido). El aviso visible «sin coincidencias» ya se muestra aparte abajo.
+  const resultsAnnouncement =
+    trimmed && catalog
+      ? filtered.length === 0
+        ? strings.searchNoMatch
+        : filtered.length === 1
+          ? strings.searchResultsOne
+          : strings.searchResultsMany.replace("{n}", String(filtered.length))
+      : "";
+
   return (
     <div className="screen">
       <h2>{strings.homeTitle}</h2>
@@ -128,54 +146,56 @@ export function HomeScreen({
         <span className="letter-entry-cta">{strings.letterEntryButton}</span>
       </button>
 
-      {clarification && <div className="clarification">{clarification}</div>}
+      {/* Región de estado (invisible): anuncia al lector de pantalla cuántos
+          trámites deja el filtro en vivo (WCAG 2.2 §4.1.3, mensajes de estado). */}
+      <p className="sr-only" role="status" aria-live="polite">
+        {resultsAnnouncement}
+      </p>
+
+      {/* role="status": la aclaración de la IA llega tras una búsqueda asíncrona
+          y debe anunciarse al aparecer, no solo verse. */}
+      {clarification && (
+        <div className="clarification" role="status">
+          {clarification}
+        </div>
+      )}
       {failed && <div className="banner banner-info">{strings.apiError}</div>}
       {!catalog && !failed && <p className="subtitle">{strings.loading}</p>}
 
       {catalog &&
-        (() => {
-          // Filtro EN VIVO por palabras clave (sin IA, instantáneo): estrecha
-          // las tarjetas visibles mientras se escribe. El botón «Buscar» sigue
-          // usando la IA para frases en lenguaje natural.
-          const trimmed = query.trim();
-          const filtered = trimmed ? keywordMatches(trimmed) : catalog;
-
-          if (trimmed && filtered.length === 0) {
-            return <p className="subtitle">{strings.searchNoMatch}</p>;
-          }
-
-          return (
-            <>
-              <p className="subtitle">{strings.searchHint}</p>
-              <div className="cards">
-                {filtered.map((item) => (
-              <button
-                key={item.id}
-                className={`card${highlighted === item.id ? " highlighted" : ""}`}
-                onClick={() => onOpenProcedure(item.id)}
-              >
-                <div className="card-top">
-                  <span className="card-icon" aria-hidden="true">
-                    {procedureIcon(item.id)}
-                  </span>
-                  <span
-                    className={`badge ${
-                      item.status === "available" ? "badge-available" : "badge-coming"
-                    }`}
-                  >
-                    {item.status === "available"
-                      ? strings.statusAvailable
-                      : strings.statusComingSoon}
-                  </span>
-                </div>
-                <h3>{item.name[lang]}</h3>
-                {item.description && <p>{item.description[lang]}</p>}
-              </button>
-                ))}
-              </div>
-            </>
-          );
-        })()}
+        (trimmed && filtered.length === 0 ? (
+          <p className="subtitle">{strings.searchNoMatch}</p>
+        ) : (
+          <>
+            <p className="subtitle">{strings.searchHint}</p>
+            <div className="cards">
+              {filtered.map((item) => (
+                <button
+                  key={item.id}
+                  className={`card${highlighted === item.id ? " highlighted" : ""}`}
+                  onClick={() => onOpenProcedure(item.id)}
+                >
+                  <div className="card-top">
+                    <span className="card-icon" aria-hidden="true">
+                      {procedureIcon(item.id)}
+                    </span>
+                    <span
+                      className={`badge ${
+                        item.status === "available" ? "badge-available" : "badge-coming"
+                      }`}
+                    >
+                      {item.status === "available"
+                        ? strings.statusAvailable
+                        : strings.statusComingSoon}
+                    </span>
+                  </div>
+                  <h3>{item.name[lang]}</h3>
+                  {item.description && <p>{item.description[lang]}</p>}
+                </button>
+              ))}
+            </div>
+          </>
+        ))}
     </div>
   );
 }
