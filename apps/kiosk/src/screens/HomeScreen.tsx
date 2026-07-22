@@ -7,6 +7,15 @@ import { t } from "../i18n";
 import { procedureIcon } from "../icons";
 import { VoiceInput } from "./VoiceInput";
 
+// Normaliza para comparar sin distinguir mayúsculas ni acentos ("médico" =
+// "medico"), para que el filtro en vivo sea tolerante a cómo se escriba.
+function normalize(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, ""); // quita las marcas diacríticas combinantes
+}
+
 export function HomeScreen({
   lang,
   sessionId,
@@ -104,11 +113,30 @@ export function HomeScreen({
       {failed && <div className="banner banner-info">{strings.apiError}</div>}
       {!catalog && !failed && <p className="subtitle">{strings.loading}</p>}
 
-      {catalog && (
-        <>
-          <p className="subtitle">{strings.searchHint}</p>
-          <div className="cards">
-            {catalog.map((item) => (
+      {catalog &&
+        (() => {
+          // Filtro EN VIVO por palabras clave (sin IA, instantáneo): estrecha
+          // las tarjetas visibles mientras se escribe. El botón «Buscar» sigue
+          // usando la IA para frases en lenguaje natural.
+          const q = normalize(query.trim());
+          const filtered = q
+            ? catalog.filter((item) => {
+                const haystack = normalize(
+                  item.name[lang] + " " + (item.description?.[lang] ?? ""),
+                );
+                return q.split(/\s+/).every((word) => haystack.includes(word));
+              })
+            : catalog;
+
+          if (q && filtered.length === 0) {
+            return <p className="subtitle">{strings.searchNoMatch}</p>;
+          }
+
+          return (
+            <>
+              <p className="subtitle">{strings.searchHint}</p>
+              <div className="cards">
+                {filtered.map((item) => (
               <button
                 key={item.id}
                 className={`card${highlighted === item.id ? " highlighted" : ""}`}
@@ -131,10 +159,11 @@ export function HomeScreen({
                 <h3>{item.name[lang]}</h3>
                 {item.description && <p>{item.description[lang]}</p>}
               </button>
-            ))}
-          </div>
-        </>
-      )}
+                ))}
+              </div>
+            </>
+          );
+        })()}
     </div>
   );
 }

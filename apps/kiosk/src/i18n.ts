@@ -13,6 +13,7 @@ type Strings = {
   searchPlaceholder: string;
   searchButton: string;
   searchHint: string;
+  searchNoMatch: string;
   statusAvailable: string;
   statusComingSoon: string;
   back: string;
@@ -129,6 +130,8 @@ const es: Strings = {
   searchPlaceholder: "Por ejemplo: quiero pedir cita para el médico",
   searchButton: "Buscar",
   searchHint: "También puedes tocar directamente uno de los trámites de abajo.",
+  searchNoMatch:
+    "Ningún trámite coincide con esas palabras. Pulsa «Buscar» para que te ayude, o descríbelo de otra forma.",
   statusAvailable: "Disponible",
   statusComingSoon: "Próximamente",
   back: "Atrás",
@@ -272,6 +275,8 @@ const va: Strings = {
   searchPlaceholder: "Per exemple: vull demanar cita per al metge",
   searchButton: "Buscar",
   searchHint: "També pots tocar directament un dels tràmits de baix.",
+  searchNoMatch:
+    "Cap tràmit coincidix amb eixes paraules. Prem «Buscar» perquè t'ajude, o descriu-ho d'una altra manera.",
   statusAvailable: "Disponible",
   statusComingSoon: "Pròximament",
   back: "Arrere",
