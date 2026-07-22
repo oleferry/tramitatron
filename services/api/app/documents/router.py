@@ -74,6 +74,7 @@ async def upload_document(
 ) -> DocumentExtraction:
     _get_session_or_404(request, session_id)
     _quality_check(body.image_base64)
+    request.app.state.metrics.record_channel("documents")
 
     gateway: ModelGateway = request.app.state.gateway
     result = await gateway.extract_document(

@@ -105,6 +105,9 @@ type Strings = {
   handoffPending: string;
   handoffFailed: string;
   pendingLabels: Record<string, string>;
+  feedbackQuestion: string;
+  feedbackThanks: string;
+  feedbackStarLabel: string;
 };
 
 const es: Strings = {
@@ -235,6 +238,9 @@ const es: Strings = {
     identificación: "identificarte (Cl@ve o certificado)",
     confirmar: "revisar y confirmar la cita",
   },
+  feedbackQuestion: "¿Cómo de fácil te ha resultado? (opcional)",
+  feedbackThanks: "¡Gracias por tu valoración!",
+  feedbackStarLabel: "Puntuar con {n} de 5",
 };
 
 const va: Strings = {
@@ -365,6 +371,9 @@ const va: Strings = {
     identificación: "identificar-te (Cl@ve o certificat)",
     confirmar: "revisar i confirmar la cita",
   },
+  feedbackQuestion: "Com de fàcil t'ha resultat? (opcional)",
+  feedbackThanks: "Gràcies per la teua valoració!",
+  feedbackStarLabel: "Puntuar amb {n} de 5",
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

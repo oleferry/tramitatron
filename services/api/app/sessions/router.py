@@ -58,7 +58,10 @@ def _get_or_404(request: Request, session_id: str) -> Session:
 
 @router.post("", status_code=201)
 def create_session(body: CreateSessionRequest, request: Request) -> SessionInfo:
-    return _info(_store(request).create(body.language))
+    session = _store(request).create(body.language)
+    # Métrica agregada: una sesión más, su idioma y su franja horaria. Sin el id.
+    request.app.state.metrics.record_session(body.language)
+    return _info(session)
 
 
 @router.get("/{session_id}")

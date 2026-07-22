@@ -53,4 +53,17 @@ async def execute_procedure(
         )
 
     # Los datos de la sesión se pasan al conector y viven solo durante la llamada.
-    return await connector.execute(dict(session.data), confirmed=body.confirmed)
+    result = await connector.execute(dict(session.data), confirmed=body.confirmed)
+
+    # Métrica agregada del desenlace (PRD §18.1 Eficiencia): éxito, derivación o
+    # fallo por trámite. Solo cuenta el estado; ningún dato de la persona.
+    _EVENT_BY_STATUS = {
+        "completed": "completed",
+        "user_handoff": "handoff",
+        "failed": "failed",
+    }
+    event = _EVENT_BY_STATUS.get(result.status)
+    if event:
+        request.app.state.metrics.record_procedure(procedure_id, event)
+
+    return result

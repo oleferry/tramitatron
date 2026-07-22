@@ -79,3 +79,9 @@ class Settings:
     rate_limit_window_seconds: float = field(
         default_factory=lambda: float(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60"))
     )
+
+    # Token del panel institucional (TT-602). Si se define, la LECTURA del cuadro
+    # de mando exige `Authorization: Bearer <token>`. Sin definir, el panel queda
+    # abierto (demo local); no contiene PII, solo agregados. La ingesta de
+    # eventos del kiosco es siempre pública (el kiosco es anónimo).
+    admin_token: str | None = field(default_factory=lambda: os.getenv("ADMIN_TOKEN") or None)

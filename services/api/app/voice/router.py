@@ -49,6 +49,7 @@ async def transcribe(
     # servicio abierto de transcripción.
     _get_session_or_404(request, session_id)
     _quality_check(body.audio_base64)
+    request.app.state.metrics.record_channel("voice")
 
     gateway: ModelGateway = request.app.state.gateway
     result = await gateway.transcribe(

@@ -222,6 +222,27 @@ const realApi = {
     }),
 };
 
+// Métricas del panel (TT-602). Son señales agregadas y anónimas: un trámite
+// iniciado o una valoración 1–5, nunca datos de la persona. Van "a fuego y
+// olvido": si fallan (sin backend, preview estática) se ignoran en silencio y
+// NO activan el modo demostración, porque no forman parte del flujo del usuario.
+function fireAndForget(path: string, payload: unknown): void {
+  void fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  }).catch(() => undefined);
+}
+
+export const metrics = {
+  procedureStarted: (procedureId: string) =>
+    fireAndForget("/api/metrics/event", { type: "started", procedure_id: procedureId }),
+  procedureAbandoned: (procedureId: string) =>
+    fireAndForget("/api/metrics/event", { type: "abandoned", procedure_id: procedureId }),
+  feedback: (rating: number) => fireAndForget("/api/metrics/feedback", { rating }),
+};
+
 // Cada llamada intenta el backend real; si no hay red o no existe backend
 // (preview estática), pasa al modo demostración y lo señala en la interfaz.
 function withDemoFallback<A extends unknown[], R>(

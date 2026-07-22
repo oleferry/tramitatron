@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#17324d" />
+  <title>Tramitatrón — Panel institucional (KPIs)</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect width='26' height='26' rx='7' fill='%2317324d'/%3E%3Cpath d='M6 8h14M13 8v12' fill='none' stroke='%23f2c14e' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='13' cy='20' r='2.1' fill='%23246bfd'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #17324d;
+      --navy-deep: #0f2438;
+      --blue: #246bfd;
+      --blue-ink: #1e56c9;
+      --yellow: #f2c14e;
+      --teal: #0f6b78;
+      --green: #1f6f43;
+      --red: #b3261e;
+      --paper: #f7f8fa;
+      --white: #ffffff;
+      --ink: #121820;
+      --muted: #566878;
+      --line: #dbe2ea;
+      --r-s: 12px;
+      --r-m: 18px;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --shadow: 0 1px 2px rgba(18,24,32,.04), 0 12px 32px -18px rgba(18,24,32,.28);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: var(--sans); color: var(--ink);
+      background: var(--paper); line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3 { margin: 0; line-height: 1.15; letter-spacing: -.015em; }
+    p { margin: 0; }
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+    .wrap { width: min(1180px, 100% - 2.5rem); margin-inline: auto; }
+
+    header.top {
+      background: var(--navy); color: var(--white);
+      padding: 1rem 0;
+    }
+    header.top .wrap { display: flex; align-items: center; gap: .9rem; flex-wrap: wrap; }
+    .logo { width: 40px; height: 40px; border-radius: 10px; flex: none; }
+    .titles h1 { font-size: 1.15rem; }
+    .titles p { font-size: .82rem; color: #b8c6d6; }
+
+    .config {
+      background: var(--white); border-bottom: 1px solid var(--line);
+      padding: .85rem 0;
+    }
+    .config .wrap { display: flex; gap: .7rem; align-items: end; flex-wrap: wrap; }
+    .field { display: flex; flex-direction: column; gap: .25rem; }
+    .field label { font-size: .72rem; font-weight: 600; color: var(--muted); }
+    .field input {
+      font: inherit; font-size: .9rem; padding: .5rem .65rem;
+      border: 1px solid var(--line); border-radius: var(--r-s); background: var(--white);
+      min-width: 15rem;
+    }
+    button {
+      font: inherit; font-weight: 600; cursor: pointer;
+      border-radius: var(--r-s); border: 1px solid transparent; padding: .55rem 1rem;
+    }
+    .btn-primary { background: var(--blue); color: var(--white); }
+    .btn-primary:hover { background: var(--blue-ink); }
+    .btn-ghost { background: var(--white); color: var(--navy); border-color: var(--line); }
+    .toggle { display: flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--muted); }
+
+    main { padding: 1.5rem 0 4rem; }
+    .status { font-size: .82rem; color: var(--muted); margin-bottom: 1rem; min-height: 1.2em; }
+    .status.err { color: var(--red); font-weight: 600; }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .card {
+      background: var(--white); border: 1px solid var(--line); border-radius: var(--r-m);
+      padding: 1.1rem 1.2rem; box-shadow: var(--shadow);
+    }
+    .card .k { font-size: .74rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+    .card .v { font-size: 2.1rem; font-weight: 800; letter-spacing: -.02em; margin-top: .2rem; }
+    .card .v small { font-size: .95rem; font-weight: 600; color: var(--muted); }
+    .card.accent { border-top: 3px solid var(--blue); }
+    .card.good { border-top: 3px solid var(--green); }
+    .card.warn { border-top: 3px solid var(--yellow); }
+    .card.info { border-top: 3px solid var(--teal); }
+
+    .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; }
+    .panel {
+      background: var(--white); border: 1px solid var(--line); border-radius: var(--r-m);
+      padding: 1.1rem 1.2rem; box-shadow: var(--shadow); margin-bottom: 1rem;
+    }
+    .panel h2 { font-size: .95rem; margin-bottom: .9rem; color: var(--navy); }
+
+    .bars { display: flex; flex-direction: column; gap: .45rem; }
+    .bar-row { display: grid; grid-template-columns: 5.5rem 1fr 2.5rem; align-items: center; gap: .6rem; font-size: .82rem; }
+    .bar-row .lbl { color: var(--muted); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track { background: #eef2f7; border-radius: 6px; height: 1.1rem; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--blue); border-radius: 6px; min-width: 2px; }
+    .bar-fill.hour { background: var(--teal); }
+    .bar-fill.lang { background: var(--navy); }
+    .bar-row .num { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+    th, td { text-align: right; padding: .45rem .5rem; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+    th:first-child, td:first-child { text-align: left; }
+    thead th { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .03em; }
+    tbody tr:hover { background: #f4f7fb; }
+    .pid { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .78rem; }
+
+    .privacy {
+      margin-top: 1.5rem; font-size: .8rem; color: var(--muted);
+      background: #eef4ef; border: 1px solid #cfe3d6; border-radius: var(--r-s);
+      padding: .8rem 1rem;
+    }
+    .privacy strong { color: var(--green); }
+    .empty { color: var(--muted); font-size: .85rem; padding: .5rem 0; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <svg class="logo" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="400" height="400" rx="90" fill="#17324D" />
+        <path d="M100 102 H300" stroke="#FFFFFF" stroke-width="44" stroke-linecap="round" />
+        <path d="M200 102 V260" stroke="#FFFFFF" stroke-width="44" stroke-linecap="round" />
+        <path d="M200 260 C200 315,260 325,300 286" fill="none" stroke="#F2C14E" stroke-width="32" stroke-linecap="round" />
+        <path d="M270 288 L297 315 L345 256" fill="none" stroke="#F2C14E" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div class="titles">
+        <h1>Panel institucional · KPIs del piloto</h1>
+        <p>Tramitatrón — Castilla y León · métricas agregadas y anónimas (PRD §18)</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="config">
+    <div class="wrap">
+      <div class="field">
+        <label for="api">API</label>
+        <input id="api" type="url" placeholder="http://localhost:8123" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="token">Token (si el panel está protegido)</label>
+        <input id="token" type="password" placeholder="opcional" autocomplete="off" />
+      </div>
+      <button class="btn-primary" id="refresh" type="button">Actualizar</button>
+      <button class="btn-ghost" id="csv" type="button">Descargar CSV</button>
+      <label class="toggle"><input type="checkbox" id="auto" /> Auto (30 s)</label>
+    </div>
+  </section>
+
+  <main>
+    <div class="wrap">
+      <p class="status" id="status" role="status" aria-live="polite">Introduce la URL de la API y pulsa «Actualizar».</p>
+
+      <div class="cards" id="cards"></div>
+
+      <div class="grid2">
+        <div class="panel">
+          <h2>Sesiones por franja horaria (UTC)</h2>
+          <div class="bars" id="byHour"></div>
+        </div>
+        <div class="panel">
+          <h2>Sesiones por idioma</h2>
+          <div class="bars" id="byLang"></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <h2>Uso por canal</h2>
+          <div class="bars" id="byChannel"></div>
+        </div>
+        <div class="panel">
+          <h2>Satisfacción (1–5)</h2>
+          <div class="bars" id="bySat"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Embudo por trámite</h2>
+        <div id="procTable"></div>
+        <p class="empty" style="margin-top:.6rem">
+          «Completado» y «derivación» solo cuentan en trámites transaccionales (asistidos/integrados);
+          los informativos registran interés (iniciados), no completados.
+        </p>
+      </div>
+
+      <p class="privacy">
+        <strong>Observabilidad sin vigilancia.</strong> Todo lo que se muestra son contadores agregados.
+        No hay identificadores de sesión, ni textos, imágenes o audio, ni forma de seguir a una persona
+        entre sesiones (PRD §18.2). Los datos viven en memoria del proceso: se reinician con la API.
+      </p>
+    </div>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+
+    // Precedencia: ?api= → guardado → mismo origen (relativo).
+    $("api").value = params.get("api") || localStorage.getItem("tt_api") || "";
+    $("token").value = localStorage.getItem("tt_token") || "";
+
+    const apiBase = () => $("api").value.trim().replace(/\/+$/, "");
+    const authHeaders = () => {
+      const t = $("token").value.trim();
+      return t ? { Authorization: "Bearer " + t } : {};
+    };
+
+    function esc(s) {
+      return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    }
+    function pct(v) { return v == null ? "—" : v.toFixed(1) + "%"; }
+
+    function bars(el, entries, cls) {
+      const max = Math.max(1, ...entries.map((e) => e[1]));
+      el.innerHTML = entries.map(([label, value]) => `
+        <div class="bar-row">
+          <span class="lbl" title="${esc(label)}">${esc(label)}</span>
+          <span class="bar-track"><span class="bar-fill ${cls || ""}" style="width:${(100 * value / max).toFixed(1)}%"></span></span>
+          <span class="num">${value}</span>
+        </div>`).join("");
+    }
+
+    const CHANNEL_LABELS = { assistant: "Asistente", letters: "Cartas", voice: "Voz", documents: "Documentos" };
+    const LANG_LABELS = { es: "Castellano", "ca-valencia": "Valencià" };
+
+    function render(d) {
+      const u = d.usage, p = d.procedures, s = d.satisfaction;
+
+      $("cards").innerHTML = `
+        <div class="card accent"><div class="k">Sesiones</div><div class="v">${u.sessions}</div></div>
+        <div class="card good"><div class="k">Tasa de éxito</div><div class="v">${pct(p.success_rate_pct)}</div></div>
+        <div class="card info"><div class="k">Derivaciones</div><div class="v">${pct(p.handoff_rate_pct)}</div></div>
+        <div class="card warn"><div class="k">Satisfacción media</div><div class="v">${s.average == null ? "—" : s.average.toFixed(2)}<small> /5 · ${s.votes} votos</small></div></div>
+      `;
+
+      bars($("byHour"), Object.entries(u.by_hour).map(([h, n]) => [h.padStart(2, "0") + "h", n]), "hour");
+
+      const langs = Object.entries(u.by_language).map(([k, n]) => [LANG_LABELS[k] || k, n]);
+      bars($("byLang"), langs.length ? langs : [["—", 0]], "lang");
+
+      bars($("byChannel"), Object.entries(u.channels).map(([k, n]) => [CHANNEL_LABELS[k] || k, n]));
+      bars($("bySat"), Object.entries(s.histogram).map(([r, n]) => [r + " ★", n]));
+
+      const rows = Object.entries(p.by_procedure).sort((a, b) => b[1].started - a[1].started);
+      if (!rows.length) {
+        $("procTable").innerHTML = '<p class="empty">Aún no hay trámites registrados.</p>';
+      } else {
+        $("procTable").innerHTML = `
+          <table>
+            <thead><tr><th>Trámite</th><th>Iniciados</th><th>Completados</th><th>Derivados</th><th>Fallos</th><th>Abandonos</th></tr></thead>
+            <tbody>${rows.map(([pid, c]) => `
+              <tr><td class="pid">${esc(pid)}</td><td>${c.started}</td><td>${c.completed}</td><td>${c.handoff}</td><td>${c.failed}</td><td>${c.abandoned}</td></tr>`).join("")}
+            </tbody>
+          </table>`;
+      }
+
+      $("status").className = "status";
+      $("status").textContent = `Actualizado ${new Date().toLocaleTimeString()} · datos desde ${d.since}`;
+    }
+
+    async function load() {
+      const base = apiBase();
+      localStorage.setItem("tt_api", $("api").value.trim());
+      localStorage.setItem("tt_token", $("token").value.trim());
+      $("status").className = "status";
+      $("status").textContent = "Cargando…";
+      try {
+        const res = await fetch(base + "/api/metrics/summary", { headers: authHeaders() });
+        if (res.status === 401) throw new Error("El panel está protegido: introduce el token.");
+        if (!res.ok) throw new Error("La API respondió " + res.status + ".");
+        render(await res.json());
+      } catch (e) {
+        $("status").className = "status err";
+        const hint = e instanceof TypeError
+          ? "No se pudo conectar. Revisa la URL de la API y que permita este origen (CORS)."
+          : e.message;
+        $("status").textContent = "Error: " + hint;
+      }
+    }
+
+    async function downloadCsv() {
+      const base = apiBase();
+      try {
+        const res = await fetch(base + "/api/metrics/summary.csv", { headers: authHeaders() });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "tramitatron-kpis.csv";
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        $("status").className = "status err";
+        $("status").textContent = "No se pudo descargar el CSV: " + e.message;
+      }
+    }
+
+    let autoTimer = null;
+    $("refresh").addEventListener("click", load);
+    $("csv").addEventListener("click", downloadCsv);
+    $("auto").addEventListener("change", (e) => {
+      clearInterval(autoTimer);
+      if (e.target.checked) { autoTimer = setInterval(load, 30000); load(); }
+    });
+    [$("api"), $("token")].forEach((el) =>
+      el.addEventListener("keydown", (e) => { if (e.key === "Enter") load(); }));
+
+    if (apiBase() || params.get("api")) load();
+  </script>
+</body>
+</html>

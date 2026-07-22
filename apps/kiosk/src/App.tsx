@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { api } from "./api";
+import { api, metrics } from "./api";
 import type { Lang } from "./i18n";
 import { t } from "./i18n";
 import { stopSpeaking } from "./speech";
@@ -37,6 +37,7 @@ export function App() {
   const [inactivityWarn, setInactivityWarn] = useState(false);
   const [error, setError] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
+  const [feedbackGiven, setFeedbackGiven] = useState(false);
 
   useEffect(() => {
     const onDemo = () => setDemoMode(true);
@@ -48,6 +49,10 @@ export function App() {
   const endTimer = useRef<number | undefined>(undefined);
   const sessionRef = useRef<string | null>(null);
   sessionRef.current = sessionId;
+  // Pantalla actual, para saber si alguien cierra la sesión dentro de un
+  // trámite (abandono real) frente a hacerlo desde el inicio.
+  const screenRef = useRef<Screen>(screen);
+  screenRef.current = screen;
 
   const strings = t(lang);
 
@@ -61,12 +66,17 @@ export function App() {
       setFontScaleIdx(0);
       setHighContrast(false);
       setLang("es");
-    }, 4000);
+      setFeedbackGiven(false);
+    }, 8000);
   }, []);
 
   const endSession = useCallback(async () => {
     // Al cerrar la sesión no puede quedar una voz leyendo datos del anterior.
     stopSpeaking();
+    // Abandono: se cierra la sesión estando dentro de un trámite (métrica
+    // agregada; solo el id del trámite, nada de la persona).
+    const scr = screenRef.current;
+    if (scr.kind === "procedure") metrics.procedureAbandoned(scr.procedureId);
     const current = sessionRef.current;
     if (current) {
       try {
@@ -201,7 +211,10 @@ export function App() {
             lang={lang}
             sessionId={sessionId}
             voiceEnabled={voiceEnabled}
-            onOpenProcedure={(procedureId) => setScreen({ kind: "procedure", procedureId })}
+            onOpenProcedure={(procedureId) => {
+              metrics.procedureStarted(procedureId);
+              setScreen({ kind: "procedure", procedureId });
+            }}
             onOpenLetter={() => setScreen({ kind: "letter" })}
           />
         )}
@@ -231,6 +244,32 @@ export function App() {
             </span>
             <h2>{strings.sessionEndedTitle}</h2>
             <p>{strings.sessionEndedBody}</p>
+            {feedbackGiven ? (
+              <p className="feedback-thanks">{strings.feedbackThanks}</p>
+            ) : (
+              <div
+                className="feedback-rating"
+                role="group"
+                aria-label={strings.feedbackQuestion}
+              >
+                <p>{strings.feedbackQuestion}</p>
+                <div className="feedback-stars">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      className="btn-secondary feedback-star"
+                      aria-label={strings.feedbackStarLabel.replace("{n}", String(n))}
+                      onClick={() => {
+                        metrics.feedback(n);
+                        setFeedbackGiven(true);
+                      }}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>

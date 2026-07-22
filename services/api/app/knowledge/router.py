@@ -16,6 +16,8 @@ router = APIRouter(prefix="/api", tags=["knowledge"])
 @router.post("/assistant/ask")
 def ask(body: AskRequest, request: Request) -> AskResponse:
     store: KnowledgeStore = request.app.state.knowledge
+    # Uso del canal asistente (contador agregado; ni la pregunta ni la respuesta).
+    request.app.state.metrics.record_channel("assistant")
     chunk = store.retrieve(body.text, procedure_id=body.procedure_id)
     if chunk is None:
         return AskResponse(found=False)

@@ -22,6 +22,8 @@ from .gateway.mock import MockModelGateway
 from .knowledge import router as knowledge_router_module
 from .knowledge.store import KnowledgeStore
 from .letters import router as letters_router_module
+from .metrics import MetricsRegistry
+from .metrics import router as metrics_router_module
 from .ratelimit import RateLimiter, client_key
 from .sessions import router as sessions_router_module
 from .sessions.memory import MemorySessionStore
@@ -62,6 +64,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.catalog = load_catalog(settings.catalog_path)
     app.state.knowledge = KnowledgeStore(settings.knowledge_path)
     app.state.gateway = _build_gateway(settings, app.state.catalog)
+    # Métricas agregadas del piloto (TT-602). Solo contadores; sin identidad.
+    app.state.metrics = MetricsRegistry()
     app.state.connectors = {
         "demo.mock": MockConnector(),
         # Trámite de demostración por navegación asistida (worker Playwright).
@@ -124,6 +128,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(gateway_router_module.router)
     app.include_router(knowledge_router_module.router)
     app.include_router(connectors_router_module.router)
+    app.include_router(metrics_router_module.router)
     return app
 
 

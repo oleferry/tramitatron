@@ -43,6 +43,7 @@ async def explain_letter(
 ) -> LetterAnalysis:
     _get_session_or_404(request, session_id)
     _quality_check(body.image_base64)
+    request.app.state.metrics.record_channel("letters")
 
     gateway: ModelGateway = request.app.state.gateway
     transcript = await gateway.explain_official_content(

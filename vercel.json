@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm install --prefix apps/kiosk",
-  "buildCommand": "VITE_LOCALES=es npm run build --prefix apps/kiosk && rm -rf site && mkdir -p site/app && cp -r apps/kiosk/dist/. site/app/ && cp apps/landing/index.html site/index.html",
+  "buildCommand": "VITE_LOCALES=es npm run build --prefix apps/kiosk && rm -rf site && mkdir -p site/app site/admin && cp -r apps/kiosk/dist/. site/app/ && cp apps/landing/index.html site/index.html && cp apps/admin/index.html site/admin/index.html",
   "outputDirectory": "site",
   "redirects": [{ "source": "/app", "destination": "/app/", "permanent": false }],
   "rewrites": [{ "source": "/app/(.*)", "destination": "/app/index.html" }]
