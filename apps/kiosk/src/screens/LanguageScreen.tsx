@@ -1,3 +1,4 @@
+import { BrandMark } from "../BrandMark";
 import type { Lang } from "../i18n";
 import { t } from "../i18n";
 
@@ -5,7 +6,7 @@ import { t } from "../i18n";
 export function LanguageScreen({ onChoose }: { onChoose: (lang: Lang) => void }) {
   return (
     <div className="screen">
-      <img className="brand-hero" src="/icon.svg" alt="" />
+      <BrandMark className="brand-hero" />
       <p className="claim">
         {t("es").claim} · {t("ca-valencia").claim}
       </p>

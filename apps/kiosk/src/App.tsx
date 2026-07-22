@@ -4,6 +4,7 @@ import { api } from "./api";
 import type { Lang } from "./i18n";
 import { t } from "./i18n";
 import { stopSpeaking } from "./speech";
+import { BrandMark } from "./BrandMark";
 import { FORCED_LANG } from "./locales";
 import { HomeScreen } from "./screens/HomeScreen";
 import { LanguageScreen } from "./screens/LanguageScreen";
@@ -152,7 +153,7 @@ export function App() {
     >
       <header className="kiosk-header">
         <div className="brand">
-          <img className="brand-mark" src="/icon.svg" alt="" />
+          <BrandMark className="brand-mark" />
           <h1>{strings.appName}</h1>
           {demoMode && <span className="demo-badge">{strings.demoBadge}</span>}
         </div>
