@@ -102,7 +102,7 @@ Por defecto el worker usa el driver simulado (httpx contra un portal de pruebas 
 
 ### Despliegue
 
-- **Kiosco (web)**: Vercel, importando este repo tal cual (`vercel.json` define el build). Sin backend accesible, el kiosco pasa automáticamente a modo demostración con distintivo visible.
+- **Web (landing + kiosco)**: Vercel, importando este repo tal cual (`vercel.json` define el build). La **landing institucional** (`apps/landing/`) se sirve en la raíz `/` y el **kiosco** en `/app`. El build compila el kiosco (con rutas relativas, `base: './'`) y ensambla ambos en `site/`. Sin backend accesible, el kiosco pasa automáticamente a modo demostración con distintivo visible.
 - **API (región UE)**: Render mediante blueprint (`render.yaml`): servicio Docker + Redis gestionado, ambos en **Frankfurt**. En render.com → *New → Blueprint* → seleccionar este repositorio. La imagen es `infra/docker/api.Dockerfile` (incluye catálogo y snapshots de conocimiento). Cada push a `master` redespliega.
 
 ### Tests

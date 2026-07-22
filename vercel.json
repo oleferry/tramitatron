@@ -1,7 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm install --prefix apps/kiosk",
-  "buildCommand": "npm run build --prefix apps/kiosk",
-  "outputDirectory": "apps/kiosk/dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "buildCommand": "npm run build --prefix apps/kiosk && rm -rf site && mkdir -p site/app && cp -r apps/kiosk/dist/. site/app/ && cp apps/landing/index.html site/index.html",
+  "outputDirectory": "site",
+  "redirects": [{ "source": "/app", "destination": "/app/", "permanent": false }],
+  "rewrites": [{ "source": "/app/(.*)", "destination": "/app/index.html" }]
 }

@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#17324d" />
+  <title>Tramitatrón — La administración, más cerca</title>
+  <meta name="description" content="Punto público de asistencia digital: ayuda a cualquier persona a entender, preparar y realizar trámites paso a paso. Accesible, anónimo por defecto y bilingüe." />
+  <meta property="og:title" content="Tramitatrón — La administración, más cerca" />
+  <meta property="og:description" content="Un punto público de asistencia digital para que cualquier persona pueda entender, preparar y realizar trámites paso a paso." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect width='26' height='26' rx='7' fill='%2317324d'/%3E%3Cpath d='M6 8h14M13 8v12' fill='none' stroke='%23f2c14e' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='13' cy='20' r='2.1' fill='%23246bfd'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #17324d;
+      --navy-deep: #0f2438;
+      --blue: #246bfd;
+      --blue-ink: #1e56c9;
+      --yellow: #f2c14e;
+      --teal: #0f6b78;
+      --teal-soft: #e2f0f2;
+      --green: #1f6f43;
+      --paper: #f7f8fa;
+      --white: #ffffff;
+      --ink: #121820;
+      --muted: #566878;
+      --line: #dbe2ea;
+      --line-navy: #2c4a66;
+      --r-s: 12px;
+      --r-m: 20px;
+      --r-l: 32px;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --measure: 63ch;
+      --shadow: 0 1px 2px rgba(18,24,32,.04), 0 12px 32px -18px rgba(18,24,32,.28);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    h1, h2, h3 { text-wrap: balance; line-height: 1.1; margin: 0; letter-spacing: -.015em; }
+    p { margin: 0; }
+    a { color: var(--blue); }
+    :focus-visible { outline: 4px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+    .skip { position: absolute; left: -9999px; top: 0; background: var(--white); color: var(--navy); padding: .8rem 1.2rem; border-radius: var(--r-s); z-index: 50; }
+    .skip:focus { left: 1rem; top: 1rem; }
+
+    .wrap { width: min(1120px, 100% - 3rem); margin-inline: auto; }
+
+    .eyebrow {
+      font-size: .8rem; font-weight: 600; letter-spacing: .04em;
+      color: var(--teal); display: inline-flex; align-items: center; gap: .55rem;
+    }
+    .eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--yellow); border-radius: 2px; }
+    .on-navy .eyebrow { color: #cfe0ea; }
+
+    header.site {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(247,248,250,.82); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav { display: flex; align-items: center; gap: 1.5rem; padding: .85rem 0; }
+    .brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; color: var(--navy); text-decoration: none; font-size: 1.15rem; letter-spacing: -.02em; }
+    .brand svg { flex: none; }
+    .nav-links { display: flex; gap: 1.4rem; margin-left: auto; }
+    .nav-links a { color: var(--navy); text-decoration: none; font-weight: 500; font-size: .95rem; }
+    .nav-links a:hover { color: var(--blue); }
+    .nav .btn { margin-left: .25rem; }
+    @media (max-width: 820px) { .nav-links { display: none; } .nav .btn { margin-left: auto; } }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font: inherit; font-weight: 600; font-size: 1rem;
+      padding: .8rem 1.35rem; border-radius: var(--r-s);
+      text-decoration: none; cursor: pointer; border: 2px solid transparent;
+      transition: transform .12s ease, background .15s ease, box-shadow .15s ease;
+    }
+    .btn-primary { background: var(--blue); color: var(--white); box-shadow: 0 8px 22px -10px rgba(36,107,253,.7); }
+    .btn-primary:hover { background: var(--blue-ink); transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: var(--navy); border-color: var(--line); }
+    .btn-ghost:hover { border-color: var(--navy); }
+    .on-navy .btn-ghost { color: var(--white); border-color: var(--line-navy); }
+    .on-navy .btn-ghost:hover { border-color: #6f8ba5; background: rgba(255,255,255,.05); }
+    .btn .arrow { transition: transform .15s ease; }
+    .btn:hover .arrow { transform: translateX(3px); }
+
+    .hero { background: var(--navy); color: #eef3f7; position: relative; overflow: hidden; }
+    .hero::after {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(680px 380px at 78% -8%, rgba(36,107,253,.28), transparent 60%),
+                  radial-gradient(520px 320px at 8% 108%, rgba(15,107,120,.30), transparent 62%);
+      pointer-events: none;
+    }
+    .hero .wrap { position: relative; z-index: 1; padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(3rem, 6vw, 5rem); }
+    .hero h1 { color: var(--white); font-size: clamp(2.4rem, 5.6vw, 4rem); font-weight: 700; max-width: 15ch; }
+    .hero .lede { margin-top: 1.25rem; font-size: clamp(1.1rem, 1.9vw, 1.35rem); color: #c6d4df; max-width: 46ch; }
+    .hero-cta { margin-top: 2.1rem; display: flex; flex-wrap: wrap; gap: .85rem; }
+    .hero-note { margin-top: 1.5rem; font-size: .9rem; color: #9db2c4; display: flex; align-items: center; gap: .5rem; }
+    .hero-note .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(31,111,67,.25); }
+
+    .path-strip { position: relative; z-index: 1; padding-bottom: clamp(2rem, 5vw, 3.5rem); }
+    .path-svg { width: 100%; height: auto; display: block; overflow: visible; }
+    .path-line { fill: none; stroke: var(--line-navy); stroke-width: 2; }
+    .path-line.draw { stroke: var(--yellow); stroke-linecap: round; }
+    .path-node circle { fill: var(--navy-deep); stroke: var(--yellow); stroke-width: 2.5; }
+    .path-node text { fill: #dfe8f0; font-size: 13px; font-weight: 600; font-family: var(--sans); }
+    .path-node .n { fill: var(--yellow); font-size: 12px; font-weight: 700; }
+
+    section { padding: clamp(3.5rem, 7vw, 6rem) 0; }
+    .sec-head { max-width: 60ch; margin-bottom: 2.75rem; }
+    .sec-head h2 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); color: var(--navy); font-weight: 700; margin-top: .7rem; }
+    .sec-head p { margin-top: 1rem; color: var(--muted); font-size: 1.1rem; }
+
+    .problem { background: var(--white); border-block: 1px solid var(--line); }
+    .problem .grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+    .problem p.big { font-size: clamp(1.3rem, 2.4vw, 1.7rem); color: var(--ink); font-weight: 500; line-height: 1.45; }
+    .problem p.big strong { color: var(--navy); }
+    .stat-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-m); padding: 1.6rem 1.7rem; display: grid; gap: 1.1rem; }
+    .stat-card .row { display: flex; gap: .9rem; align-items: flex-start; }
+    .stat-card .ic { flex: none; width: 40px; height: 40px; border-radius: var(--r-s); display: grid; place-items: center; background: var(--teal-soft); color: var(--teal); font-size: 1.2rem; }
+    .stat-card .row p { font-size: .98rem; color: var(--muted); }
+    .stat-card .row strong { color: var(--ink); display: block; font-size: 1rem; }
+    @media (max-width: 780px) { .problem .grid { grid-template-columns: 1fr; } }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .step { background: var(--white); border: 1px solid var(--line); border-radius: var(--r-m); padding: 1.7rem; position: relative; box-shadow: var(--shadow); }
+    .step .num { font-size: .8rem; font-weight: 700; color: var(--blue); letter-spacing: .05em; }
+    .step h3 { font-size: 1.3rem; color: var(--navy); margin: .5rem 0 .55rem; }
+    .step p { color: var(--muted); font-size: 1rem; }
+    @media (max-width: 780px) { .steps { grid-template-columns: 1fr; } }
+
+    .trust { background: var(--navy); color: #e7eef4; }
+    .trust .sec-head h2 { color: var(--white); }
+    .trust .sec-head p { color: #a9bccb; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.15rem; }
+    .card { background: #1b3a58; border: 1px solid var(--line-navy); border-radius: var(--r-m); padding: 1.7rem; display: flex; flex-direction: column; gap: .7rem; }
+    .card .ic { width: 44px; height: 44px; border-radius: var(--r-s); display: grid; place-items: center; background: rgba(242,193,78,.14); color: var(--yellow); font-size: 1.3rem; }
+    .card h3 { font-size: 1.2rem; color: var(--white); }
+    .card p { color: #b3c4d2; font-size: .98rem; }
+    .card .tag { margin-top: auto; font-size: .82rem; font-weight: 600; color: #9be3bd; padding-top: .3rem; }
+    @media (max-width: 900px) { .cards { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 620px) { .cards { grid-template-columns: 1fr; } }
+
+    .uses .list { display: grid; grid-template-columns: repeat(2, 1fr); gap: .9rem 1.5rem; max-width: 860px; }
+    .use { display: flex; gap: .9rem; align-items: flex-start; padding: 1.1rem 1.2rem; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-s); }
+    .use .ic { flex: none; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--teal-soft); font-size: 1.05rem; }
+    .use strong { color: var(--navy); display: block; }
+    .use span { color: var(--muted); font-size: .95rem; }
+    @media (max-width: 680px) { .uses .list { grid-template-columns: 1fr; } }
+
+    .objections { background: var(--white); border-block: 1px solid var(--line); }
+    .obj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .obj { border: 1px solid var(--line); border-radius: var(--r-m); padding: 1.7rem 1.8rem; background: var(--paper); }
+    .obj .q { font-weight: 600; color: var(--muted); font-size: .95rem; margin-bottom: .8rem; }
+    .obj .q::before { content: "“"; color: #b9892a; font-weight: 700; }
+    .obj .q::after { content: "”"; }
+    .obj p.a { color: var(--ink); font-size: 1.08rem; line-height: 1.5; }
+    .obj p.a b { color: var(--navy); }
+    @media (max-width: 780px) { .obj-grid { grid-template-columns: 1fr; } }
+
+    .admin .grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem,4vw,3rem); align-items: start; }
+    .admin ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+    .admin li { display: flex; gap: .85rem; align-items: flex-start; }
+    .admin li .ck { flex: none; width: 26px; height: 26px; border-radius: 8px; background: rgba(31,111,67,.12); color: var(--green); display: grid; place-items: center; margin-top: 2px; font-size: .85rem; }
+    .admin li strong { color: var(--navy); }
+    .admin li span { color: var(--muted); }
+    .panel { background: var(--navy); color: #dfe8f0; border-radius: var(--r-l); padding: 2rem; }
+    .panel .eyebrow { color: #cfe0ea; }
+    .panel h3 { color: var(--white); font-size: 1.4rem; margin: .6rem 0 1rem; }
+    .panel .sig { margin-top: 1.4rem; padding-top: 1.2rem; border-top: 1px solid var(--line-navy); font-size: .92rem; color: #a9bccb; }
+    .panel .sig a { color: var(--yellow); font-weight: 600; text-decoration: none; }
+    .panel .sig a:hover { text-decoration: underline; }
+    @media (max-width: 820px) { .admin .grid { grid-template-columns: 1fr; } }
+
+    .closing { background: linear-gradient(160deg, var(--navy), var(--navy-deep)); color: #eef3f7; text-align: center; }
+    .closing h2 { color: var(--white); font-size: clamp(2rem, 4.5vw, 3.2rem); max-width: 16ch; margin-inline: auto; }
+    .closing p { color: #b9c9d6; margin: 1.1rem auto 0; max-width: 44ch; font-size: 1.1rem; }
+    .closing .hero-cta { justify-content: center; }
+
+    footer.site { background: var(--navy-deep); color: #9db2c4; padding: 2.5rem 0; font-size: .9rem; }
+    footer.site .row { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; }
+    footer.site .brand-f { color: #dfe8f0; font-weight: 700; letter-spacing: -.02em; }
+    footer.site .fine { max-width: 62ch; margin-top: 1.2rem; line-height: 1.5; color: #7f95a8; }
+    footer.site .fine a { color: #cfe0ea; }
+    footer.site .badges { display: flex; flex-wrap: wrap; gap: .5rem; }
+    footer.site .badge { border: 1px solid var(--line-navy); border-radius: 999px; padding: .3rem .8rem; font-size: .78rem; color: #b3c4d2; }
+
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      * { scroll-behavior: auto !important; }
+    }
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#servicio">Saltar al contenido</a>
+
+  <header class="site">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="Tramitatrón, inicio">
+        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+          <rect x="1" y="1" width="24" height="24" rx="7" fill="#17324d"/>
+          <path d="M6 8 h14 M13 8 v12" fill="none" stroke="#f2c14e" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="13" cy="20" r="2.1" fill="#246bfd"/>
+        </svg>
+        Tramitatrón
+      </a>
+      <nav class="nav-links" aria-label="Secciones">
+        <a href="#servicio">El servicio</a>
+        <a href="#como">Cómo funciona</a>
+        <a href="#confianza">Por qué confiar</a>
+        <a href="#piloto">Piloto</a>
+      </nav>
+      <a class="btn btn-primary" href="/app/">Probar la demo <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero on-navy" id="servicio">
+      <div class="wrap">
+        <span class="eyebrow">Punto público de asistencia digital</span>
+        <h1>La administración, más cerca.</h1>
+        <p class="lede">Un punto de asistencia que ayuda a cualquier persona a entender, preparar y realizar trámites paso a paso, por pantalla, voz y lectura de documentos.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="/app/">Probar la demo <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost" href="#piloto">Solicitar un piloto</a>
+        </div>
+        <p class="hero-note"><span class="dot" aria-hidden="true"></span> Anónimo por defecto · Castellano y valenciano · Accesibilidad WCAG 2.2 AA</p>
+      </div>
+      <div class="wrap path-strip" aria-hidden="true">
+        <svg class="path-svg" viewBox="0 0 1000 130" preserveAspectRatio="xMidYMid meet" role="presentation">
+          <path class="path-line" d="M60,95 C220,95 220,45 380,45 C540,45 540,95 700,95 C820,95 860,95 940,95"/>
+          <path class="path-line draw" d="M60,95 C220,95 220,45 380,45 C540,45 540,95 700,95 C820,95 860,95 940,95"/>
+          <g class="path-node"><circle cx="60" cy="95" r="9"/><text class="n" x="60" y="99" text-anchor="middle">1</text><text x="60" y="122" text-anchor="middle">Entender</text></g>
+          <g class="path-node"><circle cx="380" cy="45" r="9"/><text class="n" x="380" y="49" text-anchor="middle">2</text><text x="380" y="26" text-anchor="middle">Preparar</text></g>
+          <g class="path-node"><circle cx="700" cy="95" r="9"/><text class="n" x="700" y="99" text-anchor="middle">3</text><text x="700" y="122" text-anchor="middle">Realizar</text></g>
+          <g class="path-node"><circle cx="940" cy="95" r="6" fill="#246bfd" stroke="#8fb4ff"/></g>
+        </svg>
+      </div>
+    </section>
+
+    <section class="problem">
+      <div class="wrap grid">
+        <div class="reveal">
+          <span class="eyebrow">El problema</span>
+          <p class="big" style="margin-top:1rem">La digitalización pública ha dejado a parte de la ciudadanía <strong>dependiendo de familiares o del personal municipal</strong> para tareas básicas.</p>
+          <p style="margin-top:1.2rem; color:var(--muted); max-width:52ch">Colas en el mostrador, trámites que se abandonan a medias y una brecha que crece con quien tiene menos soltura digital. La sede electrónica existe; el acompañamiento, no siempre.</p>
+        </div>
+        <div class="stat-card reveal">
+          <div class="row"><span class="ic" aria-hidden="true">◷</span><div><strong>Menos carga en el mostrador</strong><p>Resuelve la orientación repetitiva y libera al personal para lo que exige criterio.</p></div></div>
+          <div class="row"><span class="ic" aria-hidden="true">◎</span><div><strong>Nadie se queda fuera</strong><p>Pensado para quien no navega solo una sede electrónica, sin señalarlo ni tratarlo distinto.</p></div></div>
+          <div class="row"><span class="ic" aria-hidden="true">↺</span><div><strong>Siempre hay salida humana</strong><p>Cuando el trámite necesita criterio, deriva a una persona. No sustituye la atención.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="como">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="eyebrow">Cómo funciona</span>
+          <h2>Un camino de tres pasos, no un formulario.</h2>
+          <p>El tótem acompaña cada trámite de principio a fin y se detiene donde debe hacerlo una persona.</p>
+        </div>
+        <div class="steps">
+          <div class="step reveal"><span class="num">Paso 1</span><h3>Entender</h3><p>La persona dice qué necesita, por pantalla o con su voz. El asistente explica los requisitos con la fuente oficial delante: organismo, fecha y enlace.</p></div>
+          <div class="step reveal"><span class="num">Paso 2</span><h3>Preparar</h3><p>Lee un documento o una carta y muestra lo que ha entendido para que la persona lo revise y corrija. Nada se usa sin su confirmación.</p></div>
+          <div class="step reveal"><span class="num">Paso 3</span><h3>Realizar</h3><p>Prepara la cita en el portal oficial y cede el paso final —CAPTCHA, identificación y confirmación— a la persona. Entrega un justificante en papel.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust on-navy" id="confianza">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="eyebrow">Por qué confiar</span>
+          <h2>Diseñado para lo que una administración no puede ceder.</h2>
+          <p>Accesibilidad, privacidad y prudencia no son extras: están en el núcleo, y son verificables.</p>
+        </div>
+        <div class="cards">
+          <div class="card reveal"><span class="ic" aria-hidden="true">♿</span><h3>Accesible de verdad</h3><p>Tipografía de alta legibilidad, alto contraste, lectura en voz alta y objetivos táctiles amplios. Bilingüe desde el primer botón.</p><span class="tag">✔ WCAG 2.2 AA verificada · EN 301 549</span></div>
+          <div class="card reveal"><span class="ic" aria-hidden="true">⛨</span><h3>Privacidad por diseño</h3><p>Anónimo por defecto, sin cuentas y sin memoria entre personas. Los datos viven solo durante la sesión y se borran al terminar.</p><span class="tag">✔ RGPD · evaluación de impacto y plan ENS</span></div>
+          <div class="card reveal"><span class="ic" aria-hidden="true">⇄</span><h3>No sustituye a tu personal</h3><p>Prepara y cede. Nunca automatiza CAPTCHA, firma ni Cl@ve, y deriva a una persona los casos que requieren criterio o representación.</p><span class="tag">✔ Prepara y cede el paso final</span></div>
+          <div class="card reveal"><span class="ic" aria-hidden="true">◈</span><h3>Solo fuentes oficiales</h3><p>Las respuestas se apoyan en contenido institucional, citando organismo y fecha. Si la información cambia, se detiene antes que indicar algo incorrecto.</p><span class="tag">✔ Sin requisitos inventados</span></div>
+          <div class="card reveal"><span class="ic" aria-hidden="true">◐</span><h3>Castellano y valenciano</h3><p>Los dos idiomas conviven desde el diseño, no como una traducción añadida. La persona elige al empezar.</p><span class="tag">✔ Bilingüe integral</span></div>
+          <div class="card reveal"><span class="ic" aria-hidden="true">▤</span><h3>Sin una nueva carga</h3><p>Servicio gestionado: terminal, software, soporte y actualización de contenidos, con un cuadro de mando de uso, finalización e incidencias —agregado, sin datos personales.</p><span class="tag">✔ Indicadores para decidir</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="uses">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="eyebrow">Casos de uso</span>
+          <h2>Lo que una persona puede resolver aquí.</h2>
+        </div>
+        <div class="list">
+          <div class="use reveal"><span class="ic" aria-hidden="true">🗓</span><div><strong>Pedir una cita</strong><span>Sanidad, DNI, Hacienda, Seguridad Social, tráfico, extranjería…</span></div></div>
+          <div class="use reveal"><span class="ic" aria-hidden="true">✉</span><div><strong>Entender una carta</strong><span>Explica en lenguaje claro qué pone y qué plazos aparecen.</span></div></div>
+          <div class="use reveal"><span class="ic" aria-hidden="true">🪪</span><div><strong>Preparar documentos</strong><span>Lee y comprueba los datos antes de continuar, con revisión de la persona.</span></div></div>
+          <div class="use reveal"><span class="ic" aria-hidden="true">🔎</span><div><strong>Consultar un trámite</strong><span>Requisitos y pasos, con la fuente oficial y la fecha de consulta.</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="objections">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="eyebrow">Sin rodeos</span>
+          <h2>Las dudas que suelen surgir.</h2>
+        </div>
+        <div class="obj-grid">
+          <div class="obj reveal"><p class="q">Es otra máquina de autoservicio.</p><p class="a">Es un punto de asistencia diseñado para <b>explicar, comprobar y acompañar</b>. Cuando el trámite no puede completarse, ofrece una salida clara y permite escalar a ayuda humana.</p></div>
+          <div class="obj reveal"><p class="q">Viene a sustituir al personal.</p><p class="a">No decide expedientes ni sustituye atención profesional. <b>Reduce tareas repetitivas</b> de orientación digital y deriva los casos que requieren criterio, representación o intervención humana.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin" id="piloto">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="eyebrow">Para la administración</span>
+          <h2>Un micro-piloto para tener evidencia, no promesas.</h2>
+        </div>
+        <div class="grid">
+          <ul class="reveal">
+            <li><span class="ck" aria-hidden="true">✓</span><div><strong>Servicio gestionado.</strong> <span>Terminal accesible, plataforma, conectores a fuentes y portales oficiales, soporte y mantenimiento.</span></div></li>
+            <li><span class="ck" aria-hidden="true">✓</span><div><strong>Con tu marca.</strong> <span>Cobranding o marca blanca: «Un servicio de tu administración, con tecnología Tramitatrón».</span></div></li>
+            <li><span class="ck" aria-hidden="true">✓</span><div><strong>Medición desde el primer día.</strong> <span>Uso, finalización, satisfacción e incidencias —siempre agregado y sin datos personales— para decidir su ampliación.</span></div></li>
+            <li><span class="ck" aria-hidden="true">✓</span><div><strong>Privacidad y seguridad documentadas.</strong> <span>Evaluación de impacto (RGPD) y plan de adecuación al ENS desde el diseño.</span></div></li>
+          </ul>
+          <aside class="panel reveal">
+            <span class="eyebrow">Ámbito inicial</span>
+            <h3>Provincia de Castellón, 1–3 municipios.</h3>
+            <p style="color:#c6d4df">Empezamos pequeño y medible: un piloto acotado en ayuntamientos, centros sociales u oficinas comarcales, con criterios de éxito claros antes de ampliar.</p>
+            <div class="hero-cta" style="margin-top:1.6rem">
+              <a class="btn btn-primary" href="mailto:hola@tramitatron.com?subject=Solicitud%20de%20piloto%20Tramitatr%C3%B3n">Solicitar un piloto</a>
+              <a class="btn btn-ghost" href="/app/">Probar la demo <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+            <p class="sig">¿Interesa a tu administración? Escríbenos a <a href="mailto:hola@tramitatron.com">hola@tramitatron.com</a> y preparamos una demostración.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing on-navy">
+      <div class="wrap">
+        <span class="eyebrow" style="justify-content:center">Empieza por verlo</span>
+        <h2>Acércate a cómo lo vive la ciudadanía.</h2>
+        <p>La demostración recorre la experiencia real del tótem, con datos de ejemplo y sin tocar ningún portal real.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="/app/">Probar la demo <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost" href="mailto:hola@tramitatron.com?subject=Solicitud%20de%20piloto%20Tramitatr%C3%B3n">Solicitar un piloto</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <div class="row">
+        <span class="brand-f">Tramitatrón</span>
+        <div class="badges">
+          <span class="badge">Anónimo por defecto</span>
+          <span class="badge">WCAG 2.2 AA</span>
+          <span class="badge">RGPD · ENS</span>
+          <span class="badge">Castellà · Valencià</span>
+        </div>
+      </div>
+      <p class="fine">Un servicio de <b style="color:#c6d4df">[Administración]</b> · Tecnología Tramitatrón · <a href="mailto:hola@tramitatron.com">hola@tramitatron.com</a>. Punto público de asistencia digital. La demostración usa datos de ejemplo; no lee documentos reales ni opera portales oficiales. Acercamos la administración a las personas.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var items = document.querySelectorAll(".reveal");
+      if (reduce || !("IntersectionObserver" in window)) {
+        items.forEach(function (el) { el.classList.add("in"); });
+      } else {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.14 });
+        items.forEach(function (el) { io.observe(el); });
+      }
+      var line = document.querySelector(".path-line.draw");
+      if (line) {
+        try {
+          var len = line.getTotalLength();
+          line.style.strokeDasharray = len;
+          line.style.strokeDashoffset = reduce ? 0 : len;
+          if (!reduce) {
+            line.style.transition = "stroke-dashoffset 1.6s ease .3s";
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () { line.style.strokeDashoffset = 0; });
+            });
+          }
+        } catch (err) { line.style.strokeDasharray = "none"; }
+      }
+    })();
+  </script>
+</body>
+</html>

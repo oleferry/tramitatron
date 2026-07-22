@@ -19,6 +19,7 @@ dist/
 
 # Node / TypeScript
 node_modules/
+site/
 .next/
 out/
 build/

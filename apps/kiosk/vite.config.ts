@@ -13,8 +13,11 @@ const proxy = {
   "/device": { target: deviceTarget, changeOrigin: true },
 };
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // En build usa rutas relativas para poder servir el kiosco bajo /app (la
+  // landing ocupa la raíz). En desarrollo se sirve en la raíz como siempre.
+  base: command === "build" ? "./" : "/",
   plugins: [react()],
   server: { port: 5173, proxy },
   preview: { port: 5173, proxy },
-});
+}));
