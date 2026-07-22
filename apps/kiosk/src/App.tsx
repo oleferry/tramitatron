@@ -4,6 +4,7 @@ import { api } from "./api";
 import type { Lang } from "./i18n";
 import { t } from "./i18n";
 import { stopSpeaking } from "./speech";
+import { FORCED_LANG } from "./locales";
 import { HomeScreen } from "./screens/HomeScreen";
 import { LanguageScreen } from "./screens/LanguageScreen";
 import { LetterScreen } from "./screens/LetterScreen";
@@ -117,6 +118,16 @@ export function App() {
     }
   };
 
+  // Despliegue monolingüe (p. ej. piloto en Castilla y León): no se muestra la
+  // pantalla de idioma; se arranca directamente en el único idioma activo. Se
+  // dispara al entrar en "language" (inicio y tras reiniciar entre personas).
+  useEffect(() => {
+    if (screen.kind === "language" && FORCED_LANG && !sessionRef.current) {
+      void startSession(FORCED_LANG);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen.kind]);
+
   const stayHere = async () => {
     window.clearTimeout(endTimer.current);
     setInactivityWarn(false);
@@ -176,7 +187,13 @@ export function App() {
       <main className="kiosk-main">
         {error && <div className="banner banner-info">{strings.apiError}</div>}
 
-        {screen.kind === "language" && <LanguageScreen onChoose={(l) => void startSession(l)} />}
+        {screen.kind === "language" &&
+          (FORCED_LANG ? (
+            // Monolingüe: no se muestra el selector; se arranca solo (arriba).
+            <p className="subtitle">{t(FORCED_LANG).loading}</p>
+          ) : (
+            <LanguageScreen onChoose={(l) => void startSession(l)} />
+          ))}
 
         {screen.kind === "home" && sessionId && (
           <HomeScreen
