@@ -5,7 +5,7 @@ name:
 description:
   es: Ejemplo del asistente que prepara una cita en un portal y te cede el paso final.
   ca-valencia: Exemple de l'assistent que prepara una cita en un portal i et cedix el pas final.
-territory: ES-VC-CS
+territory: ES
 execution_mode: integrated
 risk_class: A1
 status: available

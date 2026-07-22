@@ -41,8 +41,19 @@ def build_registry(portal_authority: str) -> dict[str, PortalSpec]:
         connector="demo.worker.appointment",
         hosts=(portal_host,),
         start_url=f"http://{portal_authority}/portal/cita",
-        field_map={"license_plate": "matricula", "vehicle_type": "tipo"},
-        handoff_signals=("captcha", "name=\"enviar\""),
+        # Campo lógico de Tramitatrón -> nombre del campo en el asistente. Cubre
+        # los cuatro pasos (servicio, oficina, fecha/hora, datos personales). El
+        # worker rellena en cada página los que estén presentes y avanza.
+        field_map={
+            "service": "servicio",
+            "office": "oficina",
+            "date": "fecha",
+            "time": "hora",
+            "full_name": "nombre",
+            "dni_number": "dni",
+            "phone": "telefono",
+        },
+        handoff_signals=("captcha", "cl@ve", "clave"),
         enabled=True,
     )
     # Portal real: declarado y DESACTIVADO (ver docstring). Sacyl (cita de

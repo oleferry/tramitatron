@@ -24,24 +24,37 @@ def test_health(client):
     assert body["driver"] == "simulated"
 
 
-def test_prepare_navigates_prefills_and_hands_off(client):
+_FULL_FIELDS = {
+    "service": "renovacion-dni",
+    "office": "valladolid-centro",
+    "date": "2026-09-01",
+    "time": "09:00",
+    "full_name": "Persona de Prueba",
+    "dni_number": "12345678Z",
+    "phone": "600123456",
+}
+
+
+def test_prepare_walks_wizard_prefills_and_hands_off(client):
     body = client.post(
         "/worker/prepare",
-        json={
-            "connector": "demo.worker.appointment",
-            "fields": {"license_plate": "1234ABC", "vehicle_type": "coche"},
-        },
+        json={"connector": "demo.worker.appointment", "fields": _FULL_FIELDS},
     ).json()
 
     # Nunca "completed": el resultado terminal es siempre ceder a la persona.
     assert body["status"] == "user_handoff"
-    assert body["url"].endswith("/portal/cita")
-    assert set(body["prefilled"]) == {"license_plate", "vehicle_type"}
+    # Recorrió el asistente hasta el último paso (datos + CAPTCHA); las
+    # selecciones viajan como parámetros del 'Siguiente'.
+    assert "/portal/cita/datos" in body["url"]
+    # Precompletó los siete campos repartidos en las cuatro páginas.
+    assert set(body["prefilled"]) == set(_FULL_FIELDS)
     # La persona debe resolver el CAPTCHA y confirmar.
     assert "captcha" in body["pending"]
     assert "confirmar" in body["pending"]
+    # Hubo navegación entre pasos (varios 'advance') y un cierre en handoff.
     kinds = [e["kind"] for e in body["events"]]
     assert kinds[0] == "navigate"
+    assert kinds.count("advance") == 3  # servicio -> oficina -> fecha -> datos
     assert "handoff" in kinds
 
 
@@ -51,7 +64,7 @@ def test_worker_never_fills_captcha_even_if_supplied(client):
         "/worker/prepare",
         json={
             "connector": "demo.worker.appointment",
-            "fields": {"license_plate": "1234ABC", "captcha": "9999", "clave": "secreto"},
+            "fields": {**_FULL_FIELDS, "captcha": "9999", "clave": "secreto"},
         },
     ).json()
     assert "captcha" not in body["prefilled"]
@@ -67,10 +80,24 @@ def test_events_never_contain_field_values(client):
         "/worker/prepare",
         json={
             "connector": "demo.worker.appointment",
-            "fields": {"license_plate": "SENTINEL-PLATE", "vehicle_type": "coche"},
+            "fields": {**_FULL_FIELDS, "full_name": "SENTINEL-NAME", "dni_number": "SENTINEL-DNI"},
         },
     ).json()
-    assert "SENTINEL-PLATE" not in str(body["events"])
+    assert "SENTINEL-NAME" not in str(body["events"])
+    assert "SENTINEL-DNI" not in str(body["events"])
+
+
+def test_partial_fields_prefill_only_what_is_provided(client):
+    """Si faltan datos, precompleta lo que hay y cede igual (no se bloquea)."""
+    body = client.post(
+        "/worker/prepare",
+        json={
+            "connector": "demo.worker.appointment",
+            "fields": {"service": "renovacion-dni", "office": "burgos-gamonal"},
+        },
+    ).json()
+    assert body["status"] == "user_handoff"
+    assert set(body["prefilled"]) == {"service", "office"}
 
 
 def test_real_portals_are_disabled(client):
@@ -101,9 +128,9 @@ def test_healthcheck_disabled_connector(client):
 
 
 def test_portal_submit_is_forbidden(client):
-    """El portal de pruebas rechaza el POST: si el worker intentara enviar el
-    formulario (lo que NO hace), fallaría de forma ruidosa."""
-    assert client.post("/portal/cita").status_code == 403
+    """El portal de pruebas rechaza el POST de confirmación: si el worker
+    intentara enviarlo (lo que NO hace), fallaría de forma ruidosa."""
+    assert client.post("/portal/cita/confirmar").status_code == 403
 
 
 def test_allowlist_rejects_foreign_host():

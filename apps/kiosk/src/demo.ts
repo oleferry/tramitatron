@@ -701,11 +701,12 @@ export const demoApi = {
 
   executeProcedure: async (procedureId: string): Promise<ExecutionResult> => {
     if (procedureId === "demo.worker.appointment") {
-      // El worker prepara y cede: nunca "completed", siempre handoff.
+      // El worker recorre el asistente (servicio→oficina→fecha→datos) y cede en
+      // el CAPTCHA: nunca "completed", siempre handoff.
       return {
         status: "user_handoff",
         receipt: {
-          url: "https://portal-de-pruebas.example/cita",
+          url: "https://portal-de-pruebas.example/cita/datos",
           pending: "captcha, confirmar",
         },
         message: null,

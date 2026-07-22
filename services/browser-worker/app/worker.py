@@ -17,17 +17,26 @@ from .registry import PortalSpec
 
 DriverFactory = Callable[[], Awaitable[BrowserDriver]]
 
+# Tope de pasos del asistente: red de seguridad contra bucles (portales rotos o
+# que se redirigen a sí mismos). Una cita previa real tiene 3-5 pasos.
+_MAX_STEPS = 8
+
 # Campos que jamás precompleta el worker aunque lleguen (regla 5): son de la
 # persona. El field_map de cada portal ya excluye estos, pero se deja explícito.
 _NEVER_FILL = {"captcha", "password", "clave", "pin", "otp", "firma", "cvv"}
 
 
+def _at_handoff(text: str, signals: tuple[str, ...]) -> bool:
+    """La página actual es el muro de la persona: hay CAPTCHA/identificación."""
+    lowered = text.lower()
+    return any(s in lowered for s in signals)
+
+
 def _detect_pending(text: str, signals: tuple[str, ...]) -> list[str]:
     lowered = text.lower()
     pending: list[str] = []
-    if any(s in lowered for s in ("captcha",)) or "captcha" in signals:
-        if "captcha" in lowered:
-            pending.append("captcha")
+    if "captcha" in lowered:
+        pending.append("captcha")
     if any(s in lowered for s in ("cl@ve", "clave", "certificado")):
         pending.append("identificación")
     # Enviar/confirmar siempre lo hace la persona.
@@ -67,20 +76,41 @@ async def prepare(
             await driver.open(spec.start_url)
             events.append(StepEvent(kind="navigate", detail=spec.start_url))
 
-            names = await driver.field_names()
-            events.append(StepEvent(kind="read", detail=f"{len(names)} campos en el formulario"))
-
             prefilled: list[str] = []
-            for logical, form_name in spec.field_map.items():
-                value = fields.get(logical)
-                if not value or form_name in _NEVER_FILL or form_name not in names:
-                    continue
-                await driver.fill(form_name, value)
-                prefilled.append(logical)
-                # El evento registra el nombre del campo, nunca el valor (PII).
-                events.append(StepEvent(kind="fill", detail=form_name))
+            text = ""
+            # Recorre el asistente paso a paso: en cada página rellena lo que
+            # puede y avanza, hasta llegar al muro de la persona (CAPTCHA/Cl@ve)
+            # o quedarse sin 'Siguiente' que seguir.
+            for _ in range(_MAX_STEPS):
+                names = await driver.field_names()
+                events.append(StepEvent(kind="read", detail=f"{len(names)} campos"))
 
-            text = await driver.page_text()
+                for logical, form_name in spec.field_map.items():
+                    value = fields.get(logical)
+                    if (
+                        not value
+                        or logical in prefilled
+                        or form_name in _NEVER_FILL
+                        or form_name not in names
+                    ):
+                        continue
+                    await driver.fill(form_name, value)
+                    prefilled.append(logical)
+                    # El evento registra el nombre del campo, nunca el valor (PII).
+                    events.append(StepEvent(kind="fill", detail=form_name))
+
+                text = await driver.page_text()
+                if _at_handoff(text, spec.handoff_signals):
+                    break
+
+                # El salto solo se permite dentro de la allowlist (regla 7): el
+                # worker valida el destino ANTES de que el driver lo abra.
+                target = await driver.next_target()
+                if target is None or not spec.allows(target):
+                    break
+                await driver.advance()
+                events.append(StepEvent(kind="advance", detail=target))
+
             pending = _detect_pending(text, spec.handoff_signals)
             url = await driver.current_url()
             events.append(StepEvent(kind="handoff", detail=", ".join(pending)))
@@ -126,11 +156,21 @@ async def healthcheck(
         driver = await make_driver()
         try:
             await driver.open(spec.start_url)
-            names = await driver.field_names()
-            expected = set(spec.field_map.values())
-            missing = expected - names
+            expected = set(spec.field_map.values()) - _NEVER_FILL
+            seen: set[str] = set()
+            # Recorre el asistente reuniendo los campos de todas las páginas.
+            for _ in range(_MAX_STEPS):
+                seen |= await driver.field_names()
+                if expected <= seen:
+                    break
+                target = await driver.next_target()
+                if target is None or not spec.allows(target):
+                    break
+                await driver.advance()
+
+            missing = expected - seen
             if missing:
-                # TT-505: alerta por cambio. Si el formulario ya no tiene los
+                # TT-505: alerta por cambio. Si el asistente ya no tiene los
                 # campos esperados, el portal ha cambiado y el conector no es fiable.
                 return HealthResult(
                     connector=spec.connector,

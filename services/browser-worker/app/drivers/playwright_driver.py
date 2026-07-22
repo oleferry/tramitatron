@@ -63,6 +63,29 @@ class PlaywrightDriver:
     async def current_url(self) -> str:
         return self._page.url
 
+    async def next_target(self) -> str | None:
+        # Lee el primer formulario. `el.action` en el DOM ya es una URL absoluta.
+        forms = await self._page.eval_on_selector_all(
+            "form",
+            "els => els.slice(0,1).map(f => "
+            "({action: f.action, method: (f.method||'get').toLowerCase()}))",
+        )
+        if not forms:
+            return None
+        info = forms[0]
+        if info.get("method") != "get":
+            return None
+        return info.get("action") or None
+
+    async def advance(self) -> None:
+        # Pulsa el 'Siguiente' del paso (un submit de un formulario GET) y espera
+        # la navegación. El worker solo llama aquí cuando next_target no es None,
+        # es decir, cuando el formulario es GET: nunca se envía el POST final.
+        await self._page.click(
+            "button[type=submit], input[type=submit], form button:not([type])"
+        )
+        await self._page.wait_for_load_state("domcontentloaded")
+
     async def close(self) -> None:
         await self._context.close()
         await self._browser.close()

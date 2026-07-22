@@ -30,4 +30,16 @@ class BrowserDriver(Protocol):
 
     async def current_url(self) -> str: ...
 
+    async def next_target(self) -> str | None:
+        """URL a la que avanzaría el formulario actual por GET (el 'Siguiente'
+        del asistente), ya resuelta como absoluta. Devuelve None si el
+        formulario es POST (envío final) o no hay formulario: ahí no se avanza.
+        El worker valida esa URL contra la allowlist ANTES de pedir avanzar."""
+        ...
+
+    async def advance(self) -> None:
+        """Avanza al siguiente paso del asistente (GET del 'Siguiente'). Nunca
+        envía el formulario final (POST): eso es la confirmación de la persona."""
+        ...
+
     async def close(self) -> None: ...

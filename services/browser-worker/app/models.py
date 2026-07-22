@@ -10,7 +10,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-StepKind = Literal["navigate", "read", "fill", "handoff", "error"]
+StepKind = Literal["navigate", "read", "fill", "advance", "handoff", "error"]
 PrepareStatus = Literal["user_handoff", "unavailable", "error"]
 
 
