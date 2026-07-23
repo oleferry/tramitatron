@@ -9,6 +9,7 @@ existiendo. No rellena ni reserva; solo mira.
 """
 
 import asyncio
+import re
 from collections.abc import Awaitable, Callable
 
 from .drivers.base import BrowserDriver
@@ -24,6 +25,14 @@ _MAX_STEPS = 8
 # Campos que jamás precompleta el worker aunque lleguen (regla 5): son de la
 # persona. El field_map de cada portal ya excluye estos, pero se deja explícito.
 _NEVER_FILL = {"captcha", "password", "clave", "pin", "otp", "firma", "cvv"}
+
+# Referencia/justificante en la página de confirmación (p. ej. "CITA-9A3F0B").
+_REFERENCE_RE = re.compile(r"[A-Z]{2,}-[0-9A-Z]{4,}")
+
+
+def _extract_reference(text: str) -> str | None:
+    match = _REFERENCE_RE.search(text)
+    return match.group(0) if match else None
 
 
 def _at_handoff(text: str, signals: tuple[str, ...]) -> bool:
@@ -50,6 +59,7 @@ async def prepare(
     fields: dict[str, str],
     make_driver: DriverFactory,
     timeout_seconds: float,
+    confirm: bool = False,
 ) -> PrepareResult:
     if not spec.enabled:
         return PrepareResult(
@@ -110,6 +120,33 @@ async def prepare(
                     break
                 await driver.advance()
                 events.append(StepEvent(kind="advance", detail=target))
+
+            # Trámite REVERSIBLE (una cita) y confirmación EXPLÍCITA del
+            # ciudadano: se completa. El envío es POST; se valida su destino
+            # contra la allowlist ANTES de enviar (regla 7). Sin `confirm` o si
+            # el trámite no es completable, se cede como siempre.
+            submit_target = await driver.submit_target()
+            if (
+                spec.completable
+                and confirm
+                and submit_target is not None
+                and spec.allows(submit_target)
+            ):
+                # La confirmación explícita del ciudadano ("Sí, confirma mi
+                # cita") se materializa en el campo de confirmación del
+                # formulario. No es un CAPTCHA ni una firma (regla 5): es el sí
+                # del ciudadano, que ya ha viajado como el flag `confirm`.
+                await driver.fill("confirmado", "si")
+                result_html = await driver.submit()
+                events.append(StepEvent(kind="advance", detail="confirmar"))
+                return PrepareResult(
+                    status="completed",
+                    connector=spec.connector,
+                    url=await driver.current_url(),
+                    prefilled=prefilled,
+                    reference=_extract_reference(result_html),
+                    events=events,
+                )
 
             pending = _detect_pending(text, spec.handoff_signals)
             url = await driver.current_url()

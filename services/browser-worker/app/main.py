@@ -61,7 +61,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if spec is None:
             raise HTTPException(status_code=404, detail="Conector desconocido")
         return await worker.prepare(
-            spec, body.fields, app.state.make_driver, settings.timeout_seconds
+            spec,
+            body.fields,
+            app.state.make_driver,
+            settings.timeout_seconds,
+            confirm=body.confirm,
         )
 
     @app.post("/worker/healthcheck/{connector}", tags=["worker"])

@@ -96,6 +96,24 @@ class SimulatedDriver:
         self._html = response.text
         self._parse(self._html)
 
+    async def submit_target(self) -> str | None:
+        if not self._action or self._method != "post":
+            return None
+        return urljoin(self._url, self._action)
+
+    async def submit(self) -> str:
+        # Envío final (POST). Solo se llega aquí con confirmación explícita del
+        # ciudadano en un trámite completable; el worker lo valida antes.
+        target = await self.submit_target()
+        if target is None:
+            raise RuntimeError("no hay formulario de envío en la página actual")
+        response = await self._client.post(target, data=self._values)
+        response.raise_for_status()
+        self._url = str(response.url)
+        self._html = response.text
+        self._parse(self._html)
+        return self._html
+
     async def close(self) -> None:
         # El cliente httpx lo gestiona quien lo crea (la app), no el driver.
         return None

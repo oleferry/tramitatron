@@ -24,38 +24,52 @@ def test_health(client):
     assert body["driver"] == "simulated"
 
 
-_FULL_FIELDS = {
-    "service": "renovacion-dni",
-    "office": "valladolid-centro",
+# Cita médica de prueba: identificación por CIP + apellido (sin Cl@ve), centro y
+# fecha/hora. Son los cinco campos que el worker precompleta en las páginas.
+_MED_FIELDS = {
+    "health_card_number": "BBBB1234567890",
+    "surname": "García",
+    "center": "valladolid-pilarica",
     "date": "2026-09-01",
     "time": "09:00",
-    "full_name": "Persona de Prueba",
-    "dni_number": "12345678Z",
-    "phone": "600123456",
 }
 
 
-def test_prepare_walks_wizard_prefills_and_hands_off(client):
+def test_prepare_without_confirmation_prefills_and_hands_off(client):
+    """Sin la confirmación del ciudadano, prepara y cede (no reserva)."""
     body = client.post(
         "/worker/prepare",
-        json={"connector": "demo.worker.appointment", "fields": _FULL_FIELDS},
+        json={"connector": "demo.worker.appointment", "fields": _MED_FIELDS},
     ).json()
 
-    # Nunca "completed": el resultado terminal es siempre ceder a la persona.
     assert body["status"] == "user_handoff"
-    # Recorrió el asistente hasta el último paso (datos + CAPTCHA); las
-    # selecciones viajan como parámetros del 'Siguiente'.
-    assert "/portal/cita/datos" in body["url"]
-    # Precompletó los siete campos repartidos en las cuatro páginas.
-    assert set(body["prefilled"]) == set(_FULL_FIELDS)
-    # La persona debe resolver el CAPTCHA y confirmar.
-    assert "captcha" in body["pending"]
+    # Recorrió el asistente hasta la página de confirmación; las selecciones
+    # viajan como parámetros del 'Siguiente'.
+    assert "/portal/cita/confirmar" in body["url"]
+    # Precompletó los cinco campos repartidos en las páginas.
+    assert set(body["prefilled"]) == set(_MED_FIELDS)
+    # Lo que quedaría en manos de la persona.
     assert "confirmar" in body["pending"]
-    # Hubo navegación entre pasos (varios 'advance') y un cierre en handoff.
     kinds = [e["kind"] for e in body["events"]]
     assert kinds[0] == "navigate"
-    assert kinds.count("advance") == 3  # servicio -> oficina -> fecha -> datos
+    assert kinds.count("advance") == 3  # identificación -> centro -> fecha -> confirmar
     assert "handoff" in kinds
+
+
+def test_prepare_with_confirmation_completes_the_appointment(client):
+    """Con la confirmación explícita, el worker completa la cita (reversible)."""
+    body = client.post(
+        "/worker/prepare",
+        json={
+            "connector": "demo.worker.appointment",
+            "fields": _MED_FIELDS,
+            "confirm": True,
+        },
+    ).json()
+
+    assert body["status"] == "completed"
+    assert body["reference"].startswith("CITA-")
+    assert set(body["prefilled"]) == set(_MED_FIELDS)
 
 
 def test_worker_never_fills_captcha_even_if_supplied(client):
@@ -64,7 +78,7 @@ def test_worker_never_fills_captcha_even_if_supplied(client):
         "/worker/prepare",
         json={
             "connector": "demo.worker.appointment",
-            "fields": {**_FULL_FIELDS, "captcha": "9999", "clave": "secreto"},
+            "fields": {**_MED_FIELDS, "captcha": "9999", "clave": "secreto"},
         },
     ).json()
     assert "captcha" not in body["prefilled"]
@@ -80,11 +94,15 @@ def test_events_never_contain_field_values(client):
         "/worker/prepare",
         json={
             "connector": "demo.worker.appointment",
-            "fields": {**_FULL_FIELDS, "full_name": "SENTINEL-NAME", "dni_number": "SENTINEL-DNI"},
+            "fields": {
+                **_MED_FIELDS,
+                "surname": "SENTINEL-NAME",
+                "health_card_number": "SENTINEL-CIP",
+            },
         },
     ).json()
     assert "SENTINEL-NAME" not in str(body["events"])
-    assert "SENTINEL-DNI" not in str(body["events"])
+    assert "SENTINEL-CIP" not in str(body["events"])
 
 
 def test_partial_fields_prefill_only_what_is_provided(client):
@@ -93,11 +111,11 @@ def test_partial_fields_prefill_only_what_is_provided(client):
         "/worker/prepare",
         json={
             "connector": "demo.worker.appointment",
-            "fields": {"service": "renovacion-dni", "office": "burgos-gamonal"},
+            "fields": {"health_card_number": "BBBB1234567890", "surname": "García"},
         },
     ).json()
     assert body["status"] == "user_handoff"
-    assert set(body["prefilled"]) == {"service", "office"}
+    assert set(body["prefilled"]) == {"health_card_number", "surname"}
 
 
 def test_real_portals_are_disabled(client):
@@ -127,10 +145,13 @@ def test_healthcheck_disabled_connector(client):
     assert body["detail"] == "desactivado"
 
 
-def test_portal_submit_is_forbidden(client):
-    """El portal de pruebas rechaza el POST de confirmación: si el worker
-    intentara enviarlo (lo que NO hace), fallaría de forma ruidosa."""
+def test_portal_submit_requires_explicit_confirmation(client):
+    """Sin la confirmación explícita del ciudadano, el portal rechaza el envío;
+    con ella, la cita se completa y devuelve una referencia."""
     assert client.post("/portal/cita/confirmar").status_code == 403
+    ok = client.post("/portal/cita/confirmar", data={"confirmado": "si"})
+    assert ok.status_code == 200
+    assert "CITA-" in ok.text
 
 
 def test_allowlist_rejects_foreign_host():

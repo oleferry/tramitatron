@@ -58,7 +58,13 @@ class WorkerConnector:
         try:
             result = await self._post(
                 "/worker/prepare",
-                json={"connector": self._worker_connector, "fields": dict(data)},
+                json={
+                    "connector": self._worker_connector,
+                    "fields": dict(data),
+                    # La confirmación del ciudadano se traslada al worker: solo
+                    # con ella (y si el trámite es completable) se envía la cita.
+                    "confirm": confirmed,
+                },
             )
         except httpx.HTTPStatusError as exc:
             return ExecutionResult(
@@ -81,6 +87,16 @@ class WorkerConnector:
                 technical_detail=f"error inesperado: {type(exc).__name__}",
             )
 
+        if result.get("status") == "completed":
+            # Cita reservada tras la confirmación del ciudadano: justificante con
+            # la referencia, como cualquier trámite completado.
+            return ExecutionResult(
+                status="completed",
+                receipt={
+                    "reference": result.get("reference") or "",
+                    "url": result.get("url") or "",
+                },
+            )
         if result.get("status") == "user_handoff":
             return ExecutionResult(
                 status="user_handoff",

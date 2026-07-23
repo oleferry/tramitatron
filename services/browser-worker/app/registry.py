@@ -27,6 +27,10 @@ class PortalSpec:
     # marca el punto de handoff (CAPTCHA, botón de envío…).
     handoff_signals: tuple[str, ...] = ()
     enabled: bool = False
+    # ¿Es un trámite REVERSIBLE sin Cl@ve (una cita) que el worker puede
+    # completar tras la confirmación explícita del ciudadano? Si es False, el
+    # worker siempre prepara y cede, aunque llegue el flag de confirmación.
+    completable: bool = False
 
     def allows(self, url: str) -> bool:
         parsed = urlparse(url)
@@ -52,20 +56,21 @@ def build_registry(portal_authority: str) -> dict[str, PortalSpec]:
         connector="demo.worker.appointment",
         hosts=(portal_host,),
         start_url=f"http://{portal_authority}/portal/cita",
-        # Campo lógico de Tramitatrón -> nombre del campo en el asistente. Cubre
-        # los cuatro pasos (servicio, oficina, fecha/hora, datos personales). El
-        # worker rellena en cada página los que estén presentes y avanza.
+        # Réplica de una CITA MÉDICA (Sacyl): identificación por CIP de la
+        # tarjeta sanitaria + primer apellido (sin Cl@ve), luego centro y
+        # fecha/hora. Campo lógico de Tramitatrón -> nombre en el asistente. El
+        # worker rellena en cada página lo presente y avanza; al ser una cita
+        # (reversible), la completa tras la confirmación del ciudadano.
         field_map={
-            "service": "servicio",
-            "office": "oficina",
+            "health_card_number": "cip",
+            "surname": "apellido",
+            "center": "centro",
             "date": "fecha",
             "time": "hora",
-            "full_name": "nombre",
-            "dni_number": "dni",
-            "phone": "telefono",
         },
         handoff_signals=("captcha", "cl@ve", "clave"),
         enabled=True,
+        completable=True,
     )
     # Portal real: declarado y DESACTIVADO (ver docstring). Sacyl (cita de
     # atención primaria en Castilla y León); se habilitará tras la EIPD.

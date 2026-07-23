@@ -38,8 +38,20 @@ class BrowserDriver(Protocol):
         ...
 
     async def advance(self) -> None:
-        """Avanza al siguiente paso del asistente (GET del 'Siguiente'). Nunca
-        envía el formulario final (POST): eso es la confirmación de la persona."""
+        """Avanza al siguiente paso del asistente (GET del 'Siguiente')."""
+        ...
+
+    async def submit_target(self) -> str | None:
+        """URL a la que enviaría el formulario POST actual (la confirmación
+        final), ya absoluta. None si el formulario no es POST o no hay. El
+        worker valida esta URL contra la allowlist ANTES de enviar, y solo
+        envía si el trámite es completable y el ciudadano ha confirmado."""
+        ...
+
+    async def submit(self) -> str:
+        """Envía el formulario POST actual (la confirmación explícita de la
+        persona) y devuelve el HTML resultante. Solo lo llama el worker en un
+        trámite completable y con confirmación; nunca de forma automática."""
         ...
 
     async def close(self) -> None: ...
