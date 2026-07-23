@@ -227,6 +227,9 @@ class MockModelGateway:
             "sip_card": [
                 RawExtractedField(field="sip_number", value="01234567", confidence=0.93),
                 name,
+                # La tarjeta sanitaria muestra los apellidos; el primero es lo
+                # que piden los portales de cita junto al número de tarjeta.
+                RawExtractedField(field="surname", value="SINTÉTICA", confidence=0.91),
             ],
         }
         return DocumentResult(

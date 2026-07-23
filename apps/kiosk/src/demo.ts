@@ -58,49 +58,44 @@ const PROCEDURES: Procedure[] = [
   {
     id: "demo.worker.appointment",
     name: {
-      es: "Demostración de navegación asistida",
-      "ca-valencia": "Demostració de navegació assistida",
+      es: "Pedir cita con el médico",
+      "ca-valencia": "Demanar cita amb el metge",
     },
     description: {
-      es: "Ejemplo del asistente que prepara una cita en un portal y te cede el paso final.",
+      es: "Acercas tu tarjeta sanitaria, eliges centro y hora, y el sistema reserva la cita por ti.",
       "ca-valencia":
-        "Exemple de l'assistent que prepara una cita en un portal i et cedix el pas final.",
+        "Acostes la teua targeta sanitària, tries centre i hora, i el sistema reserva la cita per tu.",
     },
     status: "available",
     execution_mode: "integrated",
     official_sources: [],
     requirements: [
       {
-        es: "El sistema navega el portal de pruebas y precompleta lo que puede.",
-        "ca-valencia": "El sistema navega el portal de proves i precompleta el que pot.",
+        es: "Solo necesitas tu tarjeta sanitaria. No hace falta Cl@ve ni firma.",
+        "ca-valencia": "Només necessites la teua targeta sanitària. No cal Cl@ve ni signatura.",
       },
       {
-        es: "El CAPTCHA y la confirmación de la cita los haces tú.",
-        "ca-valencia": "El CAPTCHA i la confirmació de la cita els fas tu.",
+        es: "Antes de reservar te enseñamos la cita para que la confirmes tú.",
+        "ca-valencia": "Abans de reservar et mostrem la cita perquè la confirmes tu.",
+      },
+      {
+        es: "Demostración sobre un portal de pruebas; no toca ninguna administración real.",
+        "ca-valencia": "Demostració sobre un portal de proves; no toca cap administració real.",
       },
     ],
-    required_fields: [],
+    required_fields: ["sip_number", "surname"],
     intake: [
       {
-        key: "service",
+        key: "center",
         type: "select",
-        label: { es: "¿Qué necesitas hacer?", "ca-valencia": "Què necessites fer?" },
-        options: [
-          { value: "renovacion-dni", label: { es: "Renovar el DNI", "ca-valencia": "Renovar el DNI" } },
-          {
-            value: "primera-inscripcion",
-            label: { es: "Primera inscripción", "ca-valencia": "Primera inscripció" },
-          },
-        ],
-      },
-      {
-        key: "office",
-        type: "select",
-        label: { es: "¿En qué oficina?", "ca-valencia": "En quina oficina?" },
+        label: {
+          es: "¿A qué centro de salud quieres ir?",
+          "ca-valencia": "A quin centre de salut vols anar?",
+        },
         options: [
           {
-            value: "valladolid-centro",
-            label: { es: "Valladolid — Centro", "ca-valencia": "Valladolid — Centre" },
+            value: "valladolid-pilarica",
+            label: { es: "Valladolid — La Pilarica", "ca-valencia": "Valladolid — La Pilarica" },
           },
           {
             value: "burgos-gamonal",
@@ -732,6 +727,7 @@ export const demoApi = {
         : [
             { field: "sip_number", value: "01234567", confidence: 0.93, validator: "sip_format_v1", status: "VALID" },
             { field: "full_name", value: "PERSONA SINTÉTICA DEMO", confidence: 0.9, validator: "nonempty_v1", status: "VALID" },
+            { field: "surname", value: "SINTÉTICA", confidence: 0.91, validator: "nonempty_v1", status: "VALID" },
           ],
   }),
 
@@ -752,13 +748,13 @@ export const demoApi = {
 
   executeProcedure: async (procedureId: string): Promise<ExecutionResult> => {
     if (procedureId === "demo.worker.appointment") {
-      // El worker recorre el asistente (servicio→oficina→fecha→datos) y cede en
-      // el CAPTCHA: nunca "completed", siempre handoff.
+      // Una cita es reversible y no lleva Cl@ve: tras el "Sí, confirma" del
+      // ciudadano el sistema la RESERVA y devuelve la referencia.
       return {
-        status: "user_handoff",
+        status: "completed",
         receipt: {
-          url: "https://portal-de-pruebas.example/cita/datos",
-          pending: "captcha, confirmar",
+          reference: `CITA-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
+          url: "https://portal-de-pruebas.example/cita/confirmar",
         },
         message: null,
       };

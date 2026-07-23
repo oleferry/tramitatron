@@ -13,7 +13,7 @@ const ICONS: [string, string][] = [
   ["dgt", "🚦"],
   ["padron", "🏠"],
   ["mjusticia", "⚖️"],
-  ["demo.worker", "🧭"],
+  ["demo.worker", "🩺"],
   ["demo", "✨"],
 ];
 

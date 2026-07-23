@@ -33,6 +33,8 @@ type Strings = {
   assistedModeNote: string;
   informationModeNote: string;
   confirmAndRun: string;
+  reviewBookingTitle: string;
+  confirmBooking: string;
   executing: string;
   executionDone: string;
   receiptReference: string;
@@ -158,8 +160,10 @@ const es: Strings = {
   informationModeNote:
     "Este es un trámite informativo: aquí te explicamos cómo hacerlo, y se completa en la web oficial o presencialmente.",
   confirmAndRun: "Confirmar y hacer la demostración",
+  reviewBookingTitle: "Esta es tu cita. ¿La confirmo?",
+  confirmBooking: "Sí, confirma mi cita",
   executing: "Preparando el trámite… no cierres esta pantalla.",
-  executionDone: "Demostración completada",
+  executionDone: "¡Listo! Ya está hecho.",
   receiptReference: "Referencia",
   printReceipt: "Imprimir justificante",
   printed: "Enviado a la impresora",
@@ -186,7 +190,8 @@ const es: Strings = {
     dni_number: "Número de DNI o NIE",
     full_name: "Nombre y apellidos",
     birth_date: "Fecha de nacimiento (AAAA-MM-DD)",
-    sip_number: "Número SIP",
+    sip_number: "Número de la tarjeta sanitaria",
+    surname: "Primer apellido",
   },
   askTitle: "¿Tienes alguna duda?",
   askPlaceholder: "Por ejemplo: ¿qué documentos necesito?",
@@ -306,8 +311,10 @@ const va: Strings = {
   informationModeNote:
     "Este és un tràmit informatiu: ací t'expliquem com fer-lo, i es completa en la web oficial o presencialment.",
   confirmAndRun: "Confirmar i fer la demostració",
+  reviewBookingTitle: "Esta és la teua cita. La confirme?",
+  confirmBooking: "Sí, confirma la meua cita",
   executing: "Preparant el tràmit… no tanques esta pantalla.",
-  executionDone: "Demostració completada",
+  executionDone: "Llest! Ja està fet.",
   receiptReference: "Referència",
   printReceipt: "Imprimir justificant",
   printed: "Enviat a la impressora",
@@ -334,7 +341,8 @@ const va: Strings = {
     dni_number: "Número de DNI o NIE",
     full_name: "Nom i cognoms",
     birth_date: "Data de naixement (AAAA-MM-DD)",
-    sip_number: "Número SIP",
+    sip_number: "Número de la targeta sanitària",
+    surname: "Primer cognom",
   },
   askTitle: "Tens algun dubte?",
   askPlaceholder: "Per exemple: quins documents necessite?",

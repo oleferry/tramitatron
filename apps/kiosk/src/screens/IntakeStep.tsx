@@ -23,7 +23,9 @@ export function IntakeStep({
   lang: Lang;
   sessionId: string;
   fields: IntakeField[];
-  onComplete: () => void;
+  // Devuelve lo elegido para que la pantalla pueda enseñar el resumen de la
+  // cita antes de reservarla ("Esta es tu cita, ¿la confirmo?").
+  onComplete: (answers: Record<string, string>) => void;
 }) {
   const strings = t(lang);
   const [idx, setIdx] = useState(0);
@@ -56,7 +58,7 @@ export function IntakeStep({
         api.setSessionData(sessionId, key, val).catch(() => undefined),
       ),
     );
-    onComplete();
+    onComplete(next);
   };
 
   const progress = strings.intakeProgress

@@ -1,48 +1,40 @@
 id: demo.worker.appointment
 name:
-  es: Demostración de navegación asistida
-  ca-valencia: Demostració de navegació assistida
+  es: Pedir cita con el médico
+  ca-valencia: Demanar cita amb el metge
 description:
-  es: Ejemplo del asistente que prepara una cita en un portal y te cede el paso final.
-  ca-valencia: Exemple de l'assistent que prepara una cita en un portal i et cedix el pas final.
+  es: Acercas tu tarjeta sanitaria, eliges centro y hora, y el sistema reserva la cita por ti.
+  ca-valencia: Acostes la teua targeta sanitària, tries centre i hora, i el sistema reserva la cita per tu.
 territory: ES
 execution_mode: integrated
 risk_class: A1
 status: available
 official_sources: []
 requirements:
-  - es: El sistema navega el portal de pruebas y precompleta lo que puede.
-    ca-valencia: El sistema navega el portal de proves i precompleta el que pot.
-  - es: El CAPTCHA y la confirmación de la cita los haces tú.
-    ca-valencia: El CAPTCHA i la confirmació de la cita els fas tu.
-required_fields: []
-# Datos NO sensibles que el kiosco pide antes de preparar la cita, para que el
-# worker los precomplete. Las opciones coinciden con el asistente del portal.
+  - es: Solo necesitas tu tarjeta sanitaria. No hace falta Cl@ve ni firma.
+    ca-valencia: Només necessites la teua targeta sanitària. No cal Cl@ve ni signatura.
+  - es: Antes de reservar te enseñamos la cita para que la confirmes tú.
+    ca-valencia: Abans de reservar et mostrem la cita perquè la confirmes tu.
+  - es: Demostración sobre un portal de pruebas; no toca ninguna administración real.
+    ca-valencia: Demostració sobre un portal de proves; no toca cap administració real.
+# Datos que salen del escaneo de la tarjeta sanitaria (número y primer apellido):
+# es como se identifica de verdad una cita de atención primaria, sin Cl@ve.
+required_fields:
+  - sip_number
+  - surname
+# Datos NO sensibles que el kiosco pide antes de reservar. Las opciones
+# coinciden con el asistente del portal.
 intake:
-  - key: service
+  - key: center
     type: select
     label:
-      es: ¿Qué necesitas hacer?
-      ca-valencia: Què necessites fer?
+      es: ¿A qué centro de salud quieres ir?
+      ca-valencia: A quin centre de salut vols anar?
     options:
-      - value: renovacion-dni
+      - value: valladolid-pilarica
         label:
-          es: Renovar el DNI
-          ca-valencia: Renovar el DNI
-      - value: primera-inscripcion
-        label:
-          es: Primera inscripción
-          ca-valencia: Primera inscripció
-  - key: office
-    type: select
-    label:
-      es: ¿En qué oficina?
-      ca-valencia: En quina oficina?
-    options:
-      - value: valladolid-centro
-        label:
-          es: Valladolid — Centro
-          ca-valencia: Valladolid — Centre
+          es: Valladolid — La Pilarica
+          ca-valencia: Valladolid — La Pilarica
       - value: burgos-gamonal
         label:
           es: Burgos — Gamonal

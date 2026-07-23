@@ -994,6 +994,37 @@ button:focus-visible {
   outline: none;
 }
 
+/* Resumen de la cita antes de reservar: pensado para leerse de un vistazo y de
+   lejos (el perfil objetivo son personas mayores). */
+.booking-summary {
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-align: left;
+}
+
+.booking-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  align-items: baseline;
+  border-bottom: 2px solid var(--color-primary-soft);
+  padding-bottom: 0.5rem;
+}
+
+.booking-row dt {
+  font-size: 0.82em;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.booking-row dd {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05em;
+}
+
 .intake-options {
   display: flex;
   flex-direction: column;

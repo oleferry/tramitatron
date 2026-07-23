@@ -31,6 +31,9 @@ export function ProcedureScreen({
   const [executing, setExecuting] = useState(false);
   const [documentConfirmed, setDocumentConfirmed] = useState(false);
   const [intakeDone, setIntakeDone] = useState(false);
+  // Lo que la persona ha elegido en el intake, para enseñárselo en el resumen
+  // antes de reservar. Solo datos NO sensibles (centro, día, hora).
+  const [intakeAnswers, setIntakeAnswers] = useState<Record<string, string>>({});
   // Cerrojo SÍNCRONO: el estado de React se actualiza de forma diferida, así que
   // dos toques en el mismo ciclo verían ambos executing=false. El ref se lee y
   // escribe al instante y sí bloquea la segunda ejecución.
@@ -178,7 +181,10 @@ export function ProcedureScreen({
               lang={lang}
               sessionId={sessionId}
               fields={intake}
-              onComplete={() => setIntakeDone(true)}
+              onComplete={(answers) => {
+                setIntakeAnswers(answers);
+                setIntakeDone(true);
+              }}
             />
           );
         }
@@ -203,6 +209,32 @@ export function ProcedureScreen({
             <p className="subtitle" role="status">
               ⏳ {strings.executing}
             </p>
+          );
+        }
+        // 3) Resumen antes de reservar: la persona ve su cita en cristiano y la
+        // confirma. Ese "sí" es lo que autoriza al sistema a reservar; sin él
+        // no se envía nada (el servidor lo exige igual).
+        if (intake.length > 0) {
+          return (
+            <div className="panel booking-review">
+              <h3>{strings.reviewBookingTitle}</h3>
+              <dl className="booking-summary">
+                {intake.map((f) => {
+                  const chosen = intakeAnswers[f.key];
+                  const label =
+                    f.options.find((o) => o.value === chosen)?.label[lang] ?? chosen;
+                  return (
+                    <div key={f.key} className="booking-row">
+                      <dt>{f.label[lang]}</dt>
+                      <dd>{label}</dd>
+                    </div>
+                  );
+                })}
+              </dl>
+              <button className="btn-primary btn-xl" onClick={() => void execute()}>
+                ✅ {strings.confirmBooking}
+              </button>
+            </div>
           );
         }
         return (

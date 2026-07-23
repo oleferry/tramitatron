@@ -1,8 +1,9 @@
 """Worker de navegación asistida (TT-502 y TT-505).
 
-Lo que se fija: el worker prepara (navega y precompleta lo seguro) pero SIEMPRE
-cede a la persona (nunca "completed", nunca envía), respeta la allowlist, no
-toca campos de CAPTCHA/credenciales, y los portales reales están desactivados.
+Lo que se fija: el worker precompleta lo seguro y, en una cita REVERSIBLE sin
+Cl@ve, la COMPLETA solo con la confirmación explícita del ciudadano; sin ella,
+cede. Respeta la allowlist, no toca campos de CAPTCHA/credenciales, y los
+portales reales están desactivados.
 """
 
 import pytest
@@ -27,7 +28,7 @@ def test_health(client):
 # Cita médica de prueba: identificación por CIP + apellido (sin Cl@ve), centro y
 # fecha/hora. Son los cinco campos que el worker precompleta en las páginas.
 _MED_FIELDS = {
-    "health_card_number": "BBBB1234567890",
+    "sip_number": "BBBB1234567890",
     "surname": "García",
     "center": "valladolid-pilarica",
     "date": "2026-09-01",
@@ -97,7 +98,7 @@ def test_events_never_contain_field_values(client):
             "fields": {
                 **_MED_FIELDS,
                 "surname": "SENTINEL-NAME",
-                "health_card_number": "SENTINEL-CIP",
+                "sip_number": "SENTINEL-CIP",
             },
         },
     ).json()
@@ -111,11 +112,11 @@ def test_partial_fields_prefill_only_what_is_provided(client):
         "/worker/prepare",
         json={
             "connector": "demo.worker.appointment",
-            "fields": {"health_card_number": "BBBB1234567890", "surname": "García"},
+            "fields": {"sip_number": "BBBB1234567890", "surname": "García"},
         },
     ).json()
     assert body["status"] == "user_handoff"
-    assert set(body["prefilled"]) == {"health_card_number", "surname"}
+    assert set(body["prefilled"]) == {"sip_number", "surname"}
 
 
 def test_real_portals_are_disabled(client):

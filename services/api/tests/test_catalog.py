@@ -58,18 +58,19 @@ def test_automated_connectors_stay_coming_soon(client):
 
 
 def test_worker_procedure_exposes_intake_fields(client):
-    """El trámite del worker declara los datos NO sensibles que pide el kiosco
-    para el prefill (servicio, oficina, fecha, hora), con opciones bilingües."""
+    """La cita del médico declara los datos NO sensibles que pide el kiosco para
+    el prefill (centro, día, hora), con opciones bilingües."""
     body = client.get("/api/catalog/demo.worker.appointment").json()
     keys = [f["key"] for f in body["intake"]]
-    assert keys == ["service", "office", "date", "time"]
-    service = body["intake"][0]
-    assert service["type"] == "select"
-    assert service["label"]["es"]
-    assert service["label"]["ca-valencia"]
-    assert {o["value"] for o in service["options"]} == {"renovacion-dni", "primera-inscripcion"}
-    # Datos sensibles NO van en intake.
+    assert keys == ["center", "date", "time"]
+    center = body["intake"][0]
+    assert center["type"] == "select"
+    assert center["label"]["es"]
+    assert center["label"]["ca-valencia"]
+    assert {o["value"] for o in center["options"]} == {"valladolid-pilarica", "burgos-gamonal"}
+    # Datos sensibles NO van en intake: salen del escaneo de la tarjeta.
     assert all(f["key"] not in {"dni_number", "sip_number"} for f in body["intake"])
+    assert body["required_fields"] == ["sip_number", "surname"]
 
 
 def test_most_procedures_have_no_intake(client):

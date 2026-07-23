@@ -62,7 +62,9 @@ def build_registry(portal_authority: str) -> dict[str, PortalSpec]:
         # worker rellena en cada página lo presente y avanza; al ser una cita
         # (reversible), la completa tras la confirmación del ciudadano.
         field_map={
-            "health_card_number": "cip",
+            # `sip_number` es el número de la tarjeta sanitaria que produce el
+            # escaneo del kiosco; en el portal se llama CIP.
+            "sip_number": "cip",
             "surname": "apellido",
             "center": "centro",
             "date": "fecha",
