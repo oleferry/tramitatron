@@ -65,6 +65,12 @@ def create_app(device_token: str | None = None) -> FastAPI:
     @app.post("/device/printer/print")
     def print_job(body: PrintRequest, _: None = Depends(require_token)) -> dict[str, str]:
         SPOOL_DIR.mkdir(exist_ok=True)
+        # Higiene del spool (regla 4, minimización de datos): el tótem atiende a
+        # una persona a la vez y el trabajo anterior ya se "imprimió", así que no
+        # se acumulan en disco justificantes de trabajos previos. Se conserva
+        # solo el trabajo en curso; la purga de sesión limpia también este.
+        for old in SPOOL_DIR.glob("*.txt"):
+            old.unlink(missing_ok=True)
         job_id = f"job-{int(time.time())}-{secrets.token_hex(3)}"
         (SPOOL_DIR / f"{job_id}.txt").write_text("\n".join(body.lines), encoding="utf-8")
         return {"job_id": job_id, "status": "printed_simulated"}

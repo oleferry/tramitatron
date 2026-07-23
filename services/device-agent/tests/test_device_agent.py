@@ -21,6 +21,16 @@ def test_print_and_purge():
     assert not SPOOL_DIR.exists()
 
 
+def test_print_keeps_only_current_job():
+    """Higiene del spool (regla 4): un trabajo nuevo no deja en disco el previo."""
+    client.post("/device/session/purge")  # estado limpio
+    first = client.post("/device/printer/print", json={"lines": ["uno"]}).json()["job_id"]
+    second = client.post("/device/printer/print", json={"lines": ["dos"]}).json()["job_id"]
+    assert not (SPOOL_DIR / f"{first}.txt").exists()
+    assert (SPOOL_DIR / f"{second}.txt").exists()
+    client.post("/device/session/purge")
+
+
 def test_capture_returns_synthetic_image():
     body = client.post("/device/camera/capture").json()
     assert body["status"] == "simulated"
