@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { IntakeField } from "../api";
 import { api } from "../api";
@@ -30,8 +30,16 @@ export function IntakeStep({
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   const field = fields[idx];
+
+  // Al avanzar de paso, lleva el foco al encabezado de la nueva pregunta para
+  // que el lector de pantalla la lea. El paso 0 no se enfoca aquí: al montar,
+  // App.tsx ya mueve el foco a <main> y leerlo dos veces sería redundante.
+  useEffect(() => {
+    if (idx > 0) headingRef.current?.focus({ preventScroll: true });
+  }, [idx]);
 
   const answer = async (value: string) => {
     const next = { ...answers, [field.key]: value };
@@ -58,7 +66,11 @@ export function IntakeStep({
   return (
     <div className="panel intake">
       <p className="intake-progress">{progress}</p>
-      <h3>{field.label[lang]}</h3>
+      {/* tabIndex=-1: enfocable por código (para anunciar la pregunta al cambiar
+          de paso) pero fuera del recorrido normal del tabulador. */}
+      <h3 ref={headingRef} tabIndex={-1}>
+        {field.label[lang]}
+      </h3>
 
       {field.type === "select" ? (
         <div className="intake-options">

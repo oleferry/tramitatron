@@ -40,7 +40,7 @@ export function AskPanel({
       <h3>
         <span aria-hidden="true">💬</span> {strings.askTitle}
       </h3>
-      <div className="doc-step">
+      <div className="doc-step" aria-busy={loading}>
         <div className="search-row">
           <input
             value={question}
@@ -49,29 +49,41 @@ export function AskPanel({
             placeholder={strings.askPlaceholder}
             aria-label={strings.askPlaceholder}
           />
-          <button className="btn-primary" onClick={() => void ask()} disabled={loading}>
+          {/* aria-label fijo: mientras carga el texto es "…", que el lector
+              leería como "puntos suspensivos"; el nombre accesible no cambia. */}
+          <button
+            className="btn-primary"
+            onClick={() => void ask()}
+            disabled={loading}
+            aria-label={strings.askButton}
+          >
             {loading ? "…" : strings.askButton}
           </button>
         </div>
 
-        {failed && <div className="banner banner-info">{strings.apiError}</div>}
+        {/* Región viva SIEMPRE presente: la respuesta (o el "no encontrado" o el
+            error) llega tras una llamada asíncrona y así se anuncia al aparecer,
+            no solo se ve (WCAG 2.2 §4.1.3, mensajes de estado). */}
+        <div aria-live="polite">
+          {failed && <div className="banner banner-info">{strings.apiError}</div>}
 
-        {result && !result.found && (
-          <div className="clarification">{strings.askNoAnswer}</div>
-        )}
+          {result && !result.found && (
+            <div className="clarification">{strings.askNoAnswer}</div>
+          )}
 
-        {result?.found && result.answer && result.source && (
-          <div className="answer">
-            <p className="answer-text">{result.answer}</p>
-            <p className="answer-source">
-              {strings.askSourceLabel}: <strong>{result.source.organismo}</strong> —{" "}
-              {result.source.title}. {strings.askUpdatedLabel} {result.source.fetched_at}.
-              <br />
-              <span className="answer-url">{result.source.url}</span>
-            </p>
-            <p className="answer-disclaimer">{strings.askDisclaimer}</p>
-          </div>
-        )}
+          {result?.found && result.answer && result.source && (
+            <div className="answer">
+              <p className="answer-text">{result.answer}</p>
+              <p className="answer-source">
+                {strings.askSourceLabel}: <strong>{result.source.organismo}</strong> —{" "}
+                {result.source.title}. {strings.askUpdatedLabel} {result.source.fetched_at}.
+                <br />
+                <span className="answer-url">{result.source.url}</span>
+              </p>
+              <p className="answer-disclaimer">{strings.askDisclaimer}</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

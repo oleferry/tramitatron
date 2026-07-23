@@ -981,6 +981,13 @@ button:focus-visible {
   margin: 0 0 0.25rem;
 }
 
+/* El encabezado recibe el foco por código al cambiar de paso (solo para
+   anunciar la pregunta al lector de pantalla), no por tabulación: sin anillo,
+   igual que .kiosk-main:focus. */
+.intake h3:focus {
+  outline: none;
+}
+
 .intake-options {
   display: flex;
   flex-direction: column;
