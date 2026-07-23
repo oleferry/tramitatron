@@ -29,7 +29,18 @@ class PortalSpec:
     enabled: bool = False
 
     def allows(self, url: str) -> bool:
-        return urlparse(url).hostname in self.hosts
+        parsed = urlparse(url)
+        # Mismo esquema que el inicio del trámite: descarta de un golpe el
+        # downgrade https->http (rellenar datos por texto claro) y los esquemas
+        # que no son web (javascript:, file:, data:), que no tienen hostname
+        # válido de todas formas. El demo va por http (localhost); los portales
+        # reales, por https.
+        if parsed.scheme != urlparse(self.start_url).scheme:
+            return False
+        # Coincidencia EXACTA de host (no subcadena): `urlparse().hostname` ya
+        # descarta el userinfo (`https://banco.es@malo.com` -> `malo.com`) y el
+        # puerto, así que `...es.malo.com` tampoco cuela.
+        return parsed.hostname in self.hosts
 
 
 # La autoridad del portal de pruebas (host o host:port) se inyecta al construir

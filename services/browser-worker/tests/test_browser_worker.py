@@ -137,3 +137,27 @@ def test_allowlist_rejects_foreign_host():
     spec = build_registry("worker.local")["demo.worker.appointment"]
     assert spec.allows("http://worker.local/portal/cita") is True
     assert spec.allows("http://evil.example.com/portal/cita") is False
+
+
+def test_allowlist_rejects_userinfo_and_subdomain_suffix_tricks():
+    # Un portal real (https) es el caso realista para estos ataques de URL.
+    sacyl = build_registry("worker.local")["sacyl.health.primary-care"]
+    assert sacyl.allows("https://cita.saludcastillayleon.es/") is True
+    # Truco del userinfo: el host real es malo.com, no el que aparenta.
+    assert sacyl.allows("https://cita.saludcastillayleon.es@malo.com/") is False
+    # Truco del sufijo: ...es.malo.com es OTRO host, no un subdominio permitido.
+    assert sacyl.allows("https://cita.saludcastillayleon.es.malo.com/") is False
+
+
+def test_allowlist_rejects_scheme_downgrade():
+    """No se rellena por HTTP en claro un portal que arranca en HTTPS."""
+    sacyl = build_registry("worker.local")["sacyl.health.primary-care"]
+    assert sacyl.allows("https://www.saludcastillayleon.es/tramite") is True
+    assert sacyl.allows("http://www.saludcastillayleon.es/tramite") is False
+
+
+def test_allowlist_rejects_non_web_schemes():
+    spec = build_registry("worker.local")["demo.worker.appointment"]
+    assert spec.allows("javascript:alert(1)") is False
+    assert spec.allows("file:///etc/passwd") is False
+    assert spec.allows("data:text/html,<script>1</script>") is False
