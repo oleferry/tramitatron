@@ -6,6 +6,7 @@ import { t } from "./i18n";
 import { stopSpeaking } from "./speech";
 import { BrandMark } from "./BrandMark";
 import { FORCED_LANG } from "./locales";
+import { Modal } from "./Modal";
 import { HomeScreen } from "./screens/HomeScreen";
 import { LanguageScreen } from "./screens/LanguageScreen";
 import { LetterScreen } from "./screens/LetterScreen";
@@ -304,34 +305,40 @@ export function App() {
       )}
 
       {confirmEndOpen && (
-        <div className="modal-overlay" role="alertdialog" aria-modal="true">
-          <div className="modal">
-            <h2>{strings.endSessionConfirmTitle}</h2>
-            <p>{strings.endSessionConfirmBody}</p>
-            <div className="modal-buttons">
-              <button className="btn-primary" onClick={() => void endSession()}>
-                {strings.endSessionConfirmYes}
-              </button>
-              <button className="btn-secondary" onClick={() => setConfirmEndOpen(false)}>
-                {strings.endSessionConfirmNo}
-              </button>
-            </div>
+        // Escape = la salida menos destructiva: seguir (no borrar).
+        <Modal
+          titleId="confirm-end-title"
+          bodyId="confirm-end-body"
+          onEscape={() => setConfirmEndOpen(false)}
+        >
+          <h2 id="confirm-end-title">{strings.endSessionConfirmTitle}</h2>
+          <p id="confirm-end-body">{strings.endSessionConfirmBody}</p>
+          <div className="modal-buttons">
+            <button className="btn-primary" onClick={() => void endSession()}>
+              {strings.endSessionConfirmYes}
+            </button>
+            <button className="btn-secondary" onClick={() => setConfirmEndOpen(false)}>
+              {strings.endSessionConfirmNo}
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
 
       {inactivityWarn && !confirmEndOpen && (
-        <div className="modal-overlay" role="alertdialog" aria-modal="true">
-          <div className="modal">
-            <h2>{strings.inactivityTitle}</h2>
-            <p>{strings.inactivityBody}</p>
-            <div className="modal-buttons">
-              <button className="btn-primary btn-xl" onClick={() => void stayHere()}>
-                {strings.inactivityStay}
-              </button>
-            </div>
+        // Escape = seguir aquí (extiende la sesión en vez de dejarla caducar).
+        <Modal
+          titleId="inactivity-title"
+          bodyId="inactivity-body"
+          onEscape={() => void stayHere()}
+        >
+          <h2 id="inactivity-title">{strings.inactivityTitle}</h2>
+          <p id="inactivity-body">{strings.inactivityBody}</p>
+          <div className="modal-buttons">
+            <button className="btn-primary btn-xl" onClick={() => void stayHere()}>
+              {strings.inactivityStay}
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

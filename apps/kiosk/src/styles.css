@@ -773,6 +773,12 @@ button:focus-visible {
   animation: screen-in 200ms ease both;
 }
 
+/* El diálogo recibe el foco por código al abrir (para anunciar título y cuerpo
+   al lector de pantalla), no por tabulación: sin anillo, como .kiosk-main. */
+.modal:focus {
+  outline: none;
+}
+
 .high-contrast .modal {
   border: 3px solid var(--color-primary);
   box-shadow: none;
