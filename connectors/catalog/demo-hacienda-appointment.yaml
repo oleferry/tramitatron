@@ -1,0 +1,95 @@
+id: demo.hacienda.appointment
+name:
+  es: Pedir cita en Hacienda
+  ca-valencia: Demanar cita en Hisenda
+description:
+  es: Acercas tu DNI, eliges la gestión y la hora, y el sistema reserva la cita por ti.
+  ca-valencia: Acostes el teu DNI, tries la gestió i l'hora, i el sistema reserva la cita per tu.
+territory: ES
+execution_mode: integrated
+risk_class: A1
+status: available
+official_sources: []
+requirements:
+  - es: Solo necesitas tu DNI. Para pedir cita no hace falta Cl@ve ni certificado.
+    ca-valencia: Només necessites el teu DNI. Per a demanar cita no cal Cl@ve ni certificat.
+  - es: Antes de reservar te enseñamos la cita para que la confirmes tú.
+    ca-valencia: Abans de reservar et mostrem la cita perquè la confirmes tu.
+  - es: Demostración sobre un portal de pruebas; no toca ninguna administración real.
+    ca-valencia: Demostració sobre un portal de proves; no toca cap administració real.
+# Datos que salen del escaneo del DNI: la AEAT pide NIF y nombre y apellidos
+# para dar cita, sin Cl@ve ni certificado.
+required_fields:
+  - dni_number
+  - full_name
+# Datos NO sensibles que el kiosco pide antes de reservar.
+intake:
+  - key: service
+    type: select
+    label:
+      es: ¿Qué necesitas hacer en Hacienda?
+      ca-valencia: Què necessites fer en Hisenda?
+    options:
+      - value: informacion-renta
+        label:
+          es: Información sobre la Renta
+          ca-valencia: Informació sobre la Renda
+      - value: certificados
+        label:
+          es: Certificados tributarios
+          ca-valencia: Certificats tributaris
+      - value: censo
+        label:
+          es: Alta o cambio de datos censales
+          ca-valencia: Alta o canvi de dades censals
+  - key: office
+    type: select
+    label:
+      es: ¿A qué oficina quieres ir?
+      ca-valencia: A quina oficina vols anar?
+    options:
+      - value: valladolid
+        label:
+          es: Valladolid
+          ca-valencia: Valladolid
+      - value: burgos
+        label:
+          es: Burgos
+          ca-valencia: Burgos
+  - key: date
+    type: select
+    label:
+      es: ¿Qué día?
+      ca-valencia: Quin dia?
+    options:
+      - value: "2026-09-03"
+        label:
+          es: 3 de septiembre
+          ca-valencia: 3 de setembre
+      - value: "2026-09-04"
+        label:
+          es: 4 de septiembre
+          ca-valencia: 4 de setembre
+  - key: time
+    type: select
+    label:
+      es: ¿A qué hora?
+      ca-valencia: A quina hora?
+    options:
+      - value: "09:30"
+        label:
+          es: "09:30"
+          ca-valencia: "09:30"
+      - value: "11:00"
+        label:
+          es: "11:00"
+          ca-valencia: "11:00"
+confirmation_required: true
+captcha_policy: user_only
+document_retention: none
+connector:
+  type: playwright
+  package: connectors.worker.hacienda
+healthcheck:
+  cadence: daily
+  synthetic_data_only: true

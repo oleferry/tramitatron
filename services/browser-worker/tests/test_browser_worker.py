@@ -119,11 +119,62 @@ def test_partial_fields_prefill_only_what_is_provided(client):
     assert set(body["prefilled"]) == {"sip_number", "surname"}
 
 
-def test_real_portals_are_disabled(client):
-    """Dirigir la automatización a un portal real está gated (privacidad/EIPD)."""
+# Cita en Hacienda: NIF + nombre (del DNI) y gestión/oficina/fecha/hora.
+_AEAT_FIELDS = {
+    "dni_number": "12345678Z",
+    "full_name": "Persona de Prueba",
+    "service": "informacion-renta",
+    "office": "valladolid",
+    "date": "2026-09-03",
+    "time": "09:30",
+}
+
+
+def test_hacienda_prepare_with_confirmation_completes(client):
+    """La cita de Hacienda tampoco lleva Cl@ve: se completa con confirmación."""
     body = client.post(
         "/worker/prepare",
-        json={"connector": "sacyl.health.primary-care", "fields": {"health_card_number": "123"}},
+        json={
+            "connector": "demo.hacienda.appointment",
+            "fields": _AEAT_FIELDS,
+            "confirm": True,
+        },
+    ).json()
+    assert body["status"] == "completed"
+    assert body["reference"].startswith("AEAT-")
+    assert set(body["prefilled"]) == set(_AEAT_FIELDS)
+
+
+def test_hacienda_without_confirmation_hands_off(client):
+    body = client.post(
+        "/worker/prepare",
+        json={"connector": "demo.hacienda.appointment", "fields": _AEAT_FIELDS},
+    ).json()
+    assert body["status"] == "user_handoff"
+    assert "/portal/hacienda/cita/confirmar" in body["url"]
+    assert "confirmar" in body["pending"]
+
+
+def test_hacienda_events_never_contain_field_values(client):
+    """Ni el NIF ni el nombre aparecen en la traza (PII)."""
+    body = client.post(
+        "/worker/prepare",
+        json={
+            "connector": "demo.hacienda.appointment",
+            "fields": {**_AEAT_FIELDS, "dni_number": "SENTINEL-NIF"},
+            "confirm": True,
+        },
+    ).json()
+    assert "SENTINEL-NIF" not in str(body["events"])
+
+
+@pytest.mark.parametrize("connector", ["sacyl.health.primary-care", "aeat.cita-previa"])
+def test_real_portals_are_disabled(client, connector):
+    """Dirigir la automatización a un portal real está gated (privacidad/EIPD),
+    aunque la cita no exija Cl@ve."""
+    body = client.post(
+        "/worker/prepare",
+        json={"connector": connector, "fields": {"dni_number": "123"}, "confirm": True},
     ).json()
     assert body["status"] == "unavailable"
     assert body["url"] is None

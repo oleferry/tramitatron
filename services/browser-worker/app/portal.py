@@ -1,17 +1,18 @@
-"""Portal de pruebas local: un asistente de CITA CON EL MÉDICO de varias páginas,
-renderizado en el servidor (TT-502, demo reproducible).
+"""Portales de pruebas locales: dos asistentes de CITA PREVIA de varias páginas,
+renderizados en el servidor (TT-502, demo reproducible).
 
-Réplica FIEL de cómo funciona de verdad la cita de atención primaria de Sacyl:
-la identificación NO usa Cl@ve ni firma, solo el CIP (Código de Identificación
-Personal, impreso en la tarjeta sanitaria) + el primer apellido. Luego se elige
-centro y día/hora, y se confirma. Al ser una cita (reversible, anulable), el
-sistema SÍ puede completarla, pero solo tras el "Sí, confirma" explícito del
-ciudadano (que viaja como el flag de confirmación): sin ese flag, el envío se
-rechaza. Un CAPTCHA, si lo hubiera, lo resuelve la persona.
+Réplicas FIELES de los dos trámites objetivo, que comparten lo esencial: la
+identificación NO usa Cl@ve, certificado ni firma, sino datos que el ciudadano
+lleva encima, y la cita es reversible (se puede anular). Por eso el sistema SÍ
+puede completarlas, pero solo tras el "Sí, confirma" explícito del ciudadano
+(que viaja como el flag de confirmación); sin él, el envío se rechaza.
 
-Todo esto es un portal FICTICIO servido por el propio proyecto: no toca ninguna
+- Cita con el médico (Sacyl): CIP de la tarjeta sanitaria + primer apellido.
+- Cita en Hacienda (AEAT):    NIF + nombre y apellidos.
+
+Todo esto es FICTICIO y lo sirve el propio proyecto: no toca ninguna
 administración real. Reproduce el flujo completo, incluida la confirmación, sin
-navegadores ni red. El portal real (Sacyl) se conecta tras la EIPD (Fase 3).
+navegadores ni red. Los portales reales se conectan tras la EIPD.
 """
 
 import secrets
@@ -25,16 +26,36 @@ router = APIRouter(prefix="/portal", tags=["portal-de-pruebas"])
 def _page(body: str) -> Response:
     html = (
         '<!doctype html><html lang="es"><head><meta charset="utf-8">'
-        "<title>Cita con el médico (portal de pruebas)</title></head><body>"
+        "<title>Cita previa (portal de pruebas)</title></head><body>"
         f"{body}</body></html>"
     )
     return Response(content=html, media_type="text/html")
 
 
-# Paso 1: identificación por tarjeta sanitaria (CIP + primer apellido). Sin
-# Cl@ve. 'Siguiente' navega por GET al paso de centro.
+async def _confirmar(request: Request, prefijo: str) -> Response:
+    """Confirmación final compartida. Se lee el cuerpo urlencodificado a mano
+    para no depender de python-multipart."""
+    form = parse_qs((await request.body()).decode())
+    if form.get("confirmado", [""])[0] != "si":
+        # Sin confirmación explícita, el sistema NO reserva.
+        return Response(
+            content="Falta la confirmación explícita del ciudadano.",
+            media_type="text/plain",
+            status_code=403,
+        )
+    referencia = f"{prefijo}-{secrets.token_hex(3).upper()}"
+    return _page(
+        "<h1>Cita confirmada</h1>"
+        f"<p>Tu cita está hecha. Referencia: <strong>{referencia}</strong></p>"
+    )
+
+
+# ── Cita con el médico (réplica de Sacyl) ──────────────────────────────────
+# Identificación por CIP + primer apellido, sin Cl@ve: así funciona de verdad.
+
+
 @router.get("/cita")
-def paso_identificacion() -> Response:
+def salud_identificacion() -> Response:
     return _page(
         "<h1>Cita con el médico · paso 1 de 4: identifícate</h1>"
         '<form method="get" action="/portal/cita/centro">'
@@ -46,9 +67,8 @@ def paso_identificacion() -> Response:
     )
 
 
-# Paso 2: elegir el centro de salud.
 @router.get("/cita/centro")
-def paso_centro() -> Response:
+def salud_centro() -> Response:
     return _page(
         "<h1>Cita con el médico · paso 2 de 4: centro de salud</h1>"
         '<form method="get" action="/portal/cita/fecha">'
@@ -62,9 +82,8 @@ def paso_centro() -> Response:
     )
 
 
-# Paso 3: elegir fecha y hora.
 @router.get("/cita/fecha")
-def paso_fecha() -> Response:
+def salud_fecha() -> Response:
     return _page(
         "<h1>Cita con el médico · paso 3 de 4: fecha y hora</h1>"
         '<form method="get" action="/portal/cita/confirmar">'
@@ -83,12 +102,8 @@ def paso_fecha() -> Response:
     )
 
 
-# Paso 4: resumen y confirmación. El envío es POST. A diferencia de un trámite
-# firmado, una cita se puede completar; pero SOLO con el flag de confirmación
-# explícita del ciudadano (`confirmado=si`). Sin él, se rechaza: el sistema no
-# reserva por su cuenta.
 @router.get("/cita/confirmar")
-def paso_confirmar() -> Response:
+def salud_confirmar_pagina() -> Response:
     return _page(
         "<h1>Cita con el médico · paso 4 de 4: confirma tu cita</h1>"
         '<form method="post" action="/portal/cita/confirmar">'
@@ -99,18 +114,79 @@ def paso_confirmar() -> Response:
 
 
 @router.post("/cita/confirmar")
-async def confirmar(request: Request) -> Response:
-    # Se lee el cuerpo urlencodificado a mano para no depender de python-multipart.
-    form = parse_qs((await request.body()).decode())
-    if form.get("confirmado", [""])[0] != "si":
-        # Sin confirmación explícita, el sistema NO reserva.
-        return Response(
-            content="Falta la confirmación explícita del ciudadano.",
-            media_type="text/plain",
-            status_code=403,
-        )
-    referencia = f"CITA-{secrets.token_hex(3).upper()}"
+async def salud_confirmar(request: Request) -> Response:
+    return await _confirmar(request, "CITA")
+
+
+# ── Cita en Hacienda (réplica de AEAT) ─────────────────────────────────────
+# La propia AEAT indica que para pedir cita NO hace falta certificado, DNIe ni
+# Cl@ve: basta con NIF y nombre y apellidos.
+
+
+@router.get("/hacienda/cita")
+def aeat_identificacion() -> Response:
     return _page(
-        "<h1>Cita confirmada</h1>"
-        f"<p>Tu cita está hecha. Referencia: <strong>{referencia}</strong></p>"
+        "<h1>Cita en Hacienda · paso 1 de 4: identifícate</h1>"
+        '<form method="get" action="/portal/hacienda/cita/gestion">'
+        '<label>NIF <input type="text" name="nif" value=""></label>'
+        '<label>Nombre y apellidos <input type="text" name="nombre" value=""></label>'
+        '<button type="submit" name="siguiente">Siguiente</button>'
+        "</form>"
     )
+
+
+@router.get("/hacienda/cita/gestion")
+def aeat_gestion() -> Response:
+    return _page(
+        "<h1>Cita en Hacienda · paso 2 de 4: qué gestión</h1>"
+        '<form method="get" action="/portal/hacienda/cita/fecha">'
+        '<label>Gestión <select name="gestion">'
+        '<option value="">Elige…</option>'
+        '<option value="informacion-renta">Información sobre la Renta</option>'
+        '<option value="certificados">Certificados tributarios</option>'
+        '<option value="censo">Alta o cambio de datos censales</option>'
+        "</select></label>"
+        '<button type="submit" name="siguiente">Siguiente</button>'
+        "</form>"
+    )
+
+
+@router.get("/hacienda/cita/fecha")
+def aeat_fecha() -> Response:
+    return _page(
+        "<h1>Cita en Hacienda · paso 3 de 4: oficina, fecha y hora</h1>"
+        '<form method="get" action="/portal/hacienda/cita/confirmar">'
+        '<label>Oficina <select name="oficina">'
+        '<option value="">Elige…</option>'
+        '<option value="valladolid">Valladolid</option>'
+        '<option value="burgos">Burgos</option>'
+        "</select></label>"
+        '<label>Fecha <select name="fecha">'
+        '<option value="">Elige…</option>'
+        '<option value="2026-09-03">3 de septiembre</option>'
+        '<option value="2026-09-04">4 de septiembre</option>'
+        "</select></label>"
+        '<label>Hora <select name="hora">'
+        '<option value="">Elige…</option>'
+        '<option value="09:30">09:30</option>'
+        '<option value="11:00">11:00</option>'
+        "</select></label>"
+        '<button type="submit" name="siguiente">Siguiente</button>'
+        "</form>"
+    )
+
+
+@router.get("/hacienda/cita/confirmar")
+def aeat_confirmar_pagina() -> Response:
+    return _page(
+        "<h1>Cita en Hacienda · paso 4 de 4: confirma tu cita</h1>"
+        '<form method="post" action="/portal/hacienda/cita/confirmar">'
+        '<input type="hidden" name="confirmado" value="si">'
+        '<button type="submit" name="enviar">Confirmar cita</button>'
+        "</form>"
+    )
+
+
+@router.post("/hacienda/cita/confirmar")
+async def aeat_confirmar(request: Request) -> Response:
+    return await _confirmar(request, "AEAT")

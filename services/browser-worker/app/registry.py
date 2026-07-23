@@ -74,6 +74,25 @@ def build_registry(portal_authority: str) -> dict[str, PortalSpec]:
         enabled=True,
         completable=True,
     )
+    # Réplica de la CITA EN HACIENDA (AEAT): la propia Agencia indica que para
+    # pedir cita NO hace falta certificado, DNIe ni Cl@ve, solo NIF y nombre.
+    # Esos dos datos salen del escaneo del DNI, así que se puede completar.
+    hacienda = PortalSpec(
+        connector="demo.hacienda.appointment",
+        hosts=(portal_host,),
+        start_url=f"http://{portal_authority}/portal/hacienda/cita",
+        field_map={
+            "dni_number": "nif",
+            "full_name": "nombre",
+            "service": "gestion",
+            "office": "oficina",
+            "date": "fecha",
+            "time": "hora",
+        },
+        handoff_signals=("captcha", "cl@ve", "clave"),
+        enabled=True,
+        completable=True,
+    )
     # Portal real: declarado y DESACTIVADO (ver docstring). Sacyl (cita de
     # atención primaria en Castilla y León); se habilitará tras la EIPD.
     sacyl = PortalSpec(
@@ -84,4 +103,15 @@ def build_registry(portal_authority: str) -> dict[str, PortalSpec]:
         handoff_signals=("captcha", "cl@ve", "clave"),
         enabled=False,
     )
-    return {s.connector: s for s in (demo, sacyl)}
+    # Portal real de la AEAT: declarado y DESACTIVADO igual que Sacyl. La cita
+    # no exige Cl@ve, pero apuntar la automatización a un portal real sigue
+    # sujeto a la EIPD y al permiso del organismo.
+    aeat = PortalSpec(
+        connector="aeat.cita-previa",
+        hosts=("sede.agenciatributaria.gob.es", "www1.agenciatributaria.gob.es"),
+        start_url="https://sede.agenciatributaria.gob.es/",
+        field_map={"dni_number": "nif", "full_name": "nombre"},
+        handoff_signals=("captcha", "cl@ve", "clave"),
+        enabled=False,
+    )
+    return {s.connector: s for s in (demo, hacienda, sacyl, aeat)}

@@ -89,6 +89,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             worker_url=settings.browser_worker_url,
             worker_connector="demo.worker.appointment",
         ),
+        # Cita en Hacienda (AEAT): mismo motor, otro asistente.
+        "connectors.worker.hacienda": WorkerConnector(
+            name="connectors.worker.hacienda",
+            worker_url=settings.browser_worker_url,
+            worker_connector="demo.hacienda.appointment",
+        ),
     }
 
     if settings.redis_url:

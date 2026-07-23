@@ -125,6 +125,92 @@ const PROCEDURES: Procedure[] = [
     confirmation_required: true,
   },
   {
+    id: "demo.hacienda.appointment",
+    name: {
+      es: "Pedir cita en Hacienda",
+      "ca-valencia": "Demanar cita en Hisenda",
+    },
+    description: {
+      es: "Acercas tu DNI, eliges la gestión y la hora, y el sistema reserva la cita por ti.",
+      "ca-valencia":
+        "Acostes el teu DNI, tries la gestió i l'hora, i el sistema reserva la cita per tu.",
+    },
+    status: "available",
+    execution_mode: "integrated",
+    official_sources: [],
+    requirements: [
+      {
+        es: "Solo necesitas tu DNI. Para pedir cita no hace falta Cl@ve ni certificado.",
+        "ca-valencia":
+          "Només necessites el teu DNI. Per a demanar cita no cal Cl@ve ni certificat.",
+      },
+      {
+        es: "Antes de reservar te enseñamos la cita para que la confirmes tú.",
+        "ca-valencia": "Abans de reservar et mostrem la cita perquè la confirmes tu.",
+      },
+      {
+        es: "Demostración sobre un portal de pruebas; no toca ninguna administración real.",
+        "ca-valencia": "Demostració sobre un portal de proves; no toca cap administració real.",
+      },
+    ],
+    required_fields: ["dni_number", "full_name"],
+    intake: [
+      {
+        key: "service",
+        type: "select",
+        label: {
+          es: "¿Qué necesitas hacer en Hacienda?",
+          "ca-valencia": "Què necessites fer en Hisenda?",
+        },
+        options: [
+          {
+            value: "informacion-renta",
+            label: { es: "Información sobre la Renta", "ca-valencia": "Informació sobre la Renda" },
+          },
+          {
+            value: "certificados",
+            label: { es: "Certificados tributarios", "ca-valencia": "Certificats tributaris" },
+          },
+          {
+            value: "censo",
+            label: {
+              es: "Alta o cambio de datos censales",
+              "ca-valencia": "Alta o canvi de dades censals",
+            },
+          },
+        ],
+      },
+      {
+        key: "office",
+        type: "select",
+        label: { es: "¿A qué oficina quieres ir?", "ca-valencia": "A quina oficina vols anar?" },
+        options: [
+          { value: "valladolid", label: { es: "Valladolid", "ca-valencia": "Valladolid" } },
+          { value: "burgos", label: { es: "Burgos", "ca-valencia": "Burgos" } },
+        ],
+      },
+      {
+        key: "date",
+        type: "select",
+        label: { es: "¿Qué día?", "ca-valencia": "Quin dia?" },
+        options: [
+          { value: "2026-09-03", label: { es: "3 de septiembre", "ca-valencia": "3 de setembre" } },
+          { value: "2026-09-04", label: { es: "4 de septiembre", "ca-valencia": "4 de setembre" } },
+        ],
+      },
+      {
+        key: "time",
+        type: "select",
+        label: { es: "¿A qué hora?", "ca-valencia": "A quina hora?" },
+        options: [
+          { value: "09:30", label: { es: "09:30", "ca-valencia": "09:30" } },
+          { value: "11:00", label: { es: "11:00", "ca-valencia": "11:00" } },
+        ],
+      },
+    ],
+    confirmation_required: true,
+  },
+  {
     id: "sacyl.health.primary-care",
     name: { es: "Cita de atención primaria", "ca-valencia": "Cita d'atenció primària" },
     description: {
@@ -747,6 +833,17 @@ export const demoApi = {
   },
 
   executeProcedure: async (procedureId: string): Promise<ExecutionResult> => {
+    if (procedureId === "demo.hacienda.appointment") {
+      // La AEAT no exige Cl@ve para dar cita: tras el "Sí, confirma" se reserva.
+      return {
+        status: "completed",
+        receipt: {
+          reference: `AEAT-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
+          url: "https://portal-de-pruebas.example/hacienda/cita/confirmar",
+        },
+        message: null,
+      };
+    }
     if (procedureId === "demo.worker.appointment") {
       // Una cita es reversible y no lleva Cl@ve: tras el "Sí, confirma" del
       // ciudadano el sistema la RESERVA y devuelve la referencia.
