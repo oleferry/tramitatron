@@ -49,16 +49,36 @@ class WorkerConnector:
             return ExecutionResult(
                 status="failed",
                 message="El asistente de navegación no está disponible ahora.",
+                technical_detail="worker no configurado (BROWSER_WORKER_URL)",
             )
+        # El mensaje al ciudadano es siempre el mismo; el detalle técnico (para
+        # la incidencia de soporte) distingue la causa. Nunca lleva datos de la
+        # persona: solo el tipo de error o el código HTTP.
+        _UNAVAILABLE = "El asistente de navegación no está disponible ahora."
         try:
             result = await self._post(
                 "/worker/prepare",
                 json={"connector": self._worker_connector, "fields": dict(data)},
             )
-        except Exception:  # noqa: BLE001 - el tótem informa, no se rompe
+        except httpx.HTTPStatusError as exc:
             return ExecutionResult(
                 status="failed",
-                message="El asistente de navegación no está disponible ahora.",
+                message=_UNAVAILABLE,
+                technical_detail=f"worker respondió HTTP {exc.response.status_code}",
+            )
+        except httpx.HTTPError as exc:
+            # Timeout, conexión rechazada, DNS… el nombre de la clase basta para
+            # el diagnóstico y no contiene datos de la petición.
+            return ExecutionResult(
+                status="failed",
+                message=_UNAVAILABLE,
+                technical_detail=f"worker inaccesible: {type(exc).__name__}",
+            )
+        except Exception as exc:  # noqa: BLE001 - el tótem informa, no se rompe
+            return ExecutionResult(
+                status="failed",
+                message=_UNAVAILABLE,
+                technical_detail=f"error inesperado: {type(exc).__name__}",
             )
 
         if result.get("status") == "user_handoff":
@@ -69,8 +89,13 @@ class WorkerConnector:
                     "pending": ", ".join(result.get("pending", [])),
                 },
             )
-        # "unavailable" o "error": se traslada el mensaje del worker.
-        return ExecutionResult(status="failed", message=result.get("message"))
+        # "unavailable" o "error": el mensaje del worker va al ciudadano y el
+        # estado sirve de rastro técnico para soporte.
+        return ExecutionResult(
+            status="failed",
+            message=result.get("message"),
+            technical_detail=f"worker status={result.get('status')}",
+        )
 
     async def healthcheck(self) -> HealthcheckResult:
         if self._worker_url is None and self._client is None:

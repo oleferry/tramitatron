@@ -70,11 +70,18 @@ async def execute_procedure(
     # funciona → desactivar conector y derivar»). Se abre una y se devuelve su
     # código anónimo para que el kiosco lo muestre. El mensaje se redacta.
     if result.status == "failed":
+        # Para el diagnóstico se prefiere el detalle técnico del conector (código
+        # HTTP, tipo de error); el mensaje al ciudadano es genérico y sirve de
+        # respaldo. La redacción se aplica igual antes de guardar (PRD §13.4).
         incident = request.app.state.incidents.open(
             component="connector",
             connector=procedure.connector.package,
             severity="S3",
-            technical_error=result.message or f"Fallo del conector en {procedure_id}",
+            technical_error=(
+                result.technical_detail
+                or result.message
+                or f"Fallo del conector en {procedure_id}"
+            ),
         )
         result = result.model_copy(update={"incident_code": incident.code})
 

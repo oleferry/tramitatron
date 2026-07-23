@@ -166,6 +166,11 @@ def test_failed_procedure_opens_incident_and_returns_code(client: TestClient):
     match = [i for i in listed if i["code"] == body["incident_code"]]
     assert match and match[0]["severity"] == "S3"
     assert match[0]["component"] == "connector"
+    # La incidencia conserva el DETALLE TÉCNICO del conector (aquí: worker sin
+    # configurar), no el mensaje genérico que ve el ciudadano. Es lo que soporte
+    # necesita para diagnosticar.
+    detail = client.get(f"/api/incidents/{body['incident_code']}").json()
+    assert "configurado" in detail["technical_error"]
 
 
 # --- Privacidad y protección -------------------------------------------------

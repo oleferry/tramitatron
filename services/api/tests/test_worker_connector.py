@@ -52,6 +52,8 @@ def test_unavailable_worker_result_becomes_failed():
     result = asyncio.run(_connector(handler).execute({}, confirmed=True))
     assert result.status == "failed"
     assert result.message == "gated"
+    # El estado del worker queda como rastro técnico para soporte.
+    assert result.technical_detail == "worker status=unavailable"
 
 
 def test_execute_requires_confirmation():
@@ -68,7 +70,37 @@ def test_worker_error_is_reported_not_raised():
 
     result = asyncio.run(_connector(handler).execute({}, confirmed=True))
     assert result.status == "failed"
+    # El ciudadano ve un mensaje genérico…
     assert "no está disponible" in result.message
+    # …pero soporte recibe el código HTTP concreto.
+    assert result.technical_detail == "worker respondió HTTP 500"
+
+
+def test_transport_error_keeps_generic_message_with_technical_detail():
+    """Conexión rechazada/timeout: mensaje amable, detalle técnico con el tipo."""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("connection refused")
+
+    result = asyncio.run(_connector(handler).execute({}, confirmed=True))
+    assert result.status == "failed"
+    assert "no está disponible" in result.message
+    assert result.technical_detail == "worker inaccesible: ConnectError"
+
+
+def test_technical_detail_never_carries_field_values():
+    """El detalle técnico es diagnóstico, no de negocio: sin datos de la persona."""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(500)
+
+    result = asyncio.run(
+        _connector(handler).execute(
+            {"full_name": "Ana Ruiz", "dni_number": "12345678Z"}, confirmed=True
+        )
+    )
+    assert "Ana" not in (result.technical_detail or "")
+    assert "12345678Z" not in (result.technical_detail or "")
 
 
 def test_unconfigured_worker_fails_cleanly():

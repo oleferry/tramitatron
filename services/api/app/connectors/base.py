@@ -12,7 +12,14 @@ from pydantic import BaseModel
 class ExecutionResult(BaseModel):
     status: Literal["completed", "failed", "user_handoff"]
     receipt: dict[str, str] | None = None
+    # Mensaje PARA EL CIUDADANO: amable y genérico. Nunca lleva detalle técnico.
     message: str | None = None
+    # Detalle TÉCNICO del fallo para soporte (código HTTP, tipo de excepción,
+    # estado del worker). Alimenta el `technical_error` de la incidencia, que la
+    # capa de redacción conserva de forma segura (PRD §13.4). El kiosco NO lo
+    # muestra. Los conectores solo deben poner aquí info técnica, jamás datos de
+    # la persona: es un canal de diagnóstico, no de negocio.
+    technical_detail: str | None = None
     # Código de incidencia anónimo (TT-603, PRD §5): al fallar un trámite, el
     # servidor abre una incidencia y devuelve su código para que el kiosco lo
     # muestre y el ciudadano pueda citarlo en soporte.
