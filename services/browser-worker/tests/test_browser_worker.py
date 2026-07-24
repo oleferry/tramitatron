@@ -168,7 +168,55 @@ def test_hacienda_events_never_contain_field_values(client):
     assert "SENTINEL-NIF" not in str(body["events"])
 
 
-@pytest.mark.parametrize("connector", ["sacyl.health.primary-care", "aeat.cita-previa"])
+# Cita en la Seguridad Social: NIF + nombre (del DNI) + teléfono (tecleado).
+_INSS_FIELDS = {
+    "dni_number": "12345678Z",
+    "full_name": "Persona de Prueba",
+    "phone": "600123456",
+    "service": "jubilacion",
+    "office": "valladolid",
+    "date": "2026-09-08",
+    "time": "10:00",
+}
+
+
+def test_inss_prepare_with_confirmation_completes(client):
+    """La cita del INSS se pide 'sin certificado': se completa con confirmación."""
+    body = client.post(
+        "/worker/prepare",
+        json={"connector": "demo.inss.appointment", "fields": _INSS_FIELDS, "confirm": True},
+    ).json()
+    assert body["status"] == "completed"
+    assert body["reference"].startswith("INSS-")
+    assert set(body["prefilled"]) == set(_INSS_FIELDS)
+
+
+def test_inss_without_confirmation_hands_off(client):
+    body = client.post(
+        "/worker/prepare",
+        json={"connector": "demo.inss.appointment", "fields": _INSS_FIELDS},
+    ).json()
+    assert body["status"] == "user_handoff"
+    assert "/portal/inss/cita/confirmar" in body["url"]
+
+
+def test_inss_events_never_contain_phone_or_nif(client):
+    """Ni el teléfono ni el NIF aparecen en la traza (PII)."""
+    body = client.post(
+        "/worker/prepare",
+        json={
+            "connector": "demo.inss.appointment",
+            "fields": {**_INSS_FIELDS, "phone": "SENTINEL-TEL", "dni_number": "SENTINEL-NIF"},
+            "confirm": True,
+        },
+    ).json()
+    assert "SENTINEL-TEL" not in str(body["events"])
+    assert "SENTINEL-NIF" not in str(body["events"])
+
+
+@pytest.mark.parametrize(
+    "connector", ["sacyl.health.primary-care", "aeat.cita-previa", "inss.cita-previa"]
+)
 def test_real_portals_are_disabled(client, connector):
     """Dirigir la automatización a un portal real está gated (privacidad/EIPD),
     aunque la cita no exija Cl@ve."""

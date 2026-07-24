@@ -190,3 +190,79 @@ def aeat_confirmar_pagina() -> Response:
 @router.post("/hacienda/cita/confirmar")
 async def aeat_confirmar(request: Request) -> Response:
     return await _confirmar(request, "AEAT")
+
+
+# ── Cita en la Seguridad Social (réplica del INSS) ─────────────────────────
+# La sede del INSS permite pedir cita "sin certificado": basta con nombre y
+# apellidos, DNI/NIE y un teléfono móvil. El teléfono NO está en el DNI, así que
+# es el único dato que la persona teclea.
+
+
+@router.get("/inss/cita")
+def inss_identificacion() -> Response:
+    return _page(
+        "<h1>Cita en la Seguridad Social · paso 1 de 4: identifícate</h1>"
+        '<form method="get" action="/portal/inss/cita/prestacion">'
+        '<label>DNI o NIE <input type="text" name="nif" value=""></label>'
+        '<label>Nombre y apellidos <input type="text" name="nombre" value=""></label>'
+        '<label>Teléfono móvil <input type="text" name="telefono" value=""></label>'
+        '<button type="submit" name="siguiente">Siguiente</button>'
+        "</form>"
+    )
+
+
+@router.get("/inss/cita/prestacion")
+def inss_prestacion() -> Response:
+    return _page(
+        "<h1>Cita en la Seguridad Social · paso 2 de 4: qué necesitas</h1>"
+        '<form method="get" action="/portal/inss/cita/fecha">'
+        '<label>Prestación <select name="prestacion">'
+        '<option value="">Elige…</option>'
+        '<option value="jubilacion">Jubilación</option>'
+        '<option value="incapacidad">Incapacidad permanente</option>'
+        '<option value="viudedad">Viudedad y otras prestaciones</option>'
+        "</select></label>"
+        '<button type="submit" name="siguiente">Siguiente</button>'
+        "</form>"
+    )
+
+
+@router.get("/inss/cita/fecha")
+def inss_fecha() -> Response:
+    return _page(
+        "<h1>Cita en la Seguridad Social · paso 3 de 4: oficina, fecha y hora</h1>"
+        '<form method="get" action="/portal/inss/cita/confirmar">'
+        '<label>Oficina <select name="oficina">'
+        '<option value="">Elige…</option>'
+        '<option value="valladolid">Valladolid</option>'
+        '<option value="burgos">Burgos</option>'
+        "</select></label>"
+        '<label>Fecha <select name="fecha">'
+        '<option value="">Elige…</option>'
+        '<option value="2026-09-08">8 de septiembre</option>'
+        '<option value="2026-09-09">9 de septiembre</option>'
+        "</select></label>"
+        '<label>Hora <select name="hora">'
+        '<option value="">Elige…</option>'
+        '<option value="10:00">10:00</option>'
+        '<option value="12:00">12:00</option>'
+        "</select></label>"
+        '<button type="submit" name="siguiente">Siguiente</button>'
+        "</form>"
+    )
+
+
+@router.get("/inss/cita/confirmar")
+def inss_confirmar_pagina() -> Response:
+    return _page(
+        "<h1>Cita en la Seguridad Social · paso 4 de 4: confirma tu cita</h1>"
+        '<form method="post" action="/portal/inss/cita/confirmar">'
+        '<input type="hidden" name="confirmado" value="si">'
+        '<button type="submit" name="enviar">Confirmar cita</button>'
+        "</form>"
+    )
+
+
+@router.post("/inss/cita/confirmar")
+async def inss_confirmar(request: Request) -> Response:
+    return await _confirmar(request, "INSS")

@@ -93,6 +93,26 @@ def build_registry(portal_authority: str) -> dict[str, PortalSpec]:
         enabled=True,
         completable=True,
     )
+    # Réplica de la CITA EN LA SEGURIDAD SOCIAL (INSS). La sede permite pedir
+    # cita "sin certificado": nombre, DNI/NIE y un teléfono móvil. El teléfono
+    # no está en el DNI, así que es el único dato que la persona teclea.
+    inss = PortalSpec(
+        connector="demo.inss.appointment",
+        hosts=(portal_host,),
+        start_url=f"http://{portal_authority}/portal/inss/cita",
+        field_map={
+            "dni_number": "nif",
+            "full_name": "nombre",
+            "phone": "telefono",
+            "service": "prestacion",
+            "office": "oficina",
+            "date": "fecha",
+            "time": "hora",
+        },
+        handoff_signals=("captcha", "cl@ve", "clave"),
+        enabled=True,
+        completable=True,
+    )
     # Portal real: declarado y DESACTIVADO (ver docstring). Sacyl (cita de
     # atención primaria en Castilla y León); se habilitará tras la EIPD.
     sacyl = PortalSpec(
@@ -114,4 +134,13 @@ def build_registry(portal_authority: str) -> dict[str, PortalSpec]:
         handoff_signals=("captcha", "cl@ve", "clave"),
         enabled=False,
     )
-    return {s.connector: s for s in (demo, hacienda, sacyl, aeat)}
+    # Portal real del INSS: declarado y DESACTIVADO, como los demás.
+    inss_real = PortalSpec(
+        connector="inss.cita-previa",
+        hosts=("sede.seg-social.gob.es", "w6.seg-social.es"),
+        start_url="https://sede.seg-social.gob.es/",
+        field_map={"dni_number": "nif", "full_name": "nombre", "phone": "telefono"},
+        handoff_signals=("captcha", "cl@ve", "clave"),
+        enabled=False,
+    )
+    return {s.connector: s for s in (demo, hacienda, inss, sacyl, aeat, inss_real)}

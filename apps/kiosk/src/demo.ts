@@ -211,6 +211,98 @@ const PROCEDURES: Procedure[] = [
     confirmation_required: true,
   },
   {
+    id: "demo.inss.appointment",
+    name: {
+      es: "Pedir cita con la Seguridad Social",
+      "ca-valencia": "Demanar cita amb la Seguretat Social",
+    },
+    description: {
+      es: "Para la pensión y otras prestaciones. Acercas tu DNI, eliges día y hora, y reservamos la cita por ti.",
+      "ca-valencia":
+        "Per a la pensió i altres prestacions. Acostes el teu DNI, tries dia i hora, i reservem la cita per tu.",
+    },
+    status: "available",
+    execution_mode: "integrated",
+    official_sources: [],
+    requirements: [
+      {
+        es: "Necesitas tu DNI y un teléfono móvil. No hace falta Cl@ve ni certificado.",
+        "ca-valencia": "Necessites el teu DNI i un telèfon mòbil. No cal Cl@ve ni certificat.",
+      },
+      {
+        es: "Antes de reservar te enseñamos la cita para que la confirmes tú.",
+        "ca-valencia": "Abans de reservar et mostrem la cita perquè la confirmes tu.",
+      },
+      {
+        es: "Demostración sobre un portal de pruebas; no toca ninguna administración real.",
+        "ca-valencia": "Demostració sobre un portal de proves; no toca cap administració real.",
+      },
+    ],
+    required_fields: ["dni_number", "full_name"],
+    intake: [
+      {
+        key: "service",
+        type: "select",
+        label: {
+          es: "¿Para qué necesitas la cita?",
+          "ca-valencia": "Per a què necessites la cita?",
+        },
+        options: [
+          { value: "jubilacion", label: { es: "La jubilación", "ca-valencia": "La jubilació" } },
+          {
+            value: "incapacidad",
+            label: { es: "Incapacidad permanente", "ca-valencia": "Incapacitat permanent" },
+          },
+          {
+            value: "viudedad",
+            label: {
+              es: "Viudedad y otras prestaciones",
+              "ca-valencia": "Viudetat i altres prestacions",
+            },
+          },
+        ],
+      },
+      {
+        key: "office",
+        type: "select",
+        label: { es: "¿A qué oficina quieres ir?", "ca-valencia": "A quina oficina vols anar?" },
+        options: [
+          { value: "valladolid", label: { es: "Valladolid", "ca-valencia": "Valladolid" } },
+          { value: "burgos", label: { es: "Burgos", "ca-valencia": "Burgos" } },
+        ],
+      },
+      {
+        key: "date",
+        type: "select",
+        label: { es: "¿Qué día?", "ca-valencia": "Quin dia?" },
+        options: [
+          { value: "2026-09-08", label: { es: "8 de septiembre", "ca-valencia": "8 de setembre" } },
+          { value: "2026-09-09", label: { es: "9 de septiembre", "ca-valencia": "9 de setembre" } },
+        ],
+      },
+      {
+        key: "time",
+        type: "select",
+        label: { es: "¿A qué hora?", "ca-valencia": "A quina hora?" },
+        options: [
+          { value: "10:00", label: { es: "10:00", "ca-valencia": "10:00" } },
+          { value: "12:00", label: { es: "12:00", "ca-valencia": "12:00" } },
+        ],
+      },
+      {
+        key: "phone",
+        type: "text",
+        label: {
+          es: "¿Cuál es tu teléfono móvil? La Seguridad Social lo pide para avisarte.",
+          "ca-valencia":
+            "Quin és el teu telèfon mòbil? La Seguretat Social el demana per a avisar-te.",
+        },
+        options: [],
+      },
+    ],
+    confirmation_required: true,
+  },
+  {
     id: "sacyl.health.primary-care",
     name: { es: "Cita de atención primaria", "ca-valencia": "Cita d'atenció primària" },
     description: {
@@ -837,6 +929,17 @@ export const demoApi = {
   },
 
   executeProcedure: async (procedureId: string): Promise<ExecutionResult> => {
+    if (procedureId === "demo.inss.appointment") {
+      // El INSS permite pedir cita sin certificado: tras el "Sí, confirma" se reserva.
+      return {
+        status: "completed",
+        receipt: {
+          reference: `INSS-${Math.random().toString(16).slice(2, 8).toUpperCase()}`,
+          url: "https://portal-de-pruebas.example/inss/cita/confirmar",
+        },
+        message: null,
+      };
+    }
     if (procedureId === "demo.hacienda.appointment") {
       // La AEAT no exige Cl@ve para dar cita: tras el "Sí, confirma" se reserva.
       return {

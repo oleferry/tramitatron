@@ -95,6 +95,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             worker_url=settings.browser_worker_url,
             worker_connector="demo.hacienda.appointment",
         ),
+        # Cita en la Seguridad Social (INSS): pensiones y prestaciones.
+        "connectors.worker.inss": WorkerConnector(
+            name="connectors.worker.inss",
+            worker_url=settings.browser_worker_url,
+            worker_connector="demo.inss.appointment",
+        ),
     }
 
     if settings.redis_url:
