@@ -6,6 +6,7 @@ import type { Lang } from "../i18n";
 import { t } from "../i18n";
 import { procedureIcon } from "../icons";
 import { AskPanel } from "./AskPanel";
+import { DocumentConsent } from "./DocumentConsent";
 import { DocumentStep } from "./DocumentStep";
 import { IntakeStep } from "./IntakeStep";
 import { QrCode } from "./QrCode";
@@ -30,6 +31,8 @@ export function ProcedureScreen({
   const [failed, setFailed] = useState(false);
   const [executing, setExecuting] = useState(false);
   const [documentConfirmed, setDocumentConfirmed] = useState(false);
+  const [documentConsented, setDocumentConsented] = useState(false);
+  const [consentDeclined, setConsentDeclined] = useState(false);
   const [intakeDone, setIntakeDone] = useState(false);
   // Lo que la persona ha elegido en el intake, para enseñárselo en el resumen
   // antes de reservar. Solo datos NO sensibles (centro, día, hora).
@@ -174,6 +177,20 @@ export function ProcedureScreen({
         const runnable = procedure.status === "available" && procedure.execution_mode !== "information";
         if (!runnable || result) return null;
 
+        // Si la persona prefiere que le ayude alguien, se respeta y no se sigue.
+        if (consentDeclined) {
+          return (
+            <div className="panel">
+              <h3>{strings.consentDeclinedTitle}</h3>
+              <p className="subtitle">{strings.consentDeclinedBody}</p>
+            </div>
+          );
+        }
+
+        const documentClass = procedure.required_fields.includes("sip_number")
+          ? "sip_card"
+          : "dni";
+
         // 1) Datos NO sensibles (servicio, oficina, fecha…) para el prefill.
         if (intake.length > 0 && !intakeDone) {
           return (
@@ -188,15 +205,26 @@ export function ProcedureScreen({
             />
           );
         }
-        // 2) Documento (DNI/SIP) con revisión y confirmación, si hace falta.
+        // 2) Consentimiento informado antes de leer el documento (art. 13 + EIPD):
+        // qué se hará, que no se guarda, y la alternativa humana.
+        if (procedure.required_fields.length > 0 && !documentConsented) {
+          return (
+            <DocumentConsent
+              lang={lang}
+              documentClass={documentClass}
+              voiceEnabled={voiceEnabled}
+              onConsent={() => setDocumentConsented(true)}
+              onDecline={() => setConsentDeclined(true)}
+            />
+          );
+        }
+        // 4) Documento (DNI/SIP) con revisión y confirmación, si hace falta.
         if (procedure.required_fields.length > 0 && !documentConfirmed) {
           return (
             <DocumentStep
               lang={lang}
               sessionId={sessionId}
-              documentClass={
-                procedure.required_fields.includes("sip_number") ? "sip_card" : "dni"
-              }
+              documentClass={documentClass}
               onConfirmed={() => setDocumentConfirmed(true)}
             />
           );

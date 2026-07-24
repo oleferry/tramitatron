@@ -994,6 +994,46 @@ button:focus-visible {
   outline: none;
 }
 
+/* Consentimiento informado antes de leer el documento (art. 13 + EIPD). */
+.consent-line {
+  font-size: 1.02em;
+  line-height: 1.5;
+  margin: 0 0 0.5rem;
+}
+
+.consent-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: stretch;
+  margin-top: 1rem;
+}
+
+/* Botón con aspecto de enlace para "Cómo tratamos tus datos": subrayado, sin
+   caja, pero sigue siendo un <button> (accesible y enfocable). */
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  text-decoration: underline;
+  font-size: 0.95em;
+  cursor: pointer;
+  padding: 0.5rem;
+  align-self: center;
+}
+
+.btn-link:focus-visible {
+  outline: 4px solid var(--color-guide);
+  outline-offset: 2px;
+  border-radius: var(--radius-s);
+}
+
+.privacy-body p {
+  text-align: left;
+  line-height: 1.5;
+  margin: 0 0 0.7rem;
+}
+
 /* Resumen de la cita antes de reservar: pensado para leerse de un vistazo y de
    lejos (el perfil objetivo son personas mayores). */
 .booking-summary {

@@ -123,6 +123,27 @@ type Strings = {
   printHandoff: string;
   handoffNoPhone: string;
   qrNoData: string;
+  documentNames: Record<string, string>;
+  consentTitle: string;
+  consentIntro: string;
+  consentNoStore: string;
+  consentAiProcessing: string;
+  consentHumanAlt: string;
+  consentMore: string;
+  consentAllow: string;
+  consentDecline: string;
+  consentDeclinedTitle: string;
+  consentDeclinedBody: string;
+  privacyTitle: string;
+  privacyResponsible: string;
+  privacyPurpose: string;
+  privacyBasis: string;
+  privacyNoAccount: string;
+  privacyRecipients: string;
+  privacyAi: string;
+  privacyNoAutoDecision: string;
+  privacyRights: string;
+  privacyClose: string;
 };
 
 const es: Strings = {
@@ -274,6 +295,32 @@ const es: Strings = {
   printHandoff: "Imprimir para llevar",
   handoffNoPhone: "¿No llevas móvil? Imprime el enlace y los pasos para terminarlo en casa.",
   qrNoData: "El código y el enlace no contienen tus datos personales, solo lo que has elegido.",
+  documentNames: { dni: "DNI", sip_card: "tarjeta sanitaria" },
+  consentTitle: "Antes de leer tu documento",
+  consentIntro:
+    "Vamos a hacer una foto de tu {document} para leer tus datos y rellenar el trámite por ti.",
+  consentNoStore: "La foto no se guarda en ningún sitio. Tus datos se borran cuando termines.",
+  consentAiProcessing:
+    "Para leer el documento usamos un servicio automatizado. La imagen se usa solo para leerlo y no se conserva.",
+  consentHumanAlt: "Si lo prefieres, una persona del centro puede ayudarte a hacerlo.",
+  consentMore: "Cómo tratamos tus datos",
+  consentAllow: "Sí, doy mi permiso",
+  consentDecline: "No, prefiero que me ayude una persona",
+  consentDeclinedTitle: "Sin problema",
+  consentDeclinedBody: "Pide ayuda al personal del centro y te atenderá.",
+  privacyTitle: "Cómo tratamos tus datos",
+  privacyResponsible: "Responsable: {controller}.",
+  privacyPurpose: "Usamos tus datos solo para ayudarte a hacer el trámite que has elegido.",
+  privacyBasis:
+    "Nos ampara la ley que obliga a la Administración a ayudarte con los medios electrónicos (art. 12 de la Ley 39/2015) y tu permiso.",
+  privacyNoAccount:
+    "No creamos ninguna cuenta ni guardamos tus datos o tus documentos: todo se borra al terminar.",
+  privacyRecipients:
+    "Para reservar tu cita enviamos los datos necesarios al portal oficial correspondiente.",
+  privacyAi: "Para leer tu documento usamos un servicio automatizado; la imagen no se conserva.",
+  privacyNoAutoDecision: "El sistema no decide nada por ti: tú confirmas cada paso.",
+  privacyRights: "Para más información o para ejercer tus derechos, pregunta a: {contact}.",
+  privacyClose: "Entendido",
 };
 
 const va: Strings = {
@@ -425,6 +472,32 @@ const va: Strings = {
   printHandoff: "Imprimir per emportar",
   handoffNoPhone: "No portes mòbil? Imprimix l'enllaç i els passos per acabar-ho a casa.",
   qrNoData: "El codi i l'enllaç no contenen les teues dades personals, només el que has triat.",
+  documentNames: { dni: "DNI", sip_card: "targeta sanitària" },
+  consentTitle: "Abans de llegir el teu document",
+  consentIntro:
+    "Farem una foto del teu {document} per a llegir les teues dades i emplenar el tràmit per tu.",
+  consentNoStore: "La foto no es guarda enlloc. Les teues dades s'esborren quan acabes.",
+  consentAiProcessing:
+    "Per a llegir el document usem un servici automatitzat. La imatge s'usa només per a llegir-lo i no es conserva.",
+  consentHumanAlt: "Si ho prefereixes, una persona del centre pot ajudar-te a fer-ho.",
+  consentMore: "Com tractem les teues dades",
+  consentAllow: "Sí, done el meu permís",
+  consentDecline: "No, preferisc que m'ajude una persona",
+  consentDeclinedTitle: "Cap problema",
+  consentDeclinedBody: "Demana ajuda al personal del centre i t'atendrà.",
+  privacyTitle: "Com tractem les teues dades",
+  privacyResponsible: "Responsable: {controller}.",
+  privacyPurpose: "Usem les teues dades només per a ajudar-te a fer el tràmit que has triat.",
+  privacyBasis:
+    "Ens empara la llei que obliga l'Administració a ajudar-te amb els mitjans electrònics (art. 12 de la Llei 39/2015) i el teu permís.",
+  privacyNoAccount:
+    "No creem cap compte ni guardem les teues dades o els teus documents: tot s'esborra en acabar.",
+  privacyRecipients:
+    "Per a reservar la teua cita enviem les dades necessàries al portal oficial corresponent.",
+  privacyAi: "Per a llegir el teu document usem un servici automatitzat; la imatge no es conserva.",
+  privacyNoAutoDecision: "El sistema no decidix res per tu: tu confirmes cada pas.",
+  privacyRights: "Per a més informació o per a exercir els teus drets, pregunta a: {contact}.",
+  privacyClose: "Entés",
 };
 
 const STRINGS: Record<Lang, Strings> = { es, "ca-valencia": va };

@@ -722,6 +722,10 @@ export const demoApi = {
   // (el handoff simulado no depende de ellos).
   setSessionData: async (): Promise<void> => undefined,
 
+  // Postura de datos de la preview: mock, sin documentos a la IA (como el
+  // backend por defecto). El consentimiento adapta su texto a esto.
+  getVersion: async () => ({ version: "demo", ai_provider: "mock", documents_to_ai: false }),
+
   getCatalog: async (): Promise<CatalogItem[]> =>
     PROCEDURES.map(({ id, name, description, status, execution_mode }) => ({
       id,

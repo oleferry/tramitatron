@@ -38,6 +38,14 @@ export type SessionInfo = {
   data_keys: string[];
 };
 
+export type VersionInfo = {
+  version: string;
+  // "mock" salvo que el despliegue tenga un proveedor de IA real configurado.
+  ai_provider: string;
+  // ¿La imagen del documento sale a la IA? Apagado por defecto (hasta EIPD).
+  documents_to_ai: boolean;
+};
+
 export type IntentResult = {
   intent: string;
   confidence: number;
@@ -169,6 +177,10 @@ const realApi = {
       body: JSON.stringify({ key, value }),
     }),
   getCatalog: () => request<CatalogItem[]>("/api/catalog"),
+  // Postura de datos del despliegue (TT-604): `documents_to_ai` indica si la
+  // imagen del documento sale a un servicio de IA. El consentimiento y el aviso
+  // de privacidad adaptan su texto a esto para ser honestos.
+  getVersion: () => request<VersionInfo>("/api/version"),
   getProcedure: (id: string) => request<Procedure>(`/api/catalog/${id}`),
   classifyIntent: (text: string, language: Lang) =>
     request<IntentResult>("/api/assistant/intent", {
@@ -339,6 +351,7 @@ export const api: typeof realApi = {
   endSession: withDemoFallback(realApi.endSession, demoApi.endSession),
   setSessionData: withDemoFallback(realApi.setSessionData, demoApi.setSessionData),
   getCatalog: withDemoFallback(realApi.getCatalog, demoApi.getCatalog),
+  getVersion: withDemoFallback(realApi.getVersion, demoApi.getVersion),
   getProcedure: withDemoFallback(realApi.getProcedure, demoApi.getProcedure),
   classifyIntent: withDemoFallback(realApi.classifyIntent, demoApi.classifyIntent),
   ask: withDemoFallback(realApi.ask, demoApi.ask),
