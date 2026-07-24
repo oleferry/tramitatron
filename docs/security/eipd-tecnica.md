@@ -9,6 +9,10 @@
 - **Documento hermano:** [threat model (TT-702)](threat-model.md) — cubre el
   riesgo de **seguridad** (STRIDE). Esta EIPD cubre el riesgo para los
   **derechos y libertades** de las personas.
+- **EIPD operativa:** [`eipd.md`](eipd.md) — la evaluación **decidible** para
+  activar los dos trámites reales (lectura del documento con IA + reserva en
+  portal real). Este documento es su **anexo técnico** (diseño y ciclo de vida
+  del dato); la decisión de activación vive allí.
 
 > Este es un **borrador técnico**, no la EIPD final. Describe el tratamiento tal
 > como está implementado y evalúa los riesgos derivados del diseño. Las
@@ -48,7 +52,8 @@ administrativos mediante un asistente multimodal en un tótem público. El siste
 
 ### 2.2 Naturaleza y ámbito
 
-- Ámbito inicial: micro-piloto en 1–3 municipios de Castellón.
+- Ámbito inicial: micro-piloto en Castilla y León (los dos trámites completos
+  son la cita de atención primaria de Sacyl y la cita previa de la AEAT).
 - **Anónimo por defecto:** sin cuentas, sin identificación del ciudadano, sin
   expediente ni memoria entre sesiones (PRD §6.1, §13.1).
 - Operaciones: clasificación de la intención, orientación con fuentes oficiales,
@@ -132,11 +137,16 @@ persona.** Orienta y prepara; la persona confirma y ejecuta:
 - La IA **explica**; el sistema **valida** con reglas deterministas (PRD §6.3).
 - En cartas, el riesgo y los plazos son deterministas; el modelo solo transcribe
   (ADR-004); ante duda, escala a atención humana, no resuelve.
-- La navegación asistida **prepara y cede**: CAPTCHA, identificación y
-  confirmación las hace la persona (ADR-007). El worker nunca reserva.
+- La navegación asistida tiene **dos desenlaces** (decisión de producto
+  2026-07-23): en trámites con Cl@ve/firma, **prepara y cede** (el worker nunca
+  envía); en **citas reversibles sin Cl@ve** (médico, Hacienda), el worker
+  **completa la reserva**, pero SOLO tras el "Sí, confirma" explícito del
+  ciudadano en pantalla, y nunca automatiza CAPTCHA, Cl@ve ni firma (regla 5).
+  Ver la EIPD operativa [`eipd.md`](eipd.md), que evalúa este tratamiento.
 
-Por tanto, no aplica el régimen del Art. 22 sobre decisiones únicamente
-automatizadas. **[PENDIENTE JURÍDICO]** confirmarlo.
+Reservar una cita es un acto **reversible y sin efecto jurídico** que la persona
+**confirma expresamente**; no es una decisión únicamente automatizada del Art.
+22. **[PENDIENTE JURÍDICO]** confirmarlo.
 
 ---
 
@@ -146,7 +156,7 @@ automatizadas. **[PENDIENTE JURÍDICO]** confirmarlo.
 |---|---|---|
 | Proveedor cloud (backend, región UE — Render/Frankfurt) | Sesión efímera (A1/A2 en tránsito y en memoria) | [PENDIENTE JURÍDICO] contrato de encargado |
 | Proveedor de IA (Anthropic) | **A2 (imágenes DNI/SIP, cartas)** solo si se activa | **Desactivado por defecto** (doble interruptor, ADR-006); activarlo exige EIPD + §10.4 |
-| Portales oficiales (GVA, SITVAL…) | Campos seguros que la persona aporta para su trámite | Portales reales **desactivados** hasta EIPD (ADR-007) |
+| Portales oficiales (Sacyl, AEAT…) | Los datos de la persona para reservar su cita (CIP+apellido o NIF+nombre, y las selecciones de centro/oficina/fecha) | Portales reales **desactivados** (`enabled=False`) hasta EIPD; hoy solo réplicas locales de pruebas (ADR-007) |
 | Soporte/MDM | Metadatos de tótem (sin PII) | [PENDIENTE JURÍDICO] |
 
 **Transferencias internacionales (Art. 44+):** el envío de A2 a un proveedor de

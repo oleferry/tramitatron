@@ -26,8 +26,10 @@ structured outputs), para detectar cualquier deriva de la API antes de activar.
 Enviar imágenes de DNI/SIP y cartas (datos **A2**, PRD §13.2) a un proveedor
 externo requiere, según el PRD §10.4 y ADR-006:
 
-1. **EIPD actualizada** que cubra este tratamiento (transferencia de A2 a la IA):
-   finalidad, minimización, base jurídica, riesgos y medidas.
+1. **EIPD aprobada** que cubra este tratamiento (transferencia de A2 a la IA):
+   finalidad, minimización, base jurídica, riesgos y medidas. El borrador
+   decidible es [`eipd.md`](eipd.md) (activación A); lo firma el DPD del
+   responsable. Su checklist de activación (§8) es el gate operativo.
 2. **Base jurídica** del tratamiento documentada.
 3. **Encargo de tratamiento (DPA)** firmado con el proveedor (Anthropic),
    con garantías de no-entrenamiento y de ubicación/retención de datos.
